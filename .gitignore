@@ -1,2 +1,6 @@
 *.class
 *.project
+.metadata
+.myeclipse
+.classpath
+.mymetadata
