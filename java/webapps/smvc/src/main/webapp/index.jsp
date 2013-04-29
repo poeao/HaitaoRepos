@@ -1,5 +1,6 @@
 <html>
 <body>
-<h2>Hello World!</h2>
+<h1>Maven Jetty Plugin</h1>
+   <h2>Hello Maven and Jetty!</h2>
 </body>
 </html>
