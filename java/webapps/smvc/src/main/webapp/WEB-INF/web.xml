@@ -1,11 +1,9 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
-
-<web-app>
-  <display-name>Spring 2.5 MVC Based XML</display-name>
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <display-name>Spring  MVC  3</display-name>
   
-  <servlet>  
+  	<servlet>  
         <servlet-name>helloworld</servlet-name>  
         <servlet-class>com.me.smvc.servlet.HelloWorldServlet</servlet-class>  
     </servlet>  
@@ -14,4 +12,35 @@
         <servlet-name>helloworld</servlet-name>  
         <url-pattern>/helloworld</url-pattern>  
     </servlet-mapping>  
+    
+    <!-- Spring ApplicationContext配置文件的路径,可使用通配符,多个路径用,号分隔 此参数用于后面的Spring Context Loader -->
+    <!-- WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			classpath*:/applicationContext.xml
+		</param-value>
+	</context-param>
+	
+	<!-- Spring MVC Servlet -->
+	<!-- key = org.springframework.web.servlet.FrameworkServlet.CONTEXT.springServlet -->
+	<servlet>
+		<servlet-name>springServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring-mvc.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	<!-- session超时定义,单位为分钟 -->
+	<session-config>
+		<session-timeout>20</session-timeout>
+	</session-config>
+	
 </web-app>

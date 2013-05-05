@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+	<!-- 自动扫描且只扫描@Controller -->
+	<context:component-scan base-package="com.me.smvc" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	 <!-- 默认的注解映射的支持 -->  
+	 <!-- 
+	 	自动注册DefaultAnnotationHandlerMapping与AnnotationMethodHandlerAdapter 
+		 两个bean,是spring MVC为@Controllers分发请求所必须的 -->
+    <mvc:annotation-driven />  
+
+	<!-- 总错误处理-->
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings"> 
+			<props> 
+			<!-- 上传文件大于最大尺寸后转向出错页面 --> 
+				<prop key="org.springframework.web.multipart.MaxUploadSizeExceededException"> 
+					redirect:/uploadError.jsp
+				</prop> 
+			</props> 
+		</property> 
+		<property name="defaultErrorView">  
+		 	<value>forward:/error.jsp</value>
+		</property>
+		<property name="defaultStatusCode">  
+		 	<value>200</value>
+		</property>		 	
+		<property name="warnLogCategory">  
+		 	<value>org.springframework.web.servlet.handler.SimpleMappingExceptionResolver</value>
+		</property>		 	
+	</bean> 
+	
+ 	<!-- 对静态资源文件的访问  方案一 （二选一） -->    
+ 	<!-- 会把"/**" url,注册到SimpleUrlHandlerMapping的urlMap中,
+ 	把对静态资源的访问由HandlerMapping转到
+ 	org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler
+ 	处理并返回.DefaultServletHttpRequestHandler使用就是各个Servlet
+ 	容器自己的默认Servlet. -->
+	<mvc:default-servlet-handler />
+
+	<!-- 对静态资源文件的访问  方案二 （二选一）-->   
+	<!-- 支持classpath目录,jar包内静态资源的 ResourceHttpRequestHandler -->
+	<!-- 
+	<mvc:resources mapping="/images/**" location="/images/" cache-period="31556926"/>    
+	<mvc:resources mapping="/js/**" location="/js/" cache-period="31556926"/>    
+	<mvc:resources mapping="/css/**" location="/css/" cache-period="31556926"/>  
+	-->
+	<!-- 定义首页 -->
+	<mvc:view-controller path="/" view-name="redirect:/login/" />
+
+	<!-- 定义JSP -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- 支持上传文件 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+</beans>
