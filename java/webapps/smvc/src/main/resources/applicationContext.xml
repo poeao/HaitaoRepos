@@ -37,7 +37,7 @@
 	</bean>
     
     <!-- JPA实体管理器工厂 -->
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">  
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"> 
        <property name="dataSource" ref="dataSource"/>
        <property name="persistenceProvider" ref="persistenceProvider"/>
        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>  
@@ -61,7 +61,7 @@
     <!-- 用于指定持久化实现厂商类 -->
     <bean id="persistenceProvider" class="org.hibernate.ejb.HibernatePersistence"/>
     <!-- 用于设置JPA实现厂商的特定属性 -->
-    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">  
+    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>  
     <!-- 用于指定一些高级特性 -->
     <bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect"/>  
     <!-- Jpa 事务配置 -->
@@ -78,17 +78,9 @@
     </bean>
     
     <!-- Spring Data Jpa配置 -->
-    <jpa:repositories  transaction-manager-ref="transactionManager" entity-manager-factory-ref="entityManagerFactory">
-    	<context:component-scan base-package="com.me.smvc">
-    	<!--  
-	      <context:include-filter type="regex" expression=".*.*dao"/>
-	    -->
-	      <context:include-filter type="annotation"
-	                              expression="org.springframework.stereotype.Repository"/>
-   </context:component-scan>
+    <jpa:repositories  base-package="com.me.smvc" transaction-manager-ref="transactionManager"
+         entity-manager-factory-ref="entityManagerFactory"/>
     	
-    </jpa:repositories>
-                      
 	<!-- 用于持有ApplicationContext,可以使用SpringContextHolder.getBean('xxxx')的静态方法得到spring bean对象 -->
 	<bean class="com.me.smvc.spring.util.SpringContextHolder" lazy-init="false" />
 
