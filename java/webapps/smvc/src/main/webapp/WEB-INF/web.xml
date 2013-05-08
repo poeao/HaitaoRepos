@@ -22,6 +22,34 @@
 		</param-value>
 	</context-param>
 	
+	<!-- Character Encoding filter -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Open Entity Manager in View filter -->
+	<filter>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>openEntityManagerInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
 	<!-- Spring MVC Servlet -->
 	<!-- key = org.springframework.web.servlet.FrameworkServlet.CONTEXT.springServlet -->
 	<servlet>
@@ -43,4 +71,8 @@
 		<session-timeout>20</session-timeout>
 	</session-config>
 	
+	<!-- 配置缓存清除监听器,负责处理由 JavaBean Introspector 功能而引起的缓存泄露 -->
+  <listener>  
+      <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>  
+  </listener> 
 </web-app>

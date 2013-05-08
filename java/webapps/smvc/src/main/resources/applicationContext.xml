@@ -72,7 +72,23 @@
     <!-- 使用annotation定义事务 -->
     <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
     
+    <!-- 用于执行原生的SQL  -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
     
+    <!-- Spring Data Jpa配置 -->
+    <jpa:repositories  transaction-manager-ref="transactionManager" entity-manager-factory-ref="entityManagerFactory">
+    	<context:component-scan base-package="com.me.smvc">
+    	<!--  
+	      <context:include-filter type="regex" expression=".*.*dao"/>
+	    -->
+	      <context:include-filter type="annotation"
+	                              expression="org.springframework.stereotype.Repository"/>
+   </context:component-scan>
+    	
+    </jpa:repositories>
+                      
 	<!-- 用于持有ApplicationContext,可以使用SpringContextHolder.getBean('xxxx')的静态方法得到spring bean对象 -->
 	<bean class="com.me.smvc.spring.util.SpringContextHolder" lazy-init="false" />
 
