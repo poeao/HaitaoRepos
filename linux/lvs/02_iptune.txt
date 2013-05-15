@@ -1,0 +1,21 @@
+vmnet1: 200.168.10.4/255.255.255.0
+lvs : network card :vmnet1  
+web1, web2: network card :vmnet1.
+lvs,web1,web2 connect with vmnet1, look like they connect to the same switcher.
+
+lvs : ifconfig eth0 200.168.10.1 netmask 255.255.255.0
+
+web1: ifconfig eth0 200.168.10.2
+     route del default
+web2: ifconfig eth0 200.168.10.3 
+    route del default 
+lvs_nat.sh
+#open the route pipe 
+echo 1 > /proc/sys/net/ipv4/ip_forward
+#clean the transfrom table
+ipvsadm -C
+#add a new transform table with althorithem  t-tcp  mode - rr  method --s
+ipvsadm -At 8.8.8.8 -s rr
+#-m :nat
+ipvsadm -at 8.8.8.8:80 -r 192.168.10.2:80 -m
+ipvsadm -at 8.8.8.8:80 -r 192.168.10.3:80 -m 
