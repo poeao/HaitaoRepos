@@ -1,0 +1,51 @@
+查看CPU型号
+      cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c 
+
+      查看物理CPU个数
+      cat /proc/cpuinfo |grep '^physical'|sort |uniq
+      cat /proc/cpuinfo |grep "physical id"|sort |uniq|wc -l
+
+      查看CPU运行模式：32位或者64位，如果是32位的话并不代表不能运行在64位下
+      getconf LONG_BIT 
+
+      查看是否CPU支持64位系统，如果值大于0，则支持64位运算，lm指long mode
+      cat /proc/cpuinfo | grep flags | grep ' lm ' | wc -l 
+
+     查看CPU是几核
+     #cat /proc/cpuinfo |grep "cores"|uniq
+
+     最后再完整看cpu物理信息, 不过大部分我们都不关心而已.
+     # dmidecode | grep -A48 'Processor Information$'
+
+      查看内存信息 
+      cat /proc/meminfo
+      
+      查看当前系统内核信息
+      uname -a
+      Linux HOSTNAME 2.6.18-164.el5 #1 SMP Tue Aug 18 15:51:48 EDT 2009 x86_64 x86_64 x86_64 GNU/Linux
+      查看当前操作系统内核信息 
+      cat /etc/issue | grep Linux 
+      Red Hat Enterprise Linux Server release 5.4 (Tikanga)
+      查看服务器型号
+      dmidecode | grep "Product Name"  
+      Product Name: PowerEdge R710
+      Product Name: 0VWN1R
+      查看网卡信息
+      dmesg | grep -i eth 
+      Broadcom NetXtreme II Gigabit Ethernet Driver bnx2 v1.9.3 (March 17, 2009)
+      eth0: Broadcom NetXtreme II BCM5709 1000Base-T (C0) PCI Express found at mem d6000000, IRQ 106, node addr a4badb28c33d
+      eth1: Broadcom NetXtreme II BCM5709 1000Base-T (C0) PCI Express found at mem d8000000, IRQ 114, node addr a4badb28c33f
+      eth2: Broadcom NetXtreme II BCM5709 1000Base-T (C0) PCI Express found at mem da000000, IRQ 122, node addr a4badb28c341
+      eth3: Broadcom NetXtreme II BCM5709 1000Base-T (C0) PCI Express found at mem dc000000, IRQ 130, node addr a4badb28c343
+      cnic: Added CNIC device: eth0
+      cnic: Added CNIC device: eth1
+      cnic: Added CNIC device: eth2
+      cnic: Added CNIC device: eth3
+      bnx2: eth0: using MSIX
+      ADDRCONF(NETDEV_UP): eth0: link is not ready
+      bnx2i: iSCSI not supported, dev=eth0
+      bnx2i: iSCSI not supported, dev=eth0
+      bnx2: eth0 NIC Copper Link is Up, 1000 Mbps full duplex
+      ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+      eth0: no IPv6 routers present
+      process `sysctl' is using deprecated sysctl (syscall) net.ipv6.neigh.eth0.base_reachable_time; Usenet.ipv6.neigh.eth0.base_reachable_time_ms instead.

@@ -1,0 +1,51 @@
+1. Install squid software package:
+yum -y install squid*
+2. Squid's configuration file
+/etc/squid/squid.conf
+3. Start squid service
+service squid start/restart
+4. Stop squid service
+service squid stop
+5. Reload its configuration
+squid -k reconfig
+
+vi /etc/squid/squid.conf
+-------------------------------------------------
+http_port 192.168.10.1:3128
+visible_hostname 192.168.10.1
+acl innet src 192.168.10.0/24
+acl all src 0.0.0.0/0.0.0.0
+reply_body_max_size 10480000 allow all
+http_access allow innet
+http_access deny all
+
+
+
+-------------------------------------------------
+
+
+Frequently used configuration items:
+
+http_port 192.168.10.1:3128
+cache_mem 64MB
+maximum_object_size 4096KB
+reply_body_max_size 10480000 allow all
+access_log /var/log/squid/access.log
+visible_hostname 192.168.10.1
+cache_dir ufs /var/spool/squid 100 16 256
+
+Environment setting: 
+vmnet1: 192.168.10.2/24
+squid: ifconfig eth0 192.168.10.1
+       ifconfig eth1 200.168.10.1 (connect with vmnet2)
+web-server: ifconfig eth0 200.168.10.2 (connect with vmnet2)
+
+#一台机器PING不通另一台机器，不代表两台机器不能通讯。
+One maching can't reach another maching with ping command,
+it not means they can't communicate with each other.
+ 
+#代理服务器可以分隔内部网络和外部网络 。 
+
+
+
+
