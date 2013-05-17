@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="main_layout"/>
+    <item type="id" name="titlebar_layout"/>
+    <item type="id" name="titlebar_title"/>
+    <item type="id" name="titlebar_refresh"/>
+    <item type="id" name="categorybar_layout"/>
+    <item type="id" name="category_arrow_right"/>
+    <item type="id" name="category_scrollview"/>
+    <item type="id" name="category_layout"/>
+    <item type="id" name="news_list"/>
+</resources>
