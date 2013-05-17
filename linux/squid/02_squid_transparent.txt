@@ -1,0 +1,29 @@
+vi /etc/squid/squid.conf
+-------------------------------------------------
+http_port 192.168.10.1:3128 transparent
+visible_hostname 192.168.10.1
+acl innet src 192.168.10.0/24
+acl all src 0.0.0.0/0.0.0.0
+reply_body_max_size 10480000 allow all
+http_access allow innet
+http_access deny all
+
+
+
+-------------------------------------------------
+[root@squid ~]# iptables -t nat -A PREROUTING -i eth0 -s 192.168.10.0/24 -p tcp --dport 80 -j REDIRECT --to 3128
+[root@squid ~]# iptables -t nat -L
+
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination
+REDIRECT   tcp  --  192.168.10.0/24      anywhere            tcp dpt:http redir ports 3128
+
+ 
+Environment setting: 
+vmnet1: 192.168.10.2/24  gateway:192.168.10.1  (client)
+squid: ifconfig eth0 192.168.10.1
+       ifconfig eth1 200.168.10.1 (connect with vmnet2)
+web-server: ifconfig eth0 200.168.10.2 (connect with vmnet2)
+
+
+

@@ -1,0 +1,50 @@
+vi /etc/squid/squid.conf
+-------------------------------------------------
+http_port 200.168.10.1:80 vhost
+visible_hostname 200.168.10.1
+acl all src 0.0.0.0/0.0.0.0
+reply_body_max_size 10480000 allow all
+http_access allow all
+cache_peer 192.168.10.2 parent 80 0 originserver name=a
+cache_peer 192.168.10.2 parent 80 0 originserver name=b
+cache_peer_domain a www.lamp.com
+cache_peer_domain b www.web.com
+cache_peer_access a allow all
+cache_peer_access b allow all
+
+
+-------------------------------------------------
+
+
+apache virtual host:
+
+
+#
+#<VirtualHost *:80>
+#    ServerAdmin webmaster@dummy-host.example.com
+#    DocumentRoot /www/docs/dummy-host.example.com
+#    ServerName dummy-host.example.com
+#    ErrorLog logs/dummy-host.example.com-error_log
+#    CustomLog logs/dummy-host.example.com-access_log common
+#</VirtualHost>
+NameVirtualHost 192.168.10.2:80
+<VirtualHost 192.168.10.2:80>
+        DocumentRoot /wwwa
+        ServerName www.lamp.com
+</VirtualHost>
+<VirtualHost 192.168.10.2:80>
+        DocumentRoot /wwwb
+        ServerName www.web.com
+</VirtualHost>
+
+-------------------------------------------------------
+
+ 
+Environment setting: 
+vmnet1: 200.168.10.2/24   (client)
+squid: ifconfig eth0 200.168.10.1
+       ifconfig eth1 192.168.10.1 (connect with vmnet2)
+web-server: ifconfig eth0 192.168.10.2 (connect with vmnet2)
+
+
+
