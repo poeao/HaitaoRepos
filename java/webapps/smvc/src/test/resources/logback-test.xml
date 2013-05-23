@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+ 
+  <!-- Console appender -->
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+    </layout>
+  </appender>
+  <!-- Hibernate File appender -->
+   <appender name="hibernatefile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <Append>true</Append>
+    <File>geniuswiki-hibernate.log</File>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d{ISO8601} [%-5p][%c] -- %m%n</Pattern>
+    </layout>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <FileNamePattern>mysvc-hibernate-%d{yyyy-MM-dd}.log</FileNamePattern>
+      <!-- keep 60 days worth of history -->
+      <MaxHistory>60</MaxHistory>
+    </rollingPolicy>
+  </appender>
+  
+  <appender name="mainfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <Append>true</Append>
+    <File>my_smvc.log</File>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>%d{ISO8601} [%-5p][%c] -- %m%n</Pattern>
+    </layout>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <FileNamePattern>mysmvc-%d{yyyy-MM-dd}.log</FileNamePattern>
+      <!-- keep 60 days worth of history -->
+      <MaxHistory>60</MaxHistory>
+    </rollingPolicy>
+  </appender>
+  
+  
+  <logger name="com.anhry" level="TRACE">
+      	<appender-ref ref="mainfile"/>
+  </logger>
+  
+  <logger name="org.hibernate" level="INFO" additivity="false">
+      <!--  -->
+    <appender-ref ref="hibernatefile"/>
+  </logger>
+  
+   
+  <root level="debug">
+    <appender-ref ref="console" />
+  </root>
+</configuration>
