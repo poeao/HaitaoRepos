@@ -1,0 +1,267 @@
+# Created by
+# /usr/bin/cfgmaker –global ‘WorkDir: /var/www/mrtg’ –global ‘Options[_]: growright,bits’ –ifref=ip –output /etc/mrtg/mrtg.cfg public@localhost
+
+
+### Global Config
+EnableIPv6: no
+WorkDir: /var/www/mrtg
+Language: gb2312
+LoadMIBs:/usr/share/snmp/mibs/UCD-SNMP-MIB.txt,/usr/share/snmp/mibs/HOST-RESOURCES-MIB.txt,/usr/share/snmp/mibs/TCP-MIB.txt
+######################################################################
+# System: host.abc.com
+# Description: Linux host.abc.com 2.6.11-2.QL #1 Wed Mar 16 15:22:24 CST 2005 i686
+# Contact: Root <root@localhost> (configure /etc/snmp/snmp.local.conf)
+# Location: Unknown (edit /etc/snmp/snmpd.conf)
+######################################################################
+
+#================================================================================
+#监控内网网卡
+#Descr: ‘eth0′ | Name: ” | Ip: ’192.168.0.254′ | Eth: ’00-e0-4c-ab-55-63′
+#================================================================================
+
+Target[eth0_lan]: /192.168.0.254:public@localhost:
+Options[eth0_lan]: growright
+Directory[eth0_lan]: eth0
+MaxBytes[eth0_lan]: 100000000
+Kmg[eth0_lan]: ,k,M,G,T,P
+YLegend[eth0_lan]: Bytes per Second
+ShortLegend[eth0_lan]: B/s
+Legend1[eth0_lan]: 每秒流入量 (单位 Bytes)
+Legend2[eth0_lan]: 每秒流出量 (单位 Bytes)
+LegendI[eth0_lan]: 流入:
+LegendO[eth0_lan]: 流出:
+Title[eth0_lan]: eth0网络流量[流入+流出]
+PageTop[eth0_lan]: <H1>eth0网络流量[流入+流出]</H1>
+<TABLE>
+<TR><TD>系统 :</TD><TD>host.abc.com</TD></TR>
+<TR><TD>描述 :</TD><TD>LAN网络接口eth0的网络流量(Bytes/s)</TD></TR>
+<TR><TD>位置 :</TD><TD> Shenzhen</TD></TR>
+<TR><TD>最大值:</TD><TD>100 MBytes/s</TD></TR>
+<TR><TD>管理员:</TD><TD>hajd@optdevelop.com</TD></TR>
+<TR><TD>说明 :</TD><TD>eth0 ip=192.168.0.254</TD></TR>
+</TABLE>
+#================================================================================
+#监控外网网卡
+#Descr: ‘eth1′ | Name: ” | Ip: ’61.235.102.115′ | Eth: ’00-e0-4c-3a-cf-ef’
+#================================================================================
+
+Target[eth1_lan]: /61.235.102.115:public@localhost:
+Options[eth1_lan]: growright
+Directory[eth1_lan]: eth1
+MaxBytes[eth1_lan]: 2000000
+Kmg[eth1_lan]: ,k,M,G,T,P
+YLegend[eth1_lan]: Bytes per Second
+ShortLegend[eth1_lan]: B/s
+Legend1[eth1_lan]: 每秒流入量 (单位 Bytes)
+Legend2[eth1_lan]: 每秒流出量 (单位 Bytes)
+LegendI[eth1_lan]: 流入:
+LegendO[eth1_lan]: 流出:
+Title[eth1_lan]: eth0网络流量[流入+流出]
+PageTop[eth1_lan]: <H1>eth1网络流量[流入+流出]</H1>
+<TABLE>
+<TR><TD>系统 :</TD><TD>host.abc.com</TD></TR>
+<TR><TD>描述 :</TD><TD>WAN网络接口eth1的网络流量(Bytes/s)</TD></TR>
+<TR><TD>位置 :</TD><TD> Shenzhen</TD></TR>
+<TR><TD>最大值:</TD><TD>2 MBytes/s</TD></TR>
+<TR><TD>管理员:</TD><TD>hajd@optdevelop.com</TD></TR>
+<TR><TD>说明 :</TD><TD>eth0 ip=61.235.102.115</TD></TR>
+</TABLE>
+#================================================================================
+#监控主机连续运行时间[运行天数]
+#注:不能从SNMP中直接取得数据,使用perl script采集数 (/etc/mrtg/bin/mrtg-upday.pl)
+#================================================================================
+
+Target[upday]: `/etc/mrtg/bin/mrtg-updays.pl`
+Options[upday]: gauge,nopercent,growright
+Directory[upday]: upday
+MaxBytes[upday]: 1000
+YLegend[upday]: Up Days
+ShortLegend[upday]: 天
+Legend1[upday]: 主机连续运行时间(天)
+Legend2[upday]:
+LegendI[upday]: 运行时间:
+LegendO[upday]:
+Title[upday]: 主机连续运行时间[运行天数]
+PageTop[upday]: <h1>主机连续运行时间[运行天数]</h1>
+<TABLE>
+<TR><TD>系统:</TD><TD>host.abc.com</TD></TR>
+<TR><TD>描述:</TD><TD>主机连续运行的时间(天)</TD></TR>
+<TR><TD>位置:</TD><TD>ShenZhen</TD></TR>
+<TR><TD>最大值:</TD><TD>1000天</TD></TR>
+<TR><TD>管理员:</TD><TD>user@abc.com</TD></TR>
+<TR><TD>说明:</TD><TD>&nbsp</TD></TR>
+</TABLE>
+#================================================================================
+#监控系统负载[1分钟+15分钟]
+#MIB: .iso.org.dod.internet.private.enterprises.ucdavis.laTable.laEntry.laLoadInt
+#注:打开snmpd中的监控功能,在/etc/snmp/snmpd.conf中加入
+# view systemview included .1.3.6.1.4.1.2021.10.1.5
+#================================================================================
+
+Target[systemload]: .1.3.6.1.4.1.2021.10.1.5.1&.1.3.6.1.4.1.2021.10.1.5.3:public@localhost:
+Options[systemload]: gauge,nopercent,growright
+Directory[systemload]: load
+MaxBytes[systemload]: 3000
+YLegend[systemload]: System Load
+ShortLegend[systemload]:
+Legend1[systemload]: 最近1分钟系统负载(x 100)
+Legend2[systemload]: 最近15分钟系统负载(x 100)
+LegendI[systemload]: 1分钟负载:
+LegendO[systemload]: 15分钟负载:
+Title[systemload]: 系统负载(x100)[1分钟+15分钟]
+PageTop[systemload]: <h1>系统负载(x100)[1分钟+15分钟]</h1>
+<TABLE>
+<TR><TD>系统:</TD><TD>host.abc.com</TD></TR>
+<TR><TD>描述:</TD><TD>系统负载(x100)[1分钟+15分钟]</TD></TR>
+<TR><TD>位置:</TD><TD>Shenzhen</TD></TR>
+<TR><TD>最大值:</TD><TD>30 (x 100)</TD></TR>
+<TR><TD>管理员:</TD><TD>user@abc.com</TD></TR>
+<TR><TD>说明:</TD><TD>&nbsp</TD></TR>
+</TABLE>
+#================================================================================
+#监控CPU负载[用户+闲置]
+#MIB: .iso.org.dod.internet.private.enterprises.ucdavis.systemStats
+#注:打开snmpd中的监控功能,在/etc/snmp/snmpd.conf中加入
+# view systemview included .1.3.6.1.4.1.2021.11
+#================================================================================
+
+Target[cpuload]: .1.3.6.1.4.1.2021.11.50.0&1.3.6.1.4.1.2021.11.53.0:public@localhost:
+Options[cpuload]: nopercent,growright
+Directory[cpuload]: cpu
+MaxBytes[cpuload]: 100
+Unscaled[cpuload]: dwym
+YLegend[cpuload]: CPU Utilization
+ShortLegend[cpuload]: %;
+Legend1[cpuload]: CPU用户负载(%)
+Legend2[cpuload]: CPU闲置(%)
+LegendI[cpuload]: 用户:
+LegendO[cpuload]: 闲置:
+Title[cpuload]: CPU负载[用户+闲置]
+PageTop[cpuload]: <h1>CPU负载[用户+闲置]</h1>
+<TABLE>
+<TR><TD>系统:</TD><TD>host.abc.com</TD></TR>
+<TR><TD>描述:</TD><TD>CPU负载[用户+闲置]</TD></TR>
+<TR><TD>位置:</TD><TD>Shenzhen</TD></TR>
+<TR><TD>最大值:</TD><TD>100</TD></TR>
+<TR><TD>管理员:</TD><TD>user@abc.com</TD></TR>
+<TR><TD>说明:</TD><TD></TD></TR>
+</TABLE>
+#================================================================================
+#监控内存使用量[Mem+Swap]
+#MIB: .iso.org.dod.internet.mgmt.mib-2.host.hrStorage.hrStorageTable.hrStorageEntry.hrStorageUsed
+#注:打开snmpd中的监控,在/etc/snmp/snmpd.conf中加入
+# view systemview included .1.3.6.1.2.1.25.2.3.1.6
+#================================================================================
+
+Target[memory]: .1.3.6.1.2.1.25.2.3.1.6.2&.1.3.6.1.2.1.25.2.3.1.6.3:public@localhost:
+Options[memory]: gauge,growright
+Directory[memory]: mem
+MaxBytes1[memory]: 514588
+MaxBytes2[memory]: 514588
+Kmg[memory]: k,M,G,T,P
+Kilo[memory]: 1024
+Unscaled[memory]: dwym
+YLegend[memory]: Bytes
+ShortLegend[memory]: B
+Legend1[memory]: 已用Mem (Bytes)
+Legend2[memory]: 已用Swap(Bytes)
+LegendI[memory]: 已用Mem :
+LegendO[memory]: 已用Swap:
+Title[memory]: 内存使用量[Mem+Swap]
+PageTop[memory]: <h1>内存使用量[Mem+Swap]</h1>
+<TABLE>
+<TR><TD>系统:</TD><TD>host.abc.com</TD></TR>
+<TR><TD>描述:</TD><TD>Memory和Swap的使用量(Bytes)</TD></TR>
+<TR><TD>位置:</TD><TD>Shenzhen</TD></TR>
+<TR><TD>最大值:</TD><TD>Mem=502M,Swap=512M</TD></TR>
+<TR><TD>管理员:</TD><TD>user@abc.com</TD></TR>
+<TR><TD>说明:</TD><TD>&nbsp</TD></TR>
+</TABLE>
+#================================================================================
+#监控系统进程数[进程数]
+#MIB: .iso.org.dod.internet.mgmt.mib-2.host.hrSystem.hrSystemProcesses
+#注:打开snmpd中的系统进程数监控,在/etc/snmp/snmpd.conf中加入
+# view systemview included .1.3.6.1.2.1.25.1.6
+#================================================================================
+
+Target[process]: .1.3.6.1.2.1.25.1.6.0&.1.3.6.1.2.1.25.1.6.0:public@localhost:
+Options[process]: gauge,nopercent,growright
+Directory[process]: process
+MaxBytes[process]: 1000
+YLegend[process]: Processes
+ShortLegend[process]: 个
+Legend1[process]: 系统进程数(个)
+Legend2[process]:
+LegendI[process]: 进程数:
+LegendO[process]:
+Title[process]: 系统进程数[进程数]
+PageTop[process]: <h1>系统进程数[进程数]</h1>
+<TABLE>
+<TR><TD>系统:</TD><TD>host.abc.com</TD></TR>
+<TR><TD>描述:</TD><TD>系统进程数(个)</TD></TR>
+<TR><TD>位置:</TD><TD>Shenzhen</TD></TR>
+<TR><TD>最大值:</TD><TD>1000个</TD></TR>
+<TR><TD>管理员:</TD><TD>user@abc.com</TD></TR>
+<TR><TD>说明:</TD><TD>&nbsp</TD></TR>
+</TABLE>
+#================================================================================
+#监控硬盘空间[系统盘+数据盘]
+#MIB: .iso.org.dod.internet.private.enterprises.ucdavis.dskTable.dskEntry.dskUsed
+#注1:打开snmpd中的监控功能,在/etc/snmp/snmpd.conf中加入
+# view systemview included .1.3.6.1.4.1.2021.9.1.8
+#注2:打开snmpd中的系统盘和数据盘监控功能,在/etc/snmp/snmpd.conf中加入
+# disk / 100000
+# disk /mnt/data 500000
+#================================================================================
+
+Target[disk]: .1.3.6.1.4.1.2021.9.1.8.1&.1.3.6.1.4.1.2021.9.1.8.2:public@localhost:
+Options[disk]: gauge,growright
+Directory[disk]: disk
+MaxBytes1[disk]: 3000000
+MaxBytes2[disk]: 70000000
+Kmg[disk]: k,M,G,T,P
+Kilo[disk]: 1024
+Unscaled[disk]: dwym
+YLegend[disk]: Bytes
+ShortLegend[disk]: B
+Legend1[disk]: 系统盘已用空间
+Legend2[disk]: 数据盘已用空间
+LegendI[disk]: 系统已用:
+LegendO[disk]: 数据已用:
+Title[disk]: 硬盘空间[系统盘+数据盘]
+PageTop[disk]: <h1>硬盘空间[系统盘+数据盘]</h1>
+<TABLE>
+<TR><TD>系统:</TD><TD>host.abc.com</TD></TR>
+<TR><TD>描述:</TD><TD>系统盘=/(/dev/hda3); 数据盘=/data(/dev/hda5)</TD></TR>
+<TR><TD>位置:</TD><TD>Shenzhen</TD></TR>
+<TR><TD>最大值:</TD><TD>系统盘=3.0GB; 数据盘=70GB</TD></TR>
+<TR><TD>管理员:</TD><TD>user@abc.com</TD></TR>
+<TR><TD>说明:</TD><TD>&nbsp;</TD></TR>
+</TABLE>
+#================================================================================
+#监控打开的TCP连接数[TCP连接数]
+#MIB: .iso.org.dod.internet.mgmt.mib-2.tcp.tcpCurrEstab
+#注:打开snmpd中的监控功能,在/etc/snmp/snmpd.conf中加入
+# view systemview included .1.3.6.1.2.1.6.9
+#================================================================================
+
+Target[tcpopen]: .1.3.6.1.2.1.6.9.0&.1.3.6.1.2.1.6.9.0:public@localhost:
+Options[tcpopen]: gauge,nopercent,growright
+Directory[tcpopen]: tcpopen
+MaxBytes[tcpopen]: 1000
+YLegend[tcpopen]: Tcp Connections
+ShortLegend[tcpopen]: 个
+Legend1[tcpopen]: 打开的TCP连接数(个)
+Legend2[tcpopen]:
+LegendI[tcpopen]: TCP连接数:
+LegendO[tcpopen]:
+Title[tcpopen]: TCP连接数[TCP连接数]
+PageTop[tcpopen]: <h1>TCP连接数[TCP连接数]</h1>
+<TABLE>
+<TR><TD>系统:</TD><TD>host.abc.com</TD></TR>
+<TR><TD>描述:</TD><TD>打开的TCP连接数(个)</TD></TR>
+<TR><TD>位置:</TD><TD>Shenzhen</TD></TR>
+<TR><TD>最大值:</TD><TD>1000个</TD></TR>
+<TR><TD>管理员:</TD><TD>user@abc.com</TD></TR>
+<TR><TD>说明:</TD><TD>&nbsp</TD></TR>
+</TABLE>
