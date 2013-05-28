@@ -12,10 +12,7 @@
 	</context:component-scan>
 
 	 <!-- 默认的注解映射的支持 -->  
-	 <!-- 
-	 	自动注册DefaultAnnotationHandlerMapping与AnnotationMethodHandlerAdapter 
-		 两个bean,是spring MVC为@Controllers分发请求所必须的 -->
-     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">        
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">        
 	</bean>  	
 	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 	</bean>    
@@ -41,19 +38,6 @@
 		</property>		 	
 	</bean> 
 	
- 	<!-- 对静态资源文件的访问  方案一 （二选一） -->    
- 	<!-- 会把"/**" url,注册到SimpleUrlHandlerMapping的urlMap中,
- 	把对静态资源的访问由HandlerMapping转到
- 	org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler
- 	处理并返回.DefaultServletHttpRequestHandler使用就是各个Servlet
- 	容器自己的默认Servlet.<mvc:default-servlet-handler /> -->
-	
-
-	<!-- 对静态资源文件的访问  方案二 （二选一）-->   
-	<!-- 支持classpath目录,jar包内静态资源的 ResourceHttpRequestHandler -->
-	<mvc:resources mapping="/img/**" location="/img/" cache-period="31556926"/>    
-	<mvc:resources mapping="/js/**" location="/js/" cache-period="31556926"/>    
-	<mvc:resources mapping="/css/**" location="/css/" cache-period="31556926"/>  
 	<!-- 定义首页 -->
 	<mvc:view-controller path="/" view-name="redirect:/login/" />
 

@@ -17,7 +17,6 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 	<!-- 静态资源处理 -->
-	<!-- 
 	<servlet-mapping>
 	  <servlet-name>default</servlet-name>
 	  <url-pattern>*.jpg</url-pattern>
@@ -27,7 +26,7 @@
 	  <url-pattern>*.css</url-pattern> 
 	  <url-pattern>*.xml</url-pattern> 
 	</servlet-mapping>
-	 -->
+	
 	<!-- Character Encoding filter -->
 	<filter>
 		<filter-name>encodingFilter</filter-name>
