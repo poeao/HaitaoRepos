@@ -252,16 +252,16 @@
                 <configuration>  
                 <!-- 每2秒的间隔扫描一次,实现热部署 -->
           		<scanIntervalSeconds>10</scanIntervalSeconds>
-                    <webAppConfig>  
-                        <contextPath>/${project.artifactId}</contextPath> 
-                        <descriptor>${basedir}/src/main/webapp/WEB-INF/web.xml</descriptor>  
-                    </webAppConfig> 
-                     
-                    <connectors>  
-                        <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">  
-                            <port>8090</port>  
-                        </connector>  
-                    </connectors>  
+                <webAppConfig>  
+                    <contextPath>/${project.artifactId}</contextPath> 
+                </webAppConfig> 
+
+                <connectors>  
+                    <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">  
+                        <port>8090</port>  
+                    </connector>  
+                </connectors>  
+                  
                 </configuration>  
             </plugin>
        

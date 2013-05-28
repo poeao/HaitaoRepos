@@ -2,7 +2,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
  <head>
-  <%@ include file="/common/global.jsp"%>
+  <%@ include file="/common/taglib.jsp"%>
   <title>Welcome to OA</title>
   <link href="${ctx}/css/login.css" rel="stylesheet">
  </head>
@@ -35,7 +35,7 @@
 							<div class="clearfix"></div>
 
 							<p class="center span5">
-							<button type="submit" class="btn">Login</button>
+							<button type="submit" class="btn">登录</button>
 							</p>
 						</fieldset>
 					</form>

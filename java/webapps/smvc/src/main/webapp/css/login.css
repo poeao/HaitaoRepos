@@ -4,7 +4,7 @@
 	  font-size: 13px;
 	  line-height: 18px;
 	  color: #555555;
-	  background-color: #ffffff;
+	  background-color: #D9F5C5;
 	  text-shadow:0 -1px 1px rgba(0, 0, 0, 0.2);
 	  padding-bottom: 40px;
 	}
@@ -97,10 +97,10 @@
 	  display: inline-block;
 	  width: 14px;
 	  height: 14px;
-	  *margin-right: .3em;
+	  margin-right: .3em;
 	  line-height: 14px;
 	  vertical-align: text-top;
-	  background-image: url("../css/glyphicons-halflings.png");
+	  background-image: url("../img/glyphicons-halflings.png");
 	  background-position: 14px 14px;
 	  background-repeat: no-repeat;
 	}
@@ -139,5 +139,6 @@
 		 border-radius: 4px 4px 4px 4px;
 		border-style: solid;
 		border-width: 1px;
+		height:30px;
 		width:180px;
 	}

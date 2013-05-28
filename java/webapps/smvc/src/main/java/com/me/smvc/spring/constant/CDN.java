@@ -8,4 +8,5 @@ public final class CDN {
 	    (window.jQuery || document.write('<script src="/scripts/jquery-1.9.0.min.js"><\/script>'));  
 	</script>  */
 	public static final String JQUERY = "http://code.jquery.com/jquery-1.9.1.min.js";
+	//public static final String JQUERY = "${ctx}/js/jquery-1.9.1.min.js";
 }

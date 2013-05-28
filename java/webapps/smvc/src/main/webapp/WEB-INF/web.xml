@@ -3,16 +3,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
   <display-name>Spring  MVC  3</display-name>
   
-  	<servlet>  
-        <servlet-name>helloworld</servlet-name>  
-        <servlet-class>com.me.smvc.servlet.HelloWorldServlet</servlet-class>  
-    </servlet>  
-  
-    <servlet-mapping>  
-        <servlet-name>helloworld</servlet-name>  
-        <url-pattern>/helloworld</url-pattern>  
-    </servlet-mapping>  
-    
     <!-- Spring ApplicationContext配置文件的路径,可使用通配符,多个路径用,号分隔 此参数用于后面的Spring Context Loader -->
     <!-- WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE -->
 	<context-param>
@@ -26,7 +16,18 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-	
+	<!-- 静态资源处理 -->
+	<!-- 
+	<servlet-mapping>
+	  <servlet-name>default</servlet-name>
+	  <url-pattern>*.jpg</url-pattern>
+	  <url-pattern>*.png</url-pattern>
+	  <url-pattern>*.gif</url-pattern>
+	  <url-pattern>*.js</url-pattern>
+	  <url-pattern>*.css</url-pattern> 
+	  <url-pattern>*.xml</url-pattern> 
+	</servlet-mapping>
+	 -->
 	<!-- Character Encoding filter -->
 	<filter>
 		<filter-name>encodingFilter</filter-name>

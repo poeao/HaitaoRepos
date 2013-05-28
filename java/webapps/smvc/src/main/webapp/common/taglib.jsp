@@ -2,8 +2,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-
+<%@ page import="com.me.smvc.spring.constant.CDN" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <script type="text/javascript">
 	var ctx = '<%=request.getContextPath() %>';
 </script>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+%>

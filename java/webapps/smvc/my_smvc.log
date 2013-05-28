@@ -1,5 +1,0 @@
-2013-05-23 14:12:04,478 [TRACE][com.anhry.logback.LogBackTest] -- Hello World!
-2013-05-23 14:12:04,484 [DEBUG][com.anhry.logback.LogBackTest] -- How are you today?
-2013-05-23 14:12:04,484 [INFO ][com.anhry.logback.LogBackTest] -- I am fine.
-2013-05-23 14:12:04,486 [WARN ][com.anhry.logback.LogBackTest] -- I love programming.
-2013-05-23 14:12:04,487 [ERROR][com.anhry.logback.LogBackTest] -- I am programming.

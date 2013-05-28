@@ -15,7 +15,10 @@
 	 <!-- 
 	 	自动注册DefaultAnnotationHandlerMapping与AnnotationMethodHandlerAdapter 
 		 两个bean,是spring MVC为@Controllers分发请求所必须的 -->
-    <mvc:annotation-driven />  
+     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">        
+	</bean>  	
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+	</bean>    
 
 	<!-- 总错误处理-->
 	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
@@ -43,16 +46,14 @@
  	把对静态资源的访问由HandlerMapping转到
  	org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler
  	处理并返回.DefaultServletHttpRequestHandler使用就是各个Servlet
- 	容器自己的默认Servlet. -->
-	<mvc:default-servlet-handler />
+ 	容器自己的默认Servlet.<mvc:default-servlet-handler /> -->
+	
 
 	<!-- 对静态资源文件的访问  方案二 （二选一）-->   
 	<!-- 支持classpath目录,jar包内静态资源的 ResourceHttpRequestHandler -->
-	<!-- 
-	<mvc:resources mapping="/images/**" location="/images/" cache-period="31556926"/>    
+	<mvc:resources mapping="/img/**" location="/img/" cache-period="31556926"/>    
 	<mvc:resources mapping="/js/**" location="/js/" cache-period="31556926"/>    
 	<mvc:resources mapping="/css/**" location="/css/" cache-period="31556926"/>  
-	-->
 	<!-- 定义首页 -->
 	<mvc:view-controller path="/" view-name="redirect:/login/" />
 
@@ -64,4 +65,16 @@
 
 	<!-- 支持上传文件 -->
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+	
+	<!-- MessageResolve -->
+	<!--  
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>resources.messages</value>
+			</list>
+		</property>
+	</bean>
+	-->
 </beans>
