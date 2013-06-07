@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\src\main\assets" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\src\debug\assets" />
+    </dataSet>
+
+</merger>

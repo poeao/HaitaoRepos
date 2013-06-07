@@ -1,0 +1,24 @@
+# incremental data. DO NOT EDIT.
+# format is <lastModified> <length> <SHA-1> <path>
+# Encoding is UTF-8
+1370600132058 670 913d3d0b1c46813773104d084464670d01f17c0a E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\service\BeginService$MyBinder.class
+1370600132086 475 15cf33e1099250837597fddcd8f4fc881e670c0a E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\R$string.class
+1370163298924 484258 bd6479f5dd592790607e0504e66e0f31c2b4d308 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\libs\android-support-v4.jar
+1370164775462 396 03297bb453c0f85103d113f741ebef963111deea E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\configuration\CommonConstants.class
+1370535608490 464 4a4aca4dc3fe8f1978d15f3d10683a10bb86fdcc E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\R$dimen.class
+1370600132082 550 9ec41ce0db811d40809643c2a44ffb0cbe5bbdb7 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\R$id.class
+1370600132083 426 5ee3a9542affa896d8a03c0a35de7f4d0f0e6d87 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\R$layout.class
+1370163346837 343 7ed9c9bc911e4237f4d3858d8620a0e8497dca7b E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\R$attr.class
+1370565857011 1123 45a045ed3b2e414ac4880e5d2e75d022a4f9f1f5 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\service\MusicService.class
+1370565156643 1188 300214c0aeb6dd48530307e5b4b17c7e34cf3e92 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\service\TestService.class
+1370600132104 732 269e8f72a6b2980f915363a1c87c39b19f79c0a9 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\R.class
+1370163346868 410 67282840908ff1d3eb5e15a36c27b5c9ff74fa65 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\R$drawable.class
+1370164775518 1332 143acadb88a304a5a7ee452ad4d1a6e587f71c98 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\FirstActivity$1.class
+1370600132087 434 9a4c2b2d2ecffd6b5f9a425d21f7a57f574f53e7 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\R$style.class
+1370600132085 390 7af98d81a7334b488403ec4ad0cd5b996b77d218 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\R$raw.class
+1370607237220 1302 6ed23b13114b0d6b67d3561ba4feb30de170f4f5 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\MainActivity$1.class
+1370163346880 347 0dd07e91d592c2f23eeb2be71898ce547359e395 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\BuildConfig.class
+1370600132084 391 e8e0933a1f9bee3e0a85d6d1c9d4fa4b0ad7b219 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\R$menu.class
+1370600132062 1784 22bc9a65af872a6e2bd121b2f4c80d4da5b2db4a E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\service\BeginService.class
+1370607237231 4772 fa7c9fa339e9775f6709b8bba28a0e370ca48d64 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\MainActivity.class
+1370535608417 1524 ab0471f37255e07c8687b08fd7064430387cbbb4 E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\classes\debug\com\me\helloandroid\FirstActivity.class
