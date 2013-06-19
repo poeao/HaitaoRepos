@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="categories">
+        <item>焦点</item>
+        <item>国内</item>
+        <item>国际</item>
+        <item>军事</item>
+        <item>体育</item>
+        <item>科技</item>
+        <item>汽车</item>
+        <item>财经</item>
+        <item>游戏</item>
+        <item>女人</item>
+    </string-array>
+</resources>

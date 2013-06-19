@@ -1,0 +1,44 @@
+Open Mysql bin-log:
+
+vi /etc/my.cnf
+[mysqld]
+port=3306
+socket=/var/lib/mysql/mysql.sock
+log-slow-queries=mysql-slow.log
+log-error=mysql.err
+log=mysql.log
+log-bin=mysql-bin
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+3. 修改my.cnf
+vi /etc/my.cnf
+在[client]下添加
+  default-character-set=utf8
+在[mysqld]下添加
+  default-character-set=utf8
+--------------------------------------
+Common operations about bin-log:
+flush logs; #create a new bin-log
+
+show master status; #View the last one bin-log.
+
+reset master; #clean up all bin-log
+
+mysqlbinlog --nodefaults mysql-00001.bin 
+-------------------------------------------
+backup data:
+mysqldump -uroot -p123456 test -l -F '/tmp/test.sql'
+# -l : read lock. (can't write)
+# -F :flush bin-log.
+mysqldump -uroot -p123456 text > /tmp/test.sql
+
+sample:
+Backup db at 9:00 am (test.sql).
+Some DML operation between 9:00 and 10:00 am.
+DB corrupted at 10:00, then how to recover ?
+1. mysql -uroot -p123456 < test.sql
+2. mysqlbinlog --no-defaults mysql-bin.00002 |mysql -uroot -p123456 test
+
+!!!NOTE: It's important to do backup opeation with -F parameters.
+

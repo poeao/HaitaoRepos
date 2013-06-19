@@ -1,0 +1,10 @@
+1. logon to mysql
+ mysql -h localhost -P 3306 -u root -p 
+
+2. query the grant table
+ select user, host, password from mysql.user;
+
+3. grant privileges to user1(user1 can logon to local db server from 192.168.10.2):
+  grant all on *.* to 'user1'@'192.168.10.2' identified by '123456';
+  
+  

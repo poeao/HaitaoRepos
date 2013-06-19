@@ -1,0 +1,69 @@
+系统平台：Red Hat Enterprise Linux Server release 5 (Tikanga)
+
+方法一步骤：
+1、 将DVD光盘挂载到/media/cdrom中；
+2、 拷贝/media/cdrom中的所有文件到/media/yum1；
+3、 /etc/yum.repos.d/rhel-debuginfo.repo ：
+[Cluster]
+name=Red Hat Enterprise Linux $releasever - $basearch - Cluster
+baseurl=file:///media/yum1/Cluster
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[ClusterStorage]
+name=Red Hat Enterprise Linux $releasever - $basearch - ClusterStorage
+baseurl=file:///media/yum1/ClusterStorage
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[Server]
+name=Red Hat Enterprise Linux $releasever - $basearch - Server
+baseurl=file:///media/yum1/Server
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[VT]
+name=Red Hat Enterprise Linux $releasever - $basearch - VT
+baseurl=file:///media/yum1/VT
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+4、/usr/lib/python2.4/site-packages/yum/yumRepo.py第411行：
+remote = url + '/' + relative
+改为：
+remote = “/media/yum1/Server” + '/' + relative
+5、yum clean all
+6、yum install iptraf 测试！成功！！！
+
+方法二步骤：
+1、将DVD光盘挂载到/media/cdrom中；
+2、拷贝/media/cdrom/Server中的所有文件到/media/yum2；
+3、/etc/yum.repos.d/rhel-debuginfo.repo ：
+[Server]
+name=Red Hat Enterprise Linux $releasever - $basearch - Server
+baseurl=file:///media/yum2
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+[Server]
+name=Red Hat Enterprise Linux $releasever - $basearch - Server
+baseurl=file:///media/yum2
+enabled=1
+gpgcheck=0
+这样修改也是可以的。
+
+[Server]
+name=Red Hat Enterprise Linux $releasever - $basearch - Server
+baseurl=file:///media/yum2
+gpgcheck=1
+这样修改也是可以的。
+4、/usr/lib/python2.4/site-packages/yum/yumRepo.py第411行：
+remote = url + '/' + relative
+改为：
+remote = “/media/yum2” + '/' + relative
+5、yum clean all
+6、yum install iptraf 测试！成功！！！

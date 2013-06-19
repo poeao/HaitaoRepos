@@ -5,5 +5,13 @@
 .classpath
 .mymetadata
 .settings
+.log
 target/
 bin/
+.gradle
+.idea
+gradle
+*.gradle
+*.iml
+gradlew
+gradlew.bat

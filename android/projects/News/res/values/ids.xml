@@ -9,4 +9,5 @@
     <item type="id" name="category_scrollview"/>
     <item type="id" name="category_layout"/>
     <item type="id" name="news_list"/>
+    <item type="id" name="category_title"/>
 </resources>
