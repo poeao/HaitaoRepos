@@ -1,0 +1,25 @@
+#!/bin/sh
+#oracle用户下
+#crontab -e 增加 "35 4 * * * /home/oracle/dbbackup/backupDb.sh",保存后自动安装
+#或echo "35 4 * * * /home/oracle/dbbackup/backupDb.sh" > backupDb.cron
+ORACLE_BASE=/oracle
+export ORACLE_BASE
+export ORACLE_HOME=$ORACLE_BASE/product/10.2.0/db_1
+export ORACLE_SID=orcl
+export PATH=$PATH:$HOME/bin:$ORACLE_HOME/bin
+
+NLS_LANG="SIMPLIFIED CHINESE_CHINA.AL32UTF8"; export NLS_LANG
+
+dmpfile="`echo ~/`dbbackup/ycdb_`date +%F`.dmp"
+logfile="`echo ~/`dbbackup/ycdb_`date +%F`.log"
+
+if [ -w $dmpfile ]
+then
+echo "rm -f $dmpfile"
+rm -f "$dmpfile"
+fi
+
+exp USERID=ycsafety/ycsafety@192.168.1.52/orcl file=$dmpfile log=$logfile owner=ycsafety grants=y > todayBackUp.log
+
+#back dmp file to another server
+rsync -auzv -e ssh --exclude=*.log /home/oracle/dbbackup/ oracle@192.168.1.30:/home/oracle/dbbackup

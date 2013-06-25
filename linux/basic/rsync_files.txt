@@ -1,0 +1,4 @@
+!/bin/bash
+
+#used to sync ycsafety files from tomcat 8080 to tomcat 8081
+rsync -auzv -e ssh --exclude=*.properties /opt/usr/local/tomcat6/tomcat-8080/webapps/ycSafety/ webadmin@192.168.1.31:/opt/usr/local/tomcat6/tomcat-8080/webapps/ycSafety/

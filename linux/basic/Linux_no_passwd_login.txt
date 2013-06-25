@@ -1,0 +1,15 @@
+一、用ssh-keygen创建公钥
+haifeng@haifeng-EX38-DS4:/$ ssh-keygen -t rsa
+输入后，会提示创建.ssh/id_rsa、id_rsa.pub的文件，其中第一个为密钥，第二个为公钥。
+过程中会要求输入密码，为了ssh访问过程无须密码，可以直接回车 。
+
+2.查看钥匙。
+[root@localhost .ssh]# ls ~/.ssh/
+id_rsa  id_rsa.pub  known_hosts
+
+3.将公钥复制到被管理机器上面
+[root@localhost .ssh]# scp id_rsa.pub root@192.168.36.194:~/.ssh/authorized_keys
+root@192.168.36.194's password: 
+
+4.访问
+# ssh 192.168.36.194
