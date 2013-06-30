@@ -1,0 +1,37 @@
+1.挂载iso镜像
+mount -o loop -t iso9660 isoname.iso  /media/cdrom
+如果是光盘的文件
+mount -t iso9660 /dev/cdrom   /media/cdrom
+2.配置本地的yum源
+vim /etc/yum.repos.d/rhel-source.repo
+[server]
+name=server
+baserul=file:///media/cdrom/Server  #（注意要挂载光驱）
+enable=1
+gpgchechk=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+
+修改yumRepo.py文件
+vim /usr/lib/python2.6/site-packages/yum/yumRepo.py
+把782行的
+remote = url + ‘/’ + relative
+改成
+remote = url + ‘/local_yum_source’ + relative
+3.配置网络yum源
+rpm -ivh vsftpd-2.2.2-6.el6_0.1.x86_64
+service vsftpd restart
+chkconfig --level 35 vsftpd on
+cd /var/ftp/pub/
+mkdir yum
+把上面的挂载点改成/var/ftp/pub/yum
+vim /etc/yum.repos.d/rhel-source.repo
+[server]
+name=server
+baserul=ftp://pub/yum/Server/  #（注意要挂载光驱）
+enable=1
+gpgchechk=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+4.设置开机启动
+vim /etc/fstab
+加入下面的一行
+/dev/cdrom  /挂载的目录  iso9660 noauto,ro 0 0

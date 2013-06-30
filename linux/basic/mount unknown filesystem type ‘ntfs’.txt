@@ -1,0 +1,18 @@
+# mount –t ntfs /dev/sdb1 /mnt/
+      mount: unknown filesystem type ‘ntfs’ 
+      这是由于CentOS release 5.5(Final)上无法识别NTFS格式的分区。 
+
+解决办法： 
+      通过使用 ntfs-3g 来解决。 
+      打开ntfs-3g的下载点http://www.tuxera.com/community/ntfs-3g-download/ ，将最新稳定(当前最新版本为ntfs-3g-2011.1.15）下载到CentOS，执行以下命令安装： 
+      1) 编译安装 ntfs-3g：
+# tar zxvf  ntfs-3g-2011.1.15.tgz
+# cd ntfs-3g-2011.1.15
+#./configure
+#make
+#make install
+在网上找了，方法一样安上 还是不能挂载，最后在官方站 找到方法了，如下：
+mount -t ntfs-3g  /dev/sda5 /mnt/windows 
+这样就可以挂载了，如果想开机启动 ，就挂载上的话，编辑/etx/fstat 文件
+如下：
+/dev/sda4     /mnt/windows    ntfs-3g  defaults 0 0
