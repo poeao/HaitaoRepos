@@ -24,6 +24,11 @@
                 qualifiers="xxhdpi"
                 type="drawable" />
             <file
+                name="first"
+                path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\src\main\res\layout\first.xml"
+                qualifiers=""
+                type="layout" />
+            <file
                 name="main"
                 path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\src\main\res\layout\main.xml"
                 qualifiers=""
@@ -33,6 +38,11 @@
                 path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\src\main\res\menu\main.xml"
                 qualifiers=""
                 type="menu" />
+            <file
+                name="ichego"
+                path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\src\main\res\raw\ichego.mp3"
+                qualifiers=""
+                type="raw" />
             <file
                 path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\src\main\res\values\dimens.xml"
                 qualifiers="" >
@@ -82,16 +92,6 @@
                 <dimen name="activity_horizontal_margin" >128dp
                 </dimen>
             </file>
-            <file
-                name="first"
-                path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\src\main\res\layout\first.xml"
-                qualifiers=""
-                type="layout" />
-            <file
-                name="ichego"
-                path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\src\main\res\raw\ichego.mp3"
-                qualifiers=""
-                type="raw" />
         </source>
         <source path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloAndroid\build\res\rs\debug" />
     </dataSet>

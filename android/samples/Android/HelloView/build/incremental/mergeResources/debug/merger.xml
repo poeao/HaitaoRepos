@@ -34,6 +34,11 @@
                 qualifiers=""
                 type="menu" />
             <file
+                name="mainmenu"
+                path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloView\src\main\res\menu\mainmenu.xml"
+                qualifiers=""
+                type="menu" />
+            <file
                 path="E:\CodeRepository\HaitaoRepos\android\samples\Android\HelloView\src\main\res\values\dimens.xml"
                 qualifiers="" >
                 <dimen name="activity_horizontal_margin" >16dp
@@ -48,7 +53,7 @@
                 </string>
                 <string name="app_name" >HelloView
                 </string>
-                <string name="hello_world" >Hello world!
+                <string name="hello_world" >Hello world!哈喽
                 </string>
             </file>
             <file

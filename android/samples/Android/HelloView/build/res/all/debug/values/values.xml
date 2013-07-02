@@ -6,7 +6,7 @@
 
     <string name="action_settings">Settings</string>
     <string name="app_name">HelloView</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Hello world!哈喽</string>
 
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--
