@@ -9,7 +9,7 @@ import android.widget.*;
 
 public class MainActivity extends Activity {
 
-    String[] cities = {"上海","北京","珠海","承德"};
+    String[] cities = {"涓婃捣","鍖椾含","鐝犳捣","鎵垮痉"};
     ArrayAdapter<String> adapter = null;
     boolean display = false;
     @Override
@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(b) {
-                   // RadioButton r = (RadioButton)compoundButton;
+                    // RadioButton r = (RadioButton)compoundButton;
                     //show("Radio Button has been clicked."));
                 }
             }
@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                show("You 啥也没选啊!好赖选一个呗!");
+                show("You 鍟ヤ篃娌￠�夊晩!濂借禆閫変竴涓憲!");
             }
         });
     }
@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-       getMenuInflater().inflate(R.menu.mainmenu, menu);
+        getMenuInflater().inflate(R.menu.mainmenu, menu);
 
         menu.add("Main");
         return true;
@@ -124,7 +124,7 @@ public class MainActivity extends Activity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Title");
             AlertDialog dialog = builder.create();
-            dialog.setMessage("Hello, 欢迎点击菜单!");
+            dialog.setMessage("Hello, 娆㈣繋鐐瑰嚮鑿滃崟!");
             dialog.setButton(DialogInterface.BUTTON_POSITIVE, "Close", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {

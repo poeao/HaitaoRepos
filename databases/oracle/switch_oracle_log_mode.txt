@@ -1,0 +1,11 @@
+SQL> archive log list  #view database is running under archive log mode.
+
+change to archive log mode:
+
+SQL > shutdown immediate;
+
+SQL > startup mount;
+
+SQL > alter database archivelog;
+
+SQL > alter database open;

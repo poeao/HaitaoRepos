@@ -1,0 +1,259 @@
+
+1. 物理系统的安全性 
+
+配置BIOS，禁用从CD/DVD、外部设备、软驱启动。下一步，启用BIOS密码，同时启用GRUB的密码保护，这样可以限制对系统的物理访问。 
+1.通过设置GRUB密码来保护Linux服务器 
+
+2. 磁盘分区 
+
+使用不同的分区很重要，对于可能得灾难，这可以保证更高的数据安全性。通过划分不同的分区，数据可以进行分组并隔离开来。当意外发生时，只有出问题的分区的数据才会被破坏，其他分区的数据可以保留下来。你最好有以下的分区，并且第三方程序最好安装在单独的文件系统/opt下。 
+/
+/boot
+/usr
+/var
+/home
+/tmp
+/opt
+ 
+3. 最小包安装，最少漏洞
+
+
+你真的需要安装所有的服务么？建议不要安装无用的包，避免由这些包带来的漏洞。这将最小化风险，因为一个服务的漏洞可能会危害到其他的服务。找到并去除或者停止不用的服务，把系统漏洞减少到最小。使用‘chkconfig‘命令列出运行级别3的运行所有服务。 
+# /sbin/chkconfig --list |grep '3:on'
+
+当你发现一个不需要的服务在运行时，使用下面的命令停止这个服务。 
+# chkconfig serviceName off
+
+使用RPM包管理器，例如YUM或者apt-get 工具来列出所有安装的包，并且利用下的命令来卸载他们。 
+# yum -y remove package-name
+# sudo apt-get remove package-name
+1.5 chkconfig Command Examples 
+2.20 Practical Examples of RPM Commands 
+3.20 Linux YUM Commands for Linux Package Management 
+4. 25 APT-GET and APT-CACHE Commands to Manage Package Management 
+
+4. 检查网络监听端口 
+
+在网络命令 ‘netstat‘ 的帮助下，你将能够看到所有开启的端口，以及相关的程序。使用我上面提到的 ‘chkconfig‘ 命令关闭系统中不想要的网络服务。 
+# netstat -tulpn
+1.Linux 网络管理中的 20 条 Netstat 命令 
+
+5. 使用 SSH（Secure Shell） 
+
+Telnet 和 rlogin 协议只能用于纯文本，不能使用加密的格式，这或将导致安全漏洞的产生。SSH 是一种在客户端与服务器端通讯时使用加密技术的安全协议。 
+
+除非必要，永远都不要直接登录 root 账户。使用 “sudo” 执行命令。sudo 由 /etc/sudoers 文件制定，同时也可以使用 “visudo” 工具编辑，它将通过 VI 编辑器打开配置文件。 
+
+同时，建议将默认的 SSH 22 端口号改为其他更高的端口号。打开主要的 SSH 配置文件并做如下修改，以限制用户访问。 
+# vi /etc/ssh/sshd_config
+
+关闭 root 用户登录 
+PermitRootLogin no
+
+特定用户通过 
+AllowUsers username
+
+使用第二版 SSH 协议 
+Protocol 2
+1.
+SSH 服务器安全维护五条最佳实践 
+
+loading...
+
+6. 保证系统是最新的 
+
+得一直保证系统包含了最新版本的补丁、安全修复和可用内核。 
+# yum updates
+# yum check-update
+
+7. 锁定 Cron任务 
+
+Cron有它自己内建的特性，这特性允许定义哪些人能哪些人不能跑任务。这是通过两个文件/etc/cron.allow 和 /etc/cron.deny 控制的。要锁定在用Cron的用户时可以简单的将其名字写到corn.deny里，而要允许用户跑cron时将其名字加到cron.allow即可。如果你要禁止所有用户使用corn，那么可以将“ALL”作为一行加到cron.deny里。 
+# echo ALL >>/etc/cron.deny
+1.11 个linux Cron调度实例 
+
+8.  禁止USB探测
+
+
+很多情况下我们想去限制用户使用USB，来保障系统安全和数据的泄露。建立一个文件‘/etc/modprobe.d/no-usb‘并且利用下面的命令来禁止探测USB存储。 
+install usb-storage /bin/true
+
+9.打开SELinux 
+
+SELinux(安全增强linux)是linux内核提供的一个强制的访问控制安全机制。禁用SELinux意味着系统丢掉了安全机制。要去除SELinux之前仔细考虑下，如果你的系统需要发布到网络，并且要在公网访问，你就要更加注意一下。 
+
+SELinux 提供了三个基本的操作模式，他们是： 
+1. 强制执行：这是默认是模式，用来启用和强制执行SELinux安全措略。
+
+2. 许可模式：这种模式下SELinux不会强制执行安全措略，只有警告和日志记录。这种模式在SELinux相关问题的故障排除时候非常有用。 
+3. 关闭模式：SELinux被关闭。
+
+
+你可以使用命令行‘system-config-selinux‘, ‘getenforce‘ or ‘sestatus‘来浏览当前的SEliux的状态。 
+# sestatus
+
+如果是关闭模式，通过下面的命令开启SELinux 
+# setenforce enforcing
+
+ 你也可以通过配置文件‘/etc/selinux/config‘来进行SELinux的开关操作。 
+ 
+10. 移除KDE或GNOME桌面 
+
+没必要在专用的LAMP服务器上运行X Window桌面比如KDE和GNOME。可以移掉或关闭它们，以提高系统安全性和性能。打开/etc/inittab然后将run level改成3就可以关闭这些桌面。如果你将它彻底的从系统中移走，可以用下面这个命令： 
+# yum groupremove "X Window System"
+
+11. 关闭IPv6 
+
+如果不用IPv6协议，那就应该关闭掉它，因为大部分的应用和策略都不会用到IPv6，而且当前它不是服务器必需的。可以在网络配置文件中加入如下几行来关掉它。 
+# vi /etc/sysconfig/network
+NETWORKING_IPV6=no
+IPV6INIT=no
+
+12. 限制用户使用旧密码 
+
+如果你不希望用户继续使用老密码，这一条很有用。老的密码文件位于 /etc/security/opasswd。你可以使用 PAM 模块实现。 
+
+RHEL / CentOS / Fedora 中打开 ‘/etc/pam.d/system-auth‘ 文件。 
+# vi /etc/pam.d/system-auth
+
+Ubuntu/Debian/Linux Mint 中打开 ‘/etc/pam.d/common-password‘ 文件。 
+# vi /etc/pam.d/common-password
+
+在 ‘auth‘ 块中添加下面一行。 
+auth        sufficient    pam_unix.so likeauth nullok
+
+在 ‘password‘ 块添加下面一行，禁止用户重新使用其过去最后用过的 5个密码。 
+password   sufficient    pam_unix.so nullok use_authtok md5 shadow remember=5
+
+服务器只记录最后的 5 个密码。如果你试图使用曾用的最后 5个老密码中的任意一个，你将看到如下的错误提示。 
+Password has been already used. Choose another.
+ 
+13. 如何检查用户密码过期？ 
+
+在 Linux 中，用户的密码以加密的形式保存在 ‘/etc/shadow‘ 文件中。要检查用户的密码是否过期，你需要使用 ‘chage‘ 命令。它将显示密码的最后修改日期及密码期限的细节信息。这些细节就是系统决定用户是否必须修改其密码的依据。 
+
+要查看任一存在用户的老化信息，如 过期日 和 时长，使用如下命令。 
+#chage -l username
+
+要修改任一用户的密码老化，使用如下命令。 
+#chage -M 60 username
+#chage -M 60 -m 7 -W 7 userName
+
+参数 
+1.-M 设置天数最大数字 
+2.-m 设定天数最小数字 
+3.-W 设定想要的天数 
+
+
+14. 手动锁定或解锁用户账号 
+
+锁定和解锁功能是非常有用的，你可以锁定一个账号一周或一个月，而不是将这个账号从系统中剔除。可以用下面这个命令锁定一个特定用户。 
+# passwd -l accountName
+
+提示：这个被锁定的用户仅对root用户仍然可见。这个锁定是通过将加密过的密码替换成（！）来实现的。如果有个想用这个账号来进入系统，他会得到类似下面这个错误的提示。 
+# su - accountName
+This account is currently not available.
+
+解锁一个被锁定的账号时，用下面这个命令。这命令会将被替换成（！）的密码改回来。 
+# passwd -u accountName
+
+15. 增强密码 
+
+有相当数量的用户使用很弱智的密码，他们的密码都可以通过字典攻击或者暴力攻击攻破。‘pam_cracklib‘模块存于在PAM 中，它可以强制用户设置复杂的密码。通过编辑器打开下面的文件。 
+# vi /etc/pam.d/system-auth
+
+在文件中增加一行，使用认证参数(lcredit, ucredit, dcredit  或者 ocredit 对应小写字母、大写字母，数字和其他字符) 
+/lib/security/$ISA/pam_cracklib.so retry=3 minlen=8 lcredit=-1 ucredit=-2 dcredit=-2 ocredit=-1
+
+16. 启用Iptable（防火墙）
+
+
+高度推荐启用linux防火墙来禁止非法程序访问。使用iptable的规则来过滤入站、出站和转发的包。我们可以针对来源和目的地址进行特定udp/tcp端口的准许和拒绝访问。 
+1.Basic IPTables Guide and Tips 
+
+17. 禁止Ctrl+Alt+Delete重启
+
+
+在大多数的linux发行版中，按下‘CTRL-ALT-DELETE’将会让你的系统重启。只说生产服务器上这是不是一个很好的做法，这可能导致误操作。 
+这个配置是在‘ /etc/inittab‘文件，如果你打开这个文件，你可以看到下面类似的段落。默认的行已经被注释掉了。我们必须注释掉他。这个特定按键会让系统重启。 # Trap CTRL-ALT-DELETE
+#ca::ctrlaltdel:/sbin/shutdown -t3 -r now
+
+18. 检查空密码帐号 
+
+任何空密码的账户意味这可以让Web上任何无授权的用户访问，这是linux服务器的一个安全威胁。所以，确定所有的用户拥有一个复杂的密码并且不存在特权用户。空密码帐号是安全风险，可以被轻易的攻克。可以利用下面的命令来检查是否有空密码账户存在。 
+# cat /etc/shadow | awk -F: '($2==""){print $1}'
+
+19. 登录前显示SSH提示
+
+
+在ssh认证时候，使用一个法律和安全警示是很好的建议。关于SSH警示可以看下面的文章。 
+1.
+Display SSH Warning Message to Users 
+
+
+
+
+20. 监视用户行为
+
+
+如果你有很多的用户，去收集每一个用户的行为和和他们的进程消耗的信息非常重要。可以随后和一些性能优化和安全问题处理时进行用户分析。但是如果监视和搜集用户行为信息呢 ？ 
+
+有两个很有用的工具‘psacct‘ 和 ‘acct‘可以用来监视系统中用户的行为和进程。这些工具在系统后台执行并且不断记录系统中每一个用户的行为和各个服务比如Apache, MySQL, SSH, FTP, 等的资源消耗。对这些工具更多的安装配置和使用信息，请访问下面的网址： 
+1.
+Monitor User Activity with psacct or acct Commands 
+
+
+21. 定期查看日志 
+
+将日志移动到专用的日志服务器里，这可避免入侵者轻易的改动本地日志。下面是常见linux的默认日志文件及其用处： 
+1./var/log/message – 记录系统日志或当前活动日志。 
+2./var/log/auth.log – 身份认证日志。 
+3./var/log/kern.log – 内核日志。 
+4./var/log/cron.log – Crond 日志 (cron 任务). 
+5./var/log/maillog – 邮件服务器日志。 
+6./var/log/boot.log – 系统启动日志。 
+7./var/log/mysqld.log – MySQL数据库服务器日志。 
+8./var/log/secure – 认证日志。 
+9./var/log/utmp or /var/log/wtmp :登录日志。 
+10./var/log/yum.log: Yum 日志。 
+
+22. 重要文件备份 
+
+在生产环境里，为了灾难恢复，有必要将重要文件备份并保存在安全的远程磁带保险库、远程站点或异地硬盘。 
+
+23. NIC 绑定
+
+
+有两种类型的NIC绑定模式，需要在绑定接口用得到。 
+1.mode=0 – 循环赛模式
+
+2.mode=1 – 激活和备份模式 
+
+NIC绑定可以帮助我们避免单点失败。在NIC绑定中，我们把两个或者更多的网卡绑定到一起，提供一个虚拟的接口，这个接口设置ip地址，并且和其他服务器会话。这样在一个NIC卡down掉或者由于其他原因不能使用的时候，我们的网络将能保持可用。 
+
+相关阅读 : Create NIC Channel Bonding in Linux 
+
+24. 保持 /boot 只读
+
+
+linux内核和他的相关的文件都保存在/boot目下，默认情况下是可以读写的。把它设为了只读可以减少一些由于非法修改重要boot文件而导致的风险。 
+# vi /etc/fstab
+
+在文件最后增加下面的行，并且保存 
+LABEL=/boot     /boot     ext2     defaults,ro     1 2
+
+如果你今后需要升级内核的话，你需要修回到读写模式。 
+
+
+25.不鸟ICMP和Broadcast请求 
+
+在/etc/sysctl.conf中添加下面几行，屏蔽掉ping和broadcast请求。 
+Ignore ICMP request:
+net.ipv4.icmp_echo_ignore_all = 1
+
+Ignore Broadcast request:
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+
+运行下面这一行加载修改或更新 
+#sysctl -p
+ 
