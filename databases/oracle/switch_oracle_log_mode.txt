@@ -6,6 +6,10 @@ SQL > shutdown immediate;
 
 SQL > startup mount;
 
-SQL > alter database archivelog;
+SQL > alter database archivelog; (alter database noarchivelog;)
 
 SQL > alter database open;
+
+RMAN > backup database;  #full backup;
+
+RMAN > backup incremental level=0 database; # level 0 incremental backup 
