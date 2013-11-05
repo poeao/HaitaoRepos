@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title>User closure </title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <script>
+	function User(properties) {
+		for(var i in properties) {
+			(function(which){
+				var p=i;
+				which["get" +i] = function() {
+					return properties[p];
+				}
+//alert(which.constructor);
+				which["set" + i] = function(val) {
+					properties[p] = val;
+				}
+			})(this);
+		}
+	}
+
+	var user = new User({name:"Bob", age:44});
+
+	alert(user.name == null);
+	alert(user.getname());
+	user.setage(22);
+	alert(user.getage());
+	
+  </script>
+ </head>
+
+ <body>
+  
+ </body>
+</html>

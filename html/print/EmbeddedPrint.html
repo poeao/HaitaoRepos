@@ -1,0 +1,138 @@
+<!-- 
+本方法采用Javascript+css非报表工具的轻量级实现票据套打 可跨不同浏览器IE、Firefox、Chrome等 
+原理：将票据作为table的背景元素（这样便于实现打印预览） 
+采用表格定位样式 数据来源：可以是数据库 
+最重要的是采用js设置打印区域 实现打印制定区域的元素 
+--> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+
+<html> 
+ <head> 
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+
+  <style type="text/css" media="screen"> 
+    .td_table{ 
+      background: url(bill.png) no-repeat; /*背景图片取bill.png media="screen"只显示在屏幕 图片大小：607px*261px */ 
+    } 
+  </style> 
+
+  <style type="text/css" media="print"> 
+    .td_table{ 
+      background-image: url();/*如果要打印背景，此处只需指定背景url即可 请不要再添加no-repeat属性否则出错*/ 
+    } 
+  </style> 
+  <style type="text/css" media="all"> 
+    .td_table{ 
+      width:607px; /*背景图片的宽度 + TABLE的cellpadding + cellspacing*/ 
+      height:261px; /*背景图片的高度 + TABLE的cellpadding + cellspacing*/ 
+      table-layout:fixed; 
+      margin: 0 auto; 
+    } 
+  body,td,th { 
+	font-size: 12px; 
+} 
+</style> 
+<!-- 
+media的取值 :screen 屏幕; print 打印机; all 全部. 如果不指定media的值， 则默认是all. 
+我们要实现的套打，其实就是屏幕显示的是完整的内容，而打印出来的，只是某些预定位置的内容。 这正是应用了 media 这个属性。 
+--> 
+<script language=javascript> 
+//打印指定区域内容 
+function preview() { 
+bdhtml=window.document.body.innerHTML; 
+sprnstr="<!--startprint-->"; 
+eprnstr="<!--endprint-->"; 
+prnhtml=bdhtml.substr(bdhtml.indexOf(sprnstr)+17); 
+prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr)); 
+window.document.body.innerHTML=prnhtml; 
+window.print(); 
+         } 
+</script> 
+</head> 
+
+ <body> 
+
+
+ <div align="center"> <input name="print" type="button" onClick="preview()" value=" 打 印 "></div> 
+
+
+<!--startprint--> 
+
+ <table border="0" align="center" cellpadding="1" cellspacing="0" class="td_table"> 
+  <tr height="39"> 
+    <td>&nbsp;</td> 
+  </tr> 
+  <tr height="20px"> 
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+      <tr> 
+        <td width="82">&nbsp;</td> 
+        <td width="148">国家电网</td> 
+        <td width="53">2011</td> 
+        <td width="31">03</td> 
+        <td width="291">16</td> 
+        </tr> 
+    </table></td> 
+   </tr> 
+  <tr height="19px"> 
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+      <tr> 
+        <td width="15%" align="right">&nbsp;</td> 
+        <td width="29%">张三</td> 
+        <td width="21%">0018225556</td> 
+        <td width="35%">南昌市火炬大街100号</td> 
+      </tr> 
+    </table></td> 
+   </tr> 
+  <tr height="19px"> 
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+      <tr> 
+        <td width="15%" align="right">&nbsp;</td> 
+        <td width="29%">200</td> 
+        <td width="21%">10</td> 
+        <td width="35%">1个月</td> 
+      </tr> 
+    </table></td> 
+   </tr> 
+  <tr height="90px" valign="top"> 
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+      <tr> 
+        <td width="10%">&nbsp;</td> 
+        <td width="90%">&nbsp;</td> 
+      </tr> 
+    </table></td> 
+   </tr> 
+  <tr height="19px"> 
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="1"> 
+      <tr> 
+        <td width="14%">&nbsp;</td> 
+        <td width="46%">壹佰伍拾肆圆整</td> 
+        <td width="21%">154</td> 
+        <td width="19%">56</td> 
+      </tr> 
+    </table></td> 
+   </tr> 
+  <tr height="33px" valign="top"> 
+    <td><table width="100%"  border="0" cellpadding="0" cellspacing="0"> 
+      <tr> 
+        <td width="10%">&nbsp;</td> 
+        <td width="90%">无</td> 
+      </tr> 
+    </table></td> 
+   </tr> 
+  <tr valign="top"> 
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0"> 
+      <tr> 
+        <td width="13%">&nbsp;</td> 
+        <td width="30%">易伟思信息技术有限公司</td> 
+        <td width="38%">火炬大街营业厅</td> 
+        <td width="19%">李四</td> 
+      </tr> 
+    </table></td> 
+   </tr> 
+ </table> 
+  
+<!--endprint--> 
+  
+ </body> 
+</html> 

@@ -1,0 +1,9 @@
+mysqldump -h localhost -uanhry -panhry --opt anhry > anhryXXXXX.sql 
+mysql -h localhost -P 3308 -uanhry -panhry anhry < anhry20131025.sql
+
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'monty'@'localhost'
+    ->     IDENTIFIED BY 'some_pass' WITH GRANT OPTION;
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'monty'@'%'
+    ->     IDENTIFIED BY 'some_pass' WITH GRANT OPTION;
+mysql> GRANT RELOAD,PROCESS ON *.* TO 'admin'@'localhost';
+mysql> GRANT USAGE ON *.* TO 'dummy'@'localhost';

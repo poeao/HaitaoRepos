@@ -13,3 +13,27 @@ SQL > alter database open;
 RMAN > backup database;  #full backup;
 
 RMAN > backup incremental level=0 database; # level 0 incremental backup 
+
+RMAN > backup incremental level 1 database;  # based on level 0, take a little long time. 
+
+RMAN > backup database plus archivelog delete input ; # backup archivelog
+
+RMAN > backup tablespace users; #backup tablespace 
+
+RMAN > backup current controlfile;
+
+RMAN > backup database include current controlfile;
+
+RMAN > report schema; # look databiles 
+
+RMAN > copy datafile 5 to '/u01/rmanbak/tbs01bak.dbf';
+
+RMAN > list copy;
+
+RMAN > run {
+allocate channel cha1 type disk;
+backup format '/u01/rmanbak/full_%t'
+tag full_backup_bat
+database;
+release channel cha1;
+}

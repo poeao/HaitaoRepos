@@ -1,0 +1,18 @@
+#!/bin/sh
+# Script for backup TestLink service
+# create filenames
+mydate=`date +%y%m%d`
+backup_folder="/home/gat/backup"
+upload_folder="/home/gat/web/testlink/upload_area/"
+filename1="$backup_folder/testlink_db_$mydate.bck.sql"
+filename2="$backup_folder/testlink_upload_$mydate.bck.tgz"
+# dump data
+mysqldump -uroot -pyour_password testlink_17 > $filename1
+# compress
+gzip -f9 $filename1
+# backup attachments
+tar -cvzf $filename2 $upload_folder
+# save to backuped area on server titan
+# mount titan:/export/gat /home/gat/backup/titan/ -o
+soft,nosuid,rw,noauto,user,noexec
+#cp $filename.gz /home/gat/backup/titan/ 

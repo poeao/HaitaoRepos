@@ -4,7 +4,6 @@
 Java代码  
 mount.cifs //192.168.10.43/shared /root/shared -o user=name,pass=123456  
 
-
 注：/root/shared是linux上的目录。user是Windows系统的用户名  pass是Windows系统的密码 
 
 --------------------------删除共享----------------------------------- 
@@ -32,3 +31,17 @@ none                    /sys                    sysfs   defaults        0 0
 /dev/VolGroup00/LogVol01 swap                    swap    defaults        0 0  
 /dev/hdc                /media/cdrom            auto    pamconsole,fscontext=system_u:object_r:removable_t,exec,noauto,managed 0 0  
 //192.168.10.43/shared /mnt/shared cifs defaults,username=name,password=123456 0 2  
+
+
+
+Tomcat soft link :
+
+<Context path=”" docBase=”/www/newwap/wap”  allowLinking=”true”>
+
+<Resources className=”org.apache.naming.resources.FileDirContext”
+
+allowLinking=”true”/>
+
+<Logger className=”org.apache.catalina.logger.FileLogger”/>
+
+</Context>

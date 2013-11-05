@@ -1,0 +1,9 @@
+run {
+allocate channel cha1 type disk;
+backup
+incremental level 0
+format '/u01/rmanbak/inc0_%u_%T'
+tag monday_inc0
+database;
+release channel cha1;
+}
