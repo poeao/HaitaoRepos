@@ -6,8 +6,8 @@ mount -t iso9660 /dev/cdrom   /media/cdrom
 vim /etc/yum.repos.d/rhel-source.repo
 [server]
 name=server
-baserul=file:///media/cdrom/Server  #（注意要挂载光驱）
-enable=1
+baseurl=file:///media/cdrom/Server  #（注意要挂载光驱）
+enabled=1
 gpgchechk=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
 

@@ -1,0 +1,33 @@
+rhel 5
+-------------------------------------------------
+# Advanced Micro Devices [AMD] 79c970 [PCnet32 LANCE]
+DEVICE=eth0
+BOOTPROTO=none
+HWADDR=00:0C:29:19:FF:BE
+ONBOOT=yes
+NETMASK=255.255.255.0
+IPADDR=192.168.0.135
+GATEWAY=192.168.0.1
+TYPE=Ethernet
+USERCTL=no
+IPV6INIT=no
+PEERDNS=yes
+-----------------------------------------------------
+rhel6 
+-----------------------------------------------------
+DEVICE=eth0
+TYPE=Ethernet
+UUID=a17db87b-01c4-4635-9bf5-1d63b82b90d8
+ONBOOT=yes
+NM_CONTROLLED=yes
+BOOTPROTO=none
+HWADDR=00:0C:29:09:A3:3F
+IPADDR=192.168.0.109
+PREFIX=24
+GATEWAY=192.168.0.1
+DNS1=192.168.0.1
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=yes
+IPV6INIT=no
+NAME="System eth0"
+LAST_CONNECT=1385302490
