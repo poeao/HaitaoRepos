@@ -1,0 +1,5 @@
+[Server]
+name=Red Hat Enterprise Linux $releasever - $basearch - Server
+baseurl=file:///media/cdrom/Server
+enabled=1
+gpgcheck=0

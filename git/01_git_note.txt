@@ -1,0 +1,28 @@
+1. revert file: git checkout file(.)
+2. revert added file: git reset head filename, then: git checkout file(.)
+3, view git repos url: git remote -v
+4. git diff (compare working file with staged file)
+5. git diff head (compare working file with repository file)
+6. view current branch: git branch
+7. create branch : git branch <name>
+8. switch branch: git checkout <name>
+9. store branch temporary: git stash , recover : git stash pop 
+
+----------------------------------------------------------
+如果修改一个文件（没有 git add,已经提交过），想撤钞这次修改：
+git checkout a.txt or /src/
+
+如果修改某一个文件（git add 已经在暂存区），想撤销这次修改：
+git reset a .txt
+
+如果已经修改某几个文件，但是想撤销到某个版本， 但是当前暂存区，工作区想保留：
+git reset --soft commitId
+
+如果修改了某几个文件也提交暂存区了， 想撤销到某个 commitId:
+git reset --hard commitId 
+
+======================
+git reflog  
+version 1, 2 |  revert to 1, | back to 2 
+git reset --hard master@{1}    
+=======================
