@@ -1,0 +1,6 @@
+[Local]
+name=CentOS-5.8.local
+baseurl=file:///mnt/cdrom
+gpgcheck=0
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-5
