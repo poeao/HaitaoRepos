@@ -1,0 +1,19 @@
+#!/bin/bash
+# Clean file content version 0.1
+
+LOG_DIR=/var/log
+ROOT_UID=0 # The user root's suid.
+#The script should be run as root user.
+if [ "$UID" -ne "$ROOT_UID" ]
+then
+	echo "Must be root to run this script!"
+	exit 1
+fi
+
+cd $LOG_DIR || {
+	echo "Can't change to working directory." >&2
+	exit 1
+}
+
+cat /dev/null > messages && echo "Messages cleaned uo."
+exit 0
