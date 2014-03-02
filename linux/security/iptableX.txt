@@ -1,0 +1,20 @@
+# cat /home/jason/script/monitorIp.sh 
+
+ #!/bin/bash
+ # Author : Jason
+ # Moniting IptabLex And IptabLes Process
+ while :
+ do
+ num=`ps -ef | grep IptabLe  | wc -l`
+ if [ $num -gt 0 ]  ; then
+ pid=`ps -ef | grep IptabLe | awk '{print $2}'`
+ kill -9 $pid
+ echo "`date +%F_%H:%M` IptabLe* kill" >>  /var/log/IptabLexkill.log
+ fi
+ sleep 5
+ done
+
+
+Ö´ÐÐ£º
+# nohup /home/jason/script/monitorIp.sh &
+ # echo "nohup /home/jason/script/monitorIp.sh &" >> /etc/rc.local
