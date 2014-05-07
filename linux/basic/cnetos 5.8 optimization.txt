@@ -1,0 +1,64 @@
+1. Add a common user:
+useradd haitao
+passwd haitao
+echo "password"|passwd --stdin haitao && history -c
+
+2. Configure a civil yum source
+vi /etc/yum.repos.d/CentOS-Base.repo
+#http://mirrors.sohu.com
+#http://mirrors.163.com
+
+3. Close selinux 
+# sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+# grep SELINUX /etc/selinux/config
+# getenforce
+# setenforce 0
+
+4. close all services:
+#LANG=en
+#for myservice in `chkconfig --list|grep 3:on|awk '{print $1}'`; do chkconfig --level 3 $myservice off;done
+or 
+# for service in `chkconfig --list|grep 3:on|sed 's/0:off.*R//g'`;do chkconfig --level 3 $service off;done
+open services:
+#from myservice in crond network syslog sshd; do chkconfig --level 3 $myservice on;done
+
+5. add common user haitao 
+#visudo
+
+user   		MACHINE 		COMMANDS
+root 		ALL=(ALL)		ALL
+user		ALL=(ALL)		/usr/sbin/useradd
+haitao                      ALL=(ALL)			NOPASSWD:ALL
+
+6. change ssh configuration:
+# vi /etc/ssh/sshd_config
+port 12345
+PermitRootLogin no
+PermitEmptyPasswords no
+UseDNS no
+
+7. change system character encoding
+# vi /etc/sysconfig/i18n
+
+8. syncronization system time
+#  /sbin/ntpdate 64.4.10.33
+#  /sbin/ntpdate time.nist.gov
+# echo "*/5 * * * * /sbin/ntpdate time.nist.gov >/dev/null 2>&1" >/var/spool/cron/root
+
+9. enlarge file descripator 
+[root@mycentos59 ssh]# ulimit -n
+vi /etc/security/limits.conf
+#echo "*  -     nofile 25535">>/etc/security/limits.conf
+
+10. #clean small temp files:  
+find /var/spool/clientmqueue -type f|xargs rm -f  
+
+11. Lock system key files:
+# chattr +i /etc/passwd
+# chattr +i /etc/inittab
+# chattr +i /etc/group
+# chattr +i /etc/shadow
+#mv /usr/bin/chattr /usr/bin/test
+
+12: cleanup /etc/issue, not showing system core version .
+# cat /dev/null > /etc/issue

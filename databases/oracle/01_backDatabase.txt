@@ -20,6 +20,7 @@ rm -f "$dmpfile"
 fi
 
 exp USERID=ycsafety/ycsafety@192.168.1.52/orcl file=$dmpfile log=$logfile owner=ycsafety grants=y > todayBackUp.log
-
+/bin/tar -czf ${dmpfile}".tar.gz" $dmpfile
+rm -rf $dmpfile
 #back dmp file to another server
 rsync -auzv -e ssh --exclude=*.log /home/oracle/dbbackup/ oracle@192.168.1.30:/home/oracle/dbbackup

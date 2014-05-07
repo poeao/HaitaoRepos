@@ -1,3 +1,7 @@
 1. Install nginx 
 #--with-pcre=path ¡ª sets the path to the sources of the PCRE library. 
 ./configure --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module --with-pcre=/opt/tools/pcre-8.33/
+
+
+
+route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0
