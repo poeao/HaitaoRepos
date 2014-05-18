@@ -1,4 +1,5 @@
 #!/bin/bash
+useradd webadmin
 mkdir -p /opt/usr/local/tomcat6/
 cp -fp ./apache-tomcat-6.0.36.tar.gz /opt/usr/local/tomcat6/
 cd /opt/usr/local/tomcat6/
