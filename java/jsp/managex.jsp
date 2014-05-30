@@ -43,7 +43,8 @@ return null;
 }
 }
 }
-private static class DBOperator{
+private static class DBOperator implements java.io.Serializable{
+	private static final long serialVersionUID = 1L;
 private Connection conn = null;
 private Statement stmt = null;
 private String driver;
