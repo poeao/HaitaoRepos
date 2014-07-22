@@ -1,0 +1,18 @@
+
+开一个sqlplus conn aa/aa
+在开一个sqlplus conn sys/liang as sysdba
+
+SQL> drop user aa;
+drop user aa
+*
+ERROR at line 1:
+ORA-01940: cannot drop a user that is currently connected
+
+
+SQL> select sid,serial# from v$session where username='';
+
+       SID    SERIAL#
+---------- ----------
+       136         33
+
+SQL> alter system kill session '136,33';

@@ -1,0 +1,12 @@
+#!/bin/bash
+#hardwareinfo.sh
+#to show hardware info
+
+function cpuinfo() {
+   echo "Physical CPU number :`cat /proc/cpuinfo|grep "physical id"|sort|uniq|wc -l`"
+   echo "Cores of each physical cpu : `cat /proc/cpuinfo |grep "cpu cores"|uniq`"
+   echo "Logical cpu numbers: `cat /proc/cpuinfo |grep "processor"|wc -l`"
+
+}
+
+cpuinfo
