@@ -1,0 +1,23 @@
+在两个ORACLE数据库之间实现数据增量同步
+| 浏览：326 |更新：2013-11-29 14:09
+在两个数据库中实现数据增量同步，令数据库之间的数据能够同步更新。
+
+Oracle数据库IP：192.168.0.1（源库）、192.168.0.2（目标库）
+
+1、在源库创建测试表TEST
+
+create table TEST(  ID          NUMBER not null,  NAME        VARCHAR2(200));2、插入一条数据
+
+INSERT INTO TEST(ID,NAME) VALUES (1,'1111');commit;
+
+3、在源库创建物化视图日志表
+
+create materialized view log on TEST with rowid;4、在目标库创建一个DBLink链接
+
+create database link DBLINK_TESTconnect TO username identified by "123456"  using '(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.0.1)(PORT = 1521))    (CONNECT_DATA =      (SERVER = DEDICATED)      (SERVICE_NAME = orcl)    )  )' ;5、在目标库创建针对源库中TEST表的物化视图表MV_TEST
+
+create materialized view MV_TESTRefresh fast  on demand    with rowid    as SELECT * fromTEST@DBLINK_TEST;该表创建的同时，就会把源表中的数据同步过来；
+
+6、手工执行同步
+
+call dbms_mview.refresh('MV_TEST');

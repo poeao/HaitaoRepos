@@ -1,0 +1,8 @@
+echo -e "\n"|telnet baidu.com 80|grep Connected
+
+nmap etiantian.org -p 80
+
+PORT_COUNT=`nmap $ip_add  -p $port|grep open|wc -l`
+[[ $PORT_COUNT -ge 1 ]] && echo "$ip_add $port is ok." || echo "$ip_add $port is unknown."
+
+nc -w 10  8.8.8.8 53 && echo ok ||echo no 

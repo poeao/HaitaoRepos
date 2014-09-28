@@ -1,0 +1,14 @@
+#!/bin/sh
+
+for n in `seq 254`
+do 
+    ping -c2 10.0.0.$n >/dev/null 2>&1
+    if [ $? -qe 0 ]
+       then 
+             echo "10.0.0.$n is up" >> /tmp/uplist.log
+       else 
+             echo "10.0.0.$n is down" >>/tmp/downlist.log
+    fi
+done
+
+
