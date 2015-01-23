@@ -1,0 +1,13 @@
+oracle 数据恢复
+ 
+数据用Delete误删除掉后，而且提交了。
+
+方法：
+
+1.打开Flash存储的权限
+    ALTER TABLE tablename ENABLE row movement ;
+
+2.把表还原到指定时间点  www.2cto.com  
+    flashback table tablename to timestamp to_timestamp('2008-02-28 10:40:00','yyyy-mm-dd hh24:mi:ss');
+    后面的参数为要还原的时间点
+ 

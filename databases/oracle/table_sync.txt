@@ -12,11 +12,15 @@ INSERT INTO TEST(ID,NAME) VALUES (1,'1111');commit;
 
 3、在源库创建物化视图日志表
 
-create materialized view log on TEST with rowid;4、在目标库创建一个DBLink链接
+create materialized view log on TEST with rowid;
 
-create database link DBLINK_TESTconnect TO username identified by "123456"  using '(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.0.1)(PORT = 1521))    (CONNECT_DATA =      (SERVER = DEDICATED)      (SERVICE_NAME = orcl)    )  )' ;5、在目标库创建针对源库中TEST表的物化视图表MV_TEST
+4、在目标库创建一个DBLink链接
 
-create materialized view MV_TESTRefresh fast  on demand    with rowid    as SELECT * fromTEST@DBLINK_TEST;该表创建的同时，就会把源表中的数据同步过来；
+create database link DBLINK_TEST connect TO username identified by "123456"  using '(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.0.1)(PORT = 1521))    (CONNECT_DATA =      (SERVER = DEDICATED)      (SERVICE_NAME = orcl)    )  )' ;
+
+5、在目标库创建针对源库中TEST表的物化视图表MV_TEST
+
+create materialized view MV_TEST Refresh fast  on demand    with rowid    as SELECT * from TEST@DBLINK_TEST;该表创建的同时，就会把源表中的数据同步过来；
 
 6、手工执行同步
 
