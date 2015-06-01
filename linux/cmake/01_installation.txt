@@ -1,0 +1,24 @@
+nux下安装cmake  
+
+2012-08-20 15:33:36|  分类： linux&shell |举报|字号 订阅
+http://techbase.kde.org/Development/Tutorials/CMake_%28zh_CN%29
+http://digdeeply.info/archives/0421949.html
+
+
+首先下载源码包
+        http://www.cmake.org/cmake/resources/software.html
+
+        这里下载的是cmake-2.8.9.tar.gz
+
+随便找个目录解压缩
+
+1	        tar -xzvf cmake-2.8.9.tar.gz
+2	        cd cmake-cmake-2.8.9
+        依次执行：
+
+1	        ./bootstrap
+2	         make
+3	        make install
+        cmake 会默认安装在 /usr/local/bin 下面
+
+要改变安装路径，在bootstrap命令中加入'--prefix=PATH'选项。
