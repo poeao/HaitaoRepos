@@ -1,0 +1,11 @@
+a.查看nginx的编译参数：
+   /home/oldboy/run/nginx/sbin/nginx -V
+
+b.查看apache的编译参数：
+    cat /home/oldboy/run/apache/build/config.nice 
+
+2)查看MySQL数据库的编译参数：
+grep CONFIGURE_LINE /app/mysql/bin/mysqlbug
+
+3）查看php编译参数：
+/app/php/bin/php -i|grep configure

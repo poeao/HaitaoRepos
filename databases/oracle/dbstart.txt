@@ -1,0 +1,10 @@
+dbstart脚本修改
+数据库创建完成后，修改vi /etc/oratab，把orcl:/opt/oracle/oracle/product/10g:N那一行最后的N改成Y，
+然后执行dbstart启动数据库数据库可能无法启动，报告Can’t find init file …的错误，需要复制一个初始化文件: 
+cp /opt/oracle/admin/ge01/pfile/init.ora.* /opt/oracle/product/10.2.0/dbs/initge01.ora 
+重新执行dbstart就可以了。
+修改vi /opt/oracle/product/10g/bin/dbstart中ORACLE_HOME_LISTNER=/opt/oracle/oracle/product/10g/
+vi /etc/rc.local 加入下面一行 起动ORACLE ON system boot
+
+su - oracle -c "/home/oracle/oracle/product/10.2.0/db_1/bin/lsnrctl start"
+su - oracle -c "/home/oracle/oracle/product/10.2.0/db_1/bin/dbstart"

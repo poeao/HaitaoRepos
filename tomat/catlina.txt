@@ -1,0 +1,2 @@
+rem ----- Execute The Requested Command ---------------------------------------
+set JAVA_OPTS=%JAVA_OPTS% -Xms256m -Xmx1024m  -XX:PermSize=256M -XX:MaxNewSize=256m -XX:MaxPermSize=512m 

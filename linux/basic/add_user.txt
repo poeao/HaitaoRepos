@@ -1,0 +1,57 @@
+所以linux下自动改变用户密码的办法就是
+
+　　Echo 密码 |passwd –stdin 用户名
+
+在shell脚本中需要用root用的来执行指令：
+
+　　sudo 自动输入密码
+
+　　echo "password" | sudo -S netstat -tlnp
+
+　　-S
+
+　　The -S (stdin) option causes sudo to read the password from the standard input instead of the terminal device.
+
+自动添加用户，并且自动添加密码，让密码和用户名相同，
+例子：让系统自动添加a b c d 四个用户，并且密码和用户名同名,脚本如下：
+#!/bin/bash
+#自动添加用户和密码，且同名
+for UU in a b c d
+do
+useradd $UU
+echo $UU | passwd --stdin $UU
+done
+自动添加a b c d 四个用户，并且密码都是123:
+#!/bin/bash
+#自动添加用户和密码，且密码都是123
+for UU in a b c d
+do
+useradd $UU
+echo 123 | passwd --stdin $UU
+done
+
+如何给已有的用户改密码？
+echo “newpassword” | passwd –stdin username
+
+一：建立要添加用户列表的文件
+#ee username.list
+usr1
+usr2
+usr3
+保存退出
+二：写shell脚本实现自动添加用户（密码和用户名一样）
+#ee useradd.sh
+#!/bin/sh
+for USER in $(cat username.list)
+do
+mkdir /home/$USER
+echo $USER | pw useradd $USER -h 0
+HOME=/home/$USER
+done
+保存退出
+#chmod a+x haha.sh
+#./haha.sh
+
+注释：echo $USER | pw useradd $USER -h 0中的
+第一个$USER是用户密码（$USER就是usrname.list里面的内容）
+第二个$USER是用户名

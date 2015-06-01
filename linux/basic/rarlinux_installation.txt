@@ -1,0 +1,13 @@
+#tar -zxvf rarlinux-3.9.b3.tar.gz
+#cd rar
+#make
+#make install
+#exit
+
+行命令rar时,出现下面这个问题,
+
+rar: /lib/i686/nosegneg/libc.so.6: version `GLIBC_2.7' not found (required by rar)
+Google下,解决办法是
+
+cp rar_static /usr/local/bin/rar
+这样就OK了.

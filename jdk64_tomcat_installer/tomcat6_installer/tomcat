@@ -7,7 +7,7 @@ RETVAL=0
 export JAVA_HOME=/usr/local/jdk1.6.0_38
 export CATALINA_HOME=/opt/usr/local/tomcat6/server-8080
 export CATALINA_BASE=/opt/usr/local/tomcat6/server-8080
-TOMCATUSER=webadmin
+TOMCATUSER=anhry
 start()
 {
         if [ -f $CATALINA_HOME/bin/startup.sh ];
