@@ -1,0 +1,35 @@
+<html>
+<head>
+	<script src="jquery-1.10.2.js" type="text/javascript"></script>
+	<script src="browser.js" type="text/javascript"></script>
+	<script src="layer.js" type="text/javascript"></script>
+</head>
+
+<body>
+
+<input  type="button" id="btnOpen" value="打开" />
+<input type="button" id="btnClose" value="关闭" />
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnOpen").on("click", function () {
+            //全局
+            $(this).jqLoading();
+
+            //局部
+            //$(this).jqLoading({ type: 1 });
+         
+        });
+
+
+        $("#btnClose").on("click", function () {
+            $(this).jqLoading("destroy");
+          
+        });
+    })
+
+</script>
+</body>
+
+
+</html>
