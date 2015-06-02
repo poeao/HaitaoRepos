@@ -1,3 +1,28 @@
+在Git中，用HEAD表示当前版本 ，上一个版本就是HEAD^，上上一个版本就是HEAD^^，
+当然往上100个版本写100个^比较容易数不过来，所以写成HEAD~100
+..........................................................................
+
+Git提供了一个命令git reflog用来记录你的每一次命令
+穿梭前，用git log可以查看提交历史，以便确定要回退到哪个版本。
+
+要重返未来，用git reflog查看命令历史，以便确定要回到未来的哪个版本
+
+--------------------------------------------------------------------------
+命令git checkout -- readme.txt意思就是，把readme.txt文件在工作区的修改全部撤销，这里有两种情况：
+
+一种是readme.txt自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态；
+
+一种是readme.txt已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态.
+git checkout -- file命令中的--很重要，没有--，就变成了“创建一个新分支”的命令
+
+用命令git reset HEAD file可以把暂存区的修改撤销掉（unstage），重新放回工作区
+
+场景1：当你改乱了工作区某个文件的内容，想直接丢弃工作区的修改时，用命令git checkout -- file。
+
+场景2：当你不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，分两步，第一步用命令git reset HEAD file，就回到了场景1，第二步按场景1操作。
+
+场景3：已经提交了不合适的修改到版本库时，想要撤销本次提交，参考版本回退一节，不过前提是没有推送到远程库
+-------------------------------------------------------------------------
 1. revert file: git checkout file(.)
 2. revert added file: git reset head filename, then: git checkout file(.)
 3, view git repos url: git remote -v
@@ -7,13 +32,13 @@
 7. create branch : git branch <name>
 8. switch branch: git checkout <name>
 9. store branch temporary: git stash , recover : git stash pop 
-
+10. view log: git log or git log --pretty=oneline
 ----------------------------------------------------------
-如果修改一个文件（没有 git add,已经提交过），想撤钞这次修改：
+如果修改一个文件（没有 git add,已经提交过），想撤销这次修改：
 git checkout a.txt or /src/
 
 如果修改某一个文件（git add 已经在暂存区），想撤销这次修改：
-git reset a .txt
+git reset a.txt
 
 如果已经修改某几个文件，但是想撤销到某个版本， 但是当前暂存区，工作区想保留：
 git reset --soft commitId
@@ -26,3 +51,5 @@ git reflog
 version 1, 2 |  revert to 1, | back to 2 
 git reset --hard master@{1}    
 =======================
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
