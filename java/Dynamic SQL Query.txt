@@ -1,0 +1,24 @@
+ava在查询数据表信息的时候，如何做到字段是动态可选择的？
+问题是这样的，我在查询一个数据表的信息列表时，我不想把所有的字段都查询出来，我想通过动态的方式，可以选择我要查询那几个，然后就根据选择的字段名称，来查询对应的列表信息：
+
+比如：我的数据表User，有字段：id，userName，PassWord，post，dept，onlyCode，但是现在我只想查询4个出来，并且最好是可以在页面选择要查询的字段后，后台可以只想查询多对应字段的数据信息。
+
+
+第一步， 获取user表里所有字段。
+
+如果是ORACLE：
+
+1
+SELECT T.COLUMN_NAME FROM ALL_TAB_COLUMNS T WHERE T.TABLE_NAME = 'USER' AND AND T.OWNER = '用户名' ORDER BY T.COLUMN_ID ASC;
+如果是MYSQL：
+
+view sourceprint?
+1
+SELECT T.COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS T WHERE T.TABLE_NAME = 'User' AND t.TABLE_SCHEM = '数据库名' ORDER BY T.ORDINAL_POSITION ASC;
+ 
+
+第二步， 在页面展示这个表里的所有字段， 可以用下拉框来显示（多选的）。
+
+第三步， 定义一个变量 加入var x = ""; 选择下拉框里的字段值，将选择的字段值以逗号隔开组成字符串赋值给x。
+
+第四步， 将x传到后台，拼写SQL。   String sql = "select "+x+" from User";  执行。

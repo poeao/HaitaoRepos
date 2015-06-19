@@ -1,0 +1,23 @@
+#!/bin/sh
+for  f in `seq 10`
+do
+    [ ! -d oldboy ] && mkdir -p /oldboy
+     mv /oldboy/oldboy-$f /oldboy/linux-$f
+done
+
+#rename from to ....
+#rename oldboy linux *oldboy*
+#rename HTML jpg /server/scripts/*HTML
+
+#########################
+#f=linux-1
+#echo $f
+#echo $f|sed 's#linux#oldboy#g'
+#mv $f `echo $f|sed 's#linux#oldboy#g'`
+
+#if exist, then enter 
+[ -d /oldboy ] && cd /oldboy
+for  f in `ls linux*`
+do
+   mv $f `echo $f|sed 's#linux#oldboy#g'`
+done

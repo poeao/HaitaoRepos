@@ -1,0 +1,8 @@
+1.  访问量排名前10的ip地址： 
+cat access.log | cut -f1 -d " " |sort | uniq -c|sort -k 1 -n -r| head -10
+
+2. 页面访问量排名前10的url : 
+cat access.log |cut -f4 -d " "|sort| uniq -c|sort -k 1 -n -r| head -10
+
+3. 最耗时的页面： 
+cat access.log |sort -k 2 -n -r|head -10

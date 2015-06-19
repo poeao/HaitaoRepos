@@ -1,0 +1,23 @@
+#!/bin/bash
+#Date: 19:16 2014-02-24
+
+#Author: Createy By Leo
+
+#Mail: haitao.song@139.com
+
+#Function: This script function is ......
+
+#Version: 1.0
+
+#this can be added by revising ~/.vimrc 
+
+-----------------------
+if [  ]; then
+
+fi
+-----------------------
+for 
+	do
+
+done
+-----------------------

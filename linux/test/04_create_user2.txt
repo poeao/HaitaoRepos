@@ -1,0 +1,24 @@
+#!/bin/sh
+
+#seq -s " " -w 10
+
+for u in `seq -w 10`
+do
+     user add anhry$u && echo "echo $RANDOM|md5sum|cut -c 1-8"|passwd --stdin oldboy$u
+done
+
+#get random rumber
+#echo $RANDOM|md5sum|cut -c 1-8
+
+#openssl rand -base64 8 
+
+rm -rf /tmp/user.log
+for u in `seq -w 11 20`
+do
+    pass=`echo $RANDOM|md5sum|cut -c 1-8`
+     user add anhry$u &&  \ 
+     	echo "$pass"|passwd --stdin oldboy$u
+     echo -e "user:anhry$u \t pass:$pass" >> /tmp/user.log
+done
+
+

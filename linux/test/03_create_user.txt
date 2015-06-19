@@ -1,0 +1,9 @@
+#!/bin/sh
+
+#seq -s " " -w 10
+
+for u in `seq -w 10`
+do
+     user add anhry$u && echo "anhry$u"|passwd --stdin oldboy$u
+done
+

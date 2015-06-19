@@ -1,0 +1,17 @@
+创建一个简单的Java工程：mvn archetype:create -DgroupId=com.mycompany.example -DartifactId=Example
+创 建一个java的web工程：mvn archetype:create -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-webapp -DgroupId=com.mycompany.app -DartifactId=my-webapp
+打包：mvn package
+编译：mvn compile
+mvn dependency:sources 下载依赖包的源代码
+mvn eclipse:eclipse -DdownloadJavaDocs=true：在下载依赖包时，也下载其JavaDocs文件
+仅打包Web页面文件
+mvn war:exploded
+
+打包时跳过测试
+mvn package -Dmaven.test.skip=ture
+安装当前工程的输出文件到本地仓库: mvn install
+安 装指定文件到本地仓库：mvn install:install-file -DgroupId=<groupId> -DartifactId=<artifactId> -Dversion=1.0.0 -Dpackaging=jar -Dfile=<myfile.jar>
+查看实际pom信息: mvn help:effective-pom
+分析项目的依赖信息：mvn dependency:analyze 或 mvn dependency:tree
+查看帮助信息：mvn help:help 或 mvn help:help -Ddetail=true
+查看插件的帮助信息：mvn <plug-in>:help，比如：mvn dependency:help 或 mvn ant:help 等

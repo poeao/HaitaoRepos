@@ -1,12 +1,12 @@
 #!/bin/bash
-cp jdk-6u38-linux-i586.bin /usr/local
-dos2unix profile
-cp -fp profile /etc/profile
+/bin/cp ./jdk-6u38-linux-i586.bin /usr/local
+/usr/bin/dos2unix profile
+/bin/cp -fp ./profile /etc/profile
 cd /usr/local
-chmod u+x jdk-6u38-linux-i586.bin
-sh /usr/local/jdk-6u38-linux-i586.bin
+chmod u+x ./jdk-6u38-linux-i586.bin
+/bin/sh /usr/local/jdk-6u38-linux-i586.bin
 cd /usr/bin
-ln -s -f /usr/local/jdk1.6.0_38/jre/bin/java
-ln -s -f /usr/local/jdk1.6.0_38/bin/javac
+/bin/ln -s -f /usr/local/jdk1.6.0_38/jre/bin/java
+/bin/ln -s -f /usr/local/jdk1.6.0_38/bin/javac
 source /etc/profile
-rm -rf /usr/local/jdk-6u38-linux-i586.bin
+/bin/rm -rf /usr/local/jdk-6u38-linux-i586.bin

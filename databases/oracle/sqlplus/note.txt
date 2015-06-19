@@ -1,0 +1,5 @@
+set warp off
+set linesize 132
+col file_name format a30
+
+stty  erase ^h

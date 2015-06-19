@@ -1,0 +1,4 @@
+netsh firewall set icmpsetting 8
+这样就可以在外部ping到服务器了 非常简单实用！
+同样道理，如果想禁止Ping，那运行如下命令即可实现：
+netsh firewall set icmpsetting 8 disable

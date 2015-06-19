@@ -1,0 +1,8 @@
+#!/bin/sh
+for  f in `seq 10`
+do
+    [ ! -d oldboy ] && mkdir -p /oldboy
+     touch /oldboy/oldboy-$f
+done
+
+# touch oldboy-{1..10}

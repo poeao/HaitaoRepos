@@ -1,0 +1,61 @@
+rem ===========================================================================
+rem Oracle 数据库的自动导出备份脚本（windows环境）。
+rem 通过windows任务计划 或 AT 命令设置自动执行。
+rem ===========================================================================
+@echo off
+@echo =========================================================================
+@echo  说明：启动备份时，需要配置以下变量
+@echo    1、BACKUP_DIR           指定要备份到哪个中间目录，压缩完成后将被移动到BACKUP_WAREHOUSE目录下
+@echo    2、BACKUP_WAREHOUSE     指定历史备份数据(压缩后的)及日志的存放位置
+@echo    3、ORACLE_USERNAME      指定备份所用的Oracle用户名
+@echo    4、ORACLE_PASSWORD      指定备份所用的Oracle密码
+@echo    5、ORACLE_DB            指定备份所用的Oracle服务名
+@echo    6、BACK_OPTION          备份选项，可以为空，可以为full=y，可以为owner=a用户,b用户 或 TABLES=() 等等....
+@echo    7、RAR_CMD              指定RAR命令行压缩工具所在目录
+@echo =========================================================================
+ 
+REM ======================================================
+REM 备份本机safety 帐号下的数据 请根据实际情况修改以下变量
+REM ======================================================
+rem 以下变量需要根据实际情况配置
+set BACKUP_DIR=F:\DATABACKUP
+set BACKUP_WAREHOUSE=F:\ITCQBF_DATABACKUP\BACKUP_WAREHOUSE
+set ORACLE_USERNAME=safety
+set ORACLE_PASSWORD=safety
+set ORACLE_DB=ora11g
+set BACK_OPTION=""
+set RAR_CMD="C:\Program Files\WinRAR\Rar.exe"
+set TODAY=%date:~0,4%%date:~5,2%%date:~8,2%
+set BACK_NAME=%ORACLE_DB%_%ORACLE_USERNAME%_%TODAY%
+set BACK_FULL_NAME=%BACKUP_DIR%\%BACK_NAME%
+
+REM 创建备份目录。
+if not exist %BACKUP_DIR% mkdir %BACKUP_DIR%
+REM if not exist %BACKUP_LOG_DIR%	mkdir %BACKUP_LOG_DIR%
+
+REM 将操作记入批处理日志 %BACK_FULL_NAME%_bat.log
+echo ==================备份服务器%ORACLE_USERNAME%帐号下的数据================= >>%BACK_FULL_NAME%_bat.log
+echo 备份开始...... >>%BACK_FULL_NAME%_bat.log
+echo 当前的时间是： %DATE% %time% >>%BACK_FULL_NAME%_bat.log
+
+exp %ORACLE_USERNAME%/%ORACLE_PASSWORD%@%ORACLE_DB% grants=Y %BACK_OPTION% file="%BACK_FULL_NAME%.dmp" log="%BACK_FULL_NAME%_exp.log"
+
+if not exist %BACKUP_WAREHOUSE%\%BACK_NAME%_LOGIC (md %BACKUP_WAREHOUSE%\%BACK_NAME%_LOGIC)
+echo 压缩并删除原有dmp文件...... >>%BACK_FULL_NAME%_bat.log
+echo 当前的时间是： %DATE% %time% >>%BACK_FULL_NAME%_bat.log
+%RAR_CMD% a -df "%BACK_NAME%_logic.rar" "%BACK_FULL_NAME%.dmp" 
+REM "%BACK_FULL_NAME%exp.log"
+echo 压缩并删除原有dmp文件结束! >>%BACK_FULL_NAME%_bat.log
+echo 当前的时间是： %DATE% %time% >>%BACK_FULL_NAME%_bat.log
+echo 开始移动文件...... >>%BACK_FULL_NAME%_bat.log
+echo 当前的时间是： %DATE% %time% >>%BACK_FULL_NAME%_bat.log
+move %BACKUP_DIR%\*.rar %BACKUP_WAREHOUSE%\%BACK_NAME%_LOGIC\
+echo 移动文件完成! >>%BACK_FULL_NAME%_bat.log
+echo 当前的时间是： %DATE% %time% >>%BACK_FULL_NAME%_bat.log
+REM net send %userdomain% "数据库逻辑备份已于:%DATE% %time% 完成！"
+echo . 
+echo 备份完成!!! >>%BACK_FULL_NAME%_bat.log
+echo 当前的时间是： %DATE% %time% >>%BACK_FULL_NAME%_bat.log
+echo ===============备份103服务器 ITCQB帐号下的数据完成!!!============== >>%BACK_FULL_NAME%_bat.log
+move %BACKUP_DIR%\*.log %BACKUP_WAREHOUSE%\%BACK_NAME%_CLOGIC\
+echo 

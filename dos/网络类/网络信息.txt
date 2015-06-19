@@ -1,0 +1,151 @@
+#========================
+# 接口配置
+#========================
+pushd interface 
+
+
+popd
+# 接口配置结束
+
+
+
+# ----------------------------------
+# IPHTTPS 配置
+# ----------------------------------
+pushd interface httpstunnel
+
+reset
+
+
+popd
+# IPHTTPS 配置的结尾
+
+
+
+#========================
+# IPv4 配置
+#========================
+pushd interface ipv4
+
+reset
+set global defaultcurhoplimit=64 icmpredirects=enabled
+add route prefix=0.0.0.0/0 interface="本地连接" nexthop=192.168.1.1 publish=是
+add route prefix=0.0.0.0/0 interface="无线网络连接" nexthop=192.168.1.1 publish=是
+add address name="VMware Network Adapter VMnet1" address=192.168.57.1 mask=255.255.255.0
+add address name="本地连接" address=192.168.1.147 mask=255.255.255.0
+add address name="VMware Network Adapter VMnet8" address=192.168.205.1 mask=255.255.255.0
+add address name="VMware Network Adapter VMnet1" address=192.168.56.1 mask=255.255.255.0
+add address name="无线网络连接" address=192.168.1.170 mask=255.255.255.0
+
+
+popd
+# IPv4 配置结束
+
+
+
+# ----------------------------------
+# IPv6 配置
+# ----------------------------------
+pushd interface ipv6
+
+reset
+set interface interface="本地连接* 3" forwarding=disabled advertise=disabled mtu=1280 metric=0 siteprefixlength=0 nud=disabled routerdiscovery=disabled managedaddress=disabled otherstateful=disabled weakhostsend=disabled weakhostreceive=disabled ignoredefaultroutes=disabled advertisedrouterlifetime=0 advertisedefaultroute=disabled currenthoplimit=0 forcearpndwolpattern=disabled enabledirectedmacwolpattern=disabled
+
+
+popd
+# IPv6 配置的结尾
+
+
+
+# ----------------------------------
+# ISATAP 配置
+# ----------------------------------
+pushd interface isatap
+
+
+
+popd
+# ISATAP 配置结束
+
+
+
+# ----------------------------------
+# 6to4 配置
+# ----------------------------------
+pushd interface 6to4
+
+reset
+
+
+
+popd
+# 6to4 配置结束
+
+
+
+# ----------------------------------
+# ISATAP 配置
+# ----------------------------------
+pushd interface isatap
+
+
+
+popd
+# ISATAP 配置结束
+
+
+#========================
+# 端口代理配置
+#========================
+pushd interface portproxy
+
+reset
+
+
+popd
+
+# 端口代理配置结束
+
+
+
+# ----------------------------------
+# TCP 配置
+# ----------------------------------
+pushd interface tcp
+
+reset
+
+全局设置 rss=enabled chimney=automatic autotuninglevel=normal congestionprovider=none ecncapability=disabled timestamps=disabled netdma=enabled dca=enabled
+
+
+popd
+# TCP 配置结束
+
+
+
+# ----------------------------------
+# Teredo 配置
+# ----------------------------------
+pushd interface teredo
+set state type=client servername=teredo.ipv6.microsoft.com. servervirtualip=0.0.0.0
+
+
+
+popd
+# Teredo 配置结束
+
+
+
+# ----------------------------------
+# 6to4 配置
+# ----------------------------------
+pushd interface 6to4
+
+reset
+
+
+
+popd
+# 6to4 配置结束
+
+

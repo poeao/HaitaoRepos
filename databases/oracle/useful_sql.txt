@@ -1,0 +1,2 @@
+--query table definition:
+select dbms_metadata.get_ddl('Table','T1') from dual;

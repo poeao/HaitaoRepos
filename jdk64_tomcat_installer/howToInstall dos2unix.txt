@@ -1,0 +1,4 @@
+#tar¨Cxvf  dos2unix-3.1.tar.bz2
+#cd dos2unix-3.1.
+# make
+#make install

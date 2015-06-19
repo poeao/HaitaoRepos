@@ -1,0 +1,17 @@
+1. Unknown purpose server: 
+/boot 200M
+swap  1.5 em    if memory bigger than 8G, swap 8 - 16G
+/ 40 - 100 G
+the others perserved for the user. 
+
+
+2. Web server 
+/boot 200m 
+swap the same as above 
+/ all left. 
+
+3. Database Server 
+
+/boot 299M
+/ 40 - 100G
+/data all others 

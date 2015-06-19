@@ -5,6 +5,9 @@
  select user, host, password from mysql.user;
 
 3. grant privileges to user1(user1 can logon to local db server from 192.168.10.2):
-  grant all on *.* to 'user1'@'192.168.10.2' identified by '123456';
+  grant all on *.* to 'user1'@'192.168.10.2' identified by '123456';  
+
+4. add user: 
+grantselect,insert,update,delete on *.* to user_1@"%" Identified by"123";
   
   

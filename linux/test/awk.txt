@@ -1,0 +1,11 @@
+#执行命令取出linux中eth0的IP地址
+1 . [root@oldboy ~]# ifconfig eth0|grep 'inet addr'|awk -F ":" '{print $2}'|awk '{print $1}'
+
+2. ifconfig eth0|grep 'inet addr'|awk -F '[ :]' '{print $13}'
+
+3. [root@oldboy ~]# ifconfig eth0 |awk -F '[ :]+' 'NR==2 {print $4}'
+
+提示：本题NR是行号，分隔符+号匹配，[]里一个或多个任意一个分隔符，这里就是匹配一个或多个冒号或空格。
+1）awk -F 后面跟分隔符‘[空格:]+’，其中[空格:]多分隔符写法，意思是以空格或冒号做分隔，后面的"+"号是正则表达式，意思是匹配前面空格或冒号，两者之一的1个或1个以上。
+2）NR==2和sed -n "2p",相当，意思都是选择第几行,例：
+[root@oldboy ~]# ifconfig eth0|awk NR==2

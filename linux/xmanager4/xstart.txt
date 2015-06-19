@@ -1,0 +1,38 @@
+﻿1 . xterm 
+修改Xstart的配置，在Execution Command：点击箭头添加 
+/usr/bin/xterm 
+添加完毕后，在xstart窗口，再重新指定
+
+2. gdm
+ Xmanager远程连接桌面步骤  
+服务器端配置  
+1、通过xmanager远程连接redhat linux as 5   rhel5与rhel4不同的地方是，rhel5里没有/etc/X11/gdm/这个目录，
+rhel5的gdm的配置文件放在这里/usr/share/gdm/defaults.conf。  
+需要修改的地方如下：   修改/usr/share/gdm/defaults.conf文件，确保里面有以下几行： 
+ Enable=true 
+ DisplaysPerHost=10 
+ Port=177  保存x!  
+2、再修改/etc/inittab文件，把默认级别改为5,
+再加入以下行：  x:5:respawn:/usr/sbin/gdm   
+这样修改后，root用户还不能登录，还要继续修改/usr/share/gdm/defaults.conf文件,
+具体如下(红色部分)：  
+[security]  
+# Allow root to login.  It makes sense to turn this off for kiosk use, when 
+# you want to minimize the possibility of break in. 
+AllowRoot=true  
+# Allow login as root via XDMCP.  This value will be overridden and set to 
+# false if the /etc/default/login file exists and contains  
+# "CONSOLE=/dev/login", and set to true if the /etc/default/login file exists 
+# and contains any other value or no value for CONSOLE. 
+AllowRemoteRoot=true   
+3、如果防火墙打开了，使用以下命令打开177端口：  
+iptables -A INPUT -p udp --dport 177 -j ACCEPT  
+4、用gdm-restart 启动, 177端口  默认使用UDP协议177端口，可以用命令netstat -nupal查看
+
+客户端xmanager配置 
+
+
+1    启动xmanager的passive如图：
+2    顺序启动xmanager的xstart
+3    xstart启动后填写正确的地址、用户以及密码，选择连接类型GNOME
+4、点击run按钮
