@@ -1,0 +1,55 @@
+1、使用YAST工具安装和smb有关的所有软件包
+2、安装成功后，在/etc/目录下会生成samba这个目录，里面包含了如下几个文件
+   lmhosts   secrets.tdb  smb.conf  smbfstab  smbpasswd  smbusers
+3、建立一个用户的共享目录share,如下：
+   xuzhou:~ # mkdir /share
+4、建立要共享文件夹的用户名和密码，如下：
+   xuzhou:/ # useradd -m smb
+   xuzhou:/ # passwd smb
+   Changing password for smb.
+   New password: 
+   Re-enter new password: 
+   Password changed
+   xuzhou:/ # smbpasswd -a smb
+   New SMB password:
+   Retype new SMB password:
+   Added user smb.
+5、给/share这个目录赋予smb用户的权限
+   xuzhou:/ # chown smb share/
+   xuzhou:/ # chmod 744 share/
+6、编辑/etc/samba/smb.conf文件，在最下边建立：
+   [share]
+         comment = this is a test
+         path = /share
+         writable = yes        --可写
+         read only = yes       --只读
+         browsable = yes       --浏览
+         valid users = smb     --缺省用户
+         guest ok = no         --匿名访问
+7、启动smb
+   xuzhou:/etc/init.d # ./smb start
+   Starting Samba SMB daemon                                            done
+   xuzhou:/etc/init.d # ./smb status
+   Checking for Samba SMB daemon                                        running
+8、在windows的网上邻居里再添加一个网上邻居，注意在填写网络地址的时候，应该如下：
+   \\10.38.223.234\share
+     下一步完成之后，就会在网上邻居里看见多了一个共享的图标，这就是刚才建立的share文件夹
+9、当打开这个文件夹share发现里面什么都没有，自己去建立个文本文档，会提示：无法创建文本文档
+10、然后可以去SMB服务器里的smb.conf文件修改share这一项，修改成内容如下：
+   [share]
+      comment = this is a test
+      path = /share
+      writable = yes
+      read only = no      --将之前允许只读改为no
+      browsable = yes
+      valid users = smb
+      guest ok = no
+11、然后重新启动smb服务
+    xuzhou:/etc/samba # cd ..
+    xuzhou:/etc # cd init.d/
+    xuzhou:/etc/init.d # ./smb restart
+    Shutting down Samba SMB daemon                                       done
+    Starting Samba SMB daemon                                            done
+    xuzhou:/etc/init.d #
+12、再在windows上的那个share文件夹里新建立文本文档，结果是可以成功建立，并写如内容的
+13、回到smb服务器，在/share目录下查看，会发现多了刚才windows上新建立的文档
