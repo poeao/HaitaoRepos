@@ -1,3 +1,183 @@
+一、编译安装MySQL前的准备工作
+
+安装编译源码所需的工具和库
+
+
+yum install gcc gcc-c++ ncurses-devel perl  
+安装cmake，从http://www.cmake.org下载源码并编译安装
+
+
+
+wget http://www.cmake.org/files/v2.8/cmake-2.8.10.2.tar.gz   
+tar -xzvf cmake-2.8.10.2.tar.gz   
+cd cmake-2.8.10.2   
+./bootstrap ; make ; make install   
+cd ~  
+二、设置MySQL用户和组
+
+新增mysql用户组
+
+
+groupadd mysql  
+新增mysql用户
+
+useradd -r -g mysql mysql  
+三、新建MySQL所需要的目录
+
+新建mysql安装目录
+
+
+mkdir -p /usr/local/mysql  
+新建mysql数据库数据文件目录
+
+mkdir -p /data/mysqldb  
+四、下载MySQL源码包并解压
+从http://dev.mysql.com/downloads/mysql/直接下载源码，解压mysql-5.6.16.tar.gz（http://www.quseqi.com/这个网站就是用的5.6.16版本）
+
+
+wget http://www.kakapart.com/files/mysql-5.6.16.tar.gz  
+tar -zxv -f mysql-5.6.16.tar.gz  
+cd mysql-5.6.16  
+
+五、编译安装MySQL
+
+从mysql5.5起，mysql源码安装开始使用cmake了，设置源码编译配置脚本。
+
+-DCMAKE_INSTALL_PREFIX=dir_name	设置mysql安装目录
+-DMYSQL_UNIX_ADDR=file_name	设置监听套接字路径，这必须是一个绝对路径名。默认为/tmp/mysql.sock
+-DDEFAULT_CHARSET=charset_name	设置服务器的字符集。
+缺省情况下，MySQL使用latin1的（CP1252西欧）字符集。cmake/character_sets.cmake文件包含允许的字符集名称列表。
+-DDEFAULT_COLLATION=collation_name	设置服务器的排序规则。
+-DWITH_INNOBASE_STORAGE_ENGINE=1 
+-DWITH_ARCHIVE_STORAGE_ENGINE=1
+-DWITH_BLACKHOLE_STORAGE_ENGINE=1 
+-DWITH_PERFSCHEMA_STORAGE_ENGINE=1	存储引擎选项：
+
+MyISAM，MERGE，MEMORY，和CSV引擎是默认编译到服务器中，并不需要明确地安装。
+
+静态编译一个存储引擎到服务器，使用-DWITH_engine_STORAGE_ENGINE= 1
+
+可用的存储引擎值有：ARCHIVE, BLACKHOLE, EXAMPLE, FEDERATED, INNOBASE (InnoDB), PARTITION (partitioning support), 和PERFSCHEMA (Performance Schema)
+-DMYSQL_DATADIR=dir_name	设置mysql数据库文件目录
+-DMYSQL_TCP_PORT=port_num	设置mysql服务器监听端口，默认为3306
+-DENABLE_DOWNLOADS=bool	是否要下载可选的文件。例如，启用此选项（设置为1），cmake将下载谷歌所使用的测试套件运行单元测试。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+设置编译参数
+
+
+
+
+cmake \   
+-DCMAKE_INSTALL_PREFIX=/usr/local/mysql \   
+-DMYSQL_UNIX_ADDR=/usr/local/mysql/mysql.sock \   
+-DDEFAULT_CHARSET=utf8 \   
+-DDEFAULT_COLLATION=utf8_general_ci \   
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \   
+-DWITH_ARCHIVE_STORAGE_ENGINE=1 \   
+-DWITH_BLACKHOLE_STORAGE_ENGINE=1 \   
+-DMYSQL_DATADIR=/data/mysqldb \   
+-DMYSQL_TCP_PORT=3306 \   
+-DENABLE_DOWNLOADS=1  
+注：重新运行配置，需要删除CMakeCache.txt文件
+
+rm CMakeCache.txt  
+编译源码
+
+make  
+安装
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+make install  
+六、修改mysql目录所有者和组
+
+修改mysql安装目录
+
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+cd /usr/local/mysql   
+chown -R mysql:mysql .  
+修改mysql数据库文件目录
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+cd /data/mysqldb  
+chown -R mysql:mysql .  
+七、初始化mysql数据库
+
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+cd /usr/local/mysql   
+scripts/mysql_install_db --user=mysql --datadir=/data/mysqldb  
+八、复制mysql服务启动配置文件
+
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+cp /usr/local/mysql/support-files/my-default.cnf /etc/my.cnf  
+注：如果/etc/my.cnf文件存在，则覆盖。
+九、复制mysql服务启动脚本及加入PATH路径
+
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+cp support-files/mysql.server /etc/init.d/mysqld   
+  
+vim /etc/profile   
+  
+      PATH=/usr/local/mysql/bin:/usr/local/mysql/lib:$PATH  
+  
+      export PATH  
+  
+source /etc/profile    
+十、启动mysql服务并加入开机自启动(可选这个步骤，以后可以自己启动的)
+
+service mysqld start 
+chkconfig --level 35 mysqld on
+
+十一、检查mysql服务是否启动
+
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+netstat -tulnp | grep 3306   
+mysql -u root -p   
+密码为空，如果能登陆上，则安装成功。
+十二、修改MySQL用户root的密码
+
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+mysqladmin -u root password '123456'   
+注：也可运行安全设置脚本，修改MySQL用户root的密码，同时可禁止root远程连接，移除test数据库和匿名用户。
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+/usr/local/mysql/bin/mysql_secure_installation  
+十三、可能会出现的错误
+
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+问题：   
+Starting MySQL..The server quit without updating PID file ([FAILED]/mysql/Server03.mylinux.com.pid).   
+解决：   
+修改/etc/my.cnf 中datadir,指向正确的mysql数据库文件目录  
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+问题：   
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)   
+解决：   
+新建一个链接或在mysql中加入-S参数，直接指出mysql.sock位置。   
+ln -s /usr/local/mysql/data/mysql.sock /tmp/mysql.sock   
+  
+/usr/local/mysql/bin/mysql -u root -S /usr/local/mysql/data/mysql.sock  
+
+[sql] view plaincopy在CODE上查看代码片派生到我的代码片
+MySQL问题解决：-bash:mysql:command not found  
+因为mysql命令的路径在/usr/local/mysql/bin下面,所以你直接使用mysql命令时,  
+系统在/usr/bin下面查此命令,所以找不到了   
+   解决办法是：  
+ ln -s /usr/local/mysql/bin/mysql /usr/bin　做个链接即可  
+
+
+=====================================================================================================================================
+
+
 1. install cmake
 [root@mysql src]# tar xf cmake-2.8.11.2.tar.gz
 [root@mysql src]# cd cmake-2.8.11.2
@@ -6,6 +186,28 @@
 [root@mysql cmake-2.8.11.2]# ./bootstrap
 [root@mysql cmake-2.8.11.2]# make && make install
 
+oldboy cmake: 
+cmake \
+-DCMAKE_INSTALL_PREFIX=/application/mysql-5.5.32 \
+-DMYSQL_DATADIR=/application/mysql-5.5.32/data \
+-DSYSCONFDIR=/etc \
+-DEXTRA_CHARSETS=gbk,gb2312,utf8,ascii \
+-DWITH_MYISAM_STORAGE_ENGINE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITH_FEDERATED_STORAGE_ENGINE=1 \
+-DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
+-DWITHOUT_EXAMPLE_STORAGE_ENGINE=1 \
+-DWITH_PARTITION_STORAGE_ENGINE=1 \
+-DWITH_READLINE=1 \
+-DWITH_FAST_MUTEXES=1 \
+-DWITH_ZLIB=bundled \
+-DWITH_EMBEDDED_SERVER=1 \
+-DMYSQL_UNIX_ADDR=/application/mysql-5.5.32/tmp/mysql/mysql.sock \
+-DMYSQL_TCP_PORT=3306 \
+-DENABLED_LOCAL_INFILE=ON \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DWITH_DEBUG=0
 
 2. 安装编译MySQL-5.6.12
 说明：cmake指定编译选项的方式不同于make，其实现方式对比如下
@@ -125,3 +327,9 @@ mysql&gt; SET PASSWORD = PASSWORD('123456');
 
 cd /usr/local/mysql 
 #./bin/mysqladmin -u root password 
+
+===============================================================
+
+[root@centos-65 scripts]# ./mysql_install_db --basedir=/application/mysql/ --datadir=/application/mysql/data/ --user=mysql
+
+-----
