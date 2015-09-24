@@ -1,3 +1,5 @@
+mvn install:install-file -DgroupId=org.apache.spark -DartifactId=spark-hive_2.10 -Dversion=1.4.0 -Dpackaging=jar -Dfile=e:/spark-hive_2.10-1.4.0.jar
+
 mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc14 -Dversion=11.2.0.1.0 -Dpackaging=jar -Dfile=ojdbc14.jar 
 
 mvn install:install-file -DgroupId=org.springframework -DartifactId=spring-webmvc -Dversion=3.1.2.1.RELEASE -Dpackaging=jar -Dfile=spring-webmvc-3.1.2.1.RELEASE.jar

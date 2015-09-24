@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>HTTP文件下载控件演示页面</title>
+    <link type="text/css" href="js/downer.css" rel="Stylesheet"/>
+    <script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="js/downer.js" charset="utf-8"></script>
+</head>
+<body>
+	<p><a href="db/clear.jsp" target="_blank">清空数据库</a></p>
+<input type="button" value="下载测试文件" onclick="StartDown()" />
+<div id="downDiv"></div>
+    <script type="text/javascript" language="javascript">
+    	var downer = new FileDownloaderMgr();
+    	downer.Config["Folder"] = "F:\\ftp\\";//设置默认下载路径。
+    	downer.Fields["uname"] = "test";//
+
+    	$(document).ready(function ()
+    	{
+        	downer.LoadTo("downDiv");
+
+    	    //alert(downer.Browser.GetMacs());
+    	});
+		
+		function StartDown()
+		{
+			downer.AddFile("http://down.sandai.net/thunder7/Thunder_dl_7.9.6.4502.exe");
+			//downer.AddFile("http://www.lingoes.cn/download/lingoes_2.9.1_cn.exe");
+			//downer.AddFile("http://wsdl2.yunpan.cn/share.php?method=Share.download&fhash=2946b3b85abb80b3392014aad8db8aedad5921e9&xqid=19044811&fname=XproerIM.exe&fsize=2434536&nid=13636671072534451&cqid=61d5fd74b63cf66070ebe072f46ac8c4&st=015fb1af5a4c2cbe1430f8e786d4e601&e=1374829813");
+			//downer.AddFile("http://www.ncmem.com/images/ico-ftp.jpg","test.jpg");
+//			downer.AddFile("http://www.ncmem.com/images/ico-up.jpg");
+//			downer.AddFile("http://www.ncmem.com/images/ico-capture.jpg");
+//			downer.AddFile("http://www.ncmem.com/images/ico-imageuploader.gif");
+//			downer.AddFile("http://www.ncmem.com/images/ico-wordpaster.gif");
+			downer.PostFirst();
+		}
+
+		function copyFile()
+		{
+			var obj = new ActiveXObject(downer.ActiveX["Part"]);
+			obj.CopyFile("f:\\ftp\\test.gif","f:\\ftp\\test1.gif");
+		}
+
+		function copyFolder()
+		{
+			var obj = new ActiveXObject(downer.ActiveX["Part"]);
+			obj.CopyFile("f:\\ftp\\test.gif","f:\\ftp\\ftp1");
+		}
+		
+		function moveFile()
+		{
+			var obj = new ActiveXObject(downer.ActiveX["Part"]);
+			obj.MoveFile("f:\\ftp\\test.gif","f:\\ftp\\test2.gif");
+		}
+		
+		function moveFolder()
+		{
+			var obj = new ActiveXObject(downer.ActiveX["Part"]);
+			obj.MoveFile("f:\\ftp\\test2.gif","f:\\ftp\\ftp1");
+		}
+		
+	</script>
+	<input type="button" value="复制到文件" onclick="copyFile()" />
+	<input type="button" value="复制到文件夹" onclick="copyFolder()" />
+	<input type="button" value="移动文件" onclick="moveFile()" />
+	<input type="button" value="移动到文件夹" onclick="moveFolder()" />
+</body>
+</html>

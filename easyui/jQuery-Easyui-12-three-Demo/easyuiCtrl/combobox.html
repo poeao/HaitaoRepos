@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>combobox</title>
+	<link rel="stylesheet" type="text/css" href="../js/themes/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="../js/themes/icon.css" />
+    <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.easyui.min-1.1.2.js"></script>
+    <script type="text/javascript" src="../js/jquery.beautyOfCode.js"></script>
+
+    <script type="text/javascript" >
+    	$(function(){
+			$('#cc').combobox({
+				//选择新项时触发
+				onSelect:function(list){
+					var selectItemValue = $(list).val();
+					var selectItemText = $(list)[0].text;
+					$('#resoult').html('选中项的值:'+selectItemValue+'<br>选中项的文本:'+selectItemText);
+					if(selectItemValue=='cc'){
+						$.messager.alert('系统提示', '恭喜，你选对了！', 'info');
+					}else{
+						$.messager.alert('系统提示', ':(,没选对哦，继续啊！！', 'info');
+					}
+				}
+			})
+		})
+		
+		//设置选中的项
+		function setValue(val){
+			$('#cc').combobox('setValue',val);
+		}
+		//获取选中的值
+		function getValue(){
+			var v =$('#cc').combobox('getValue');
+			alert(v);
+		}
+		//获取选中的文本
+		function getText(){
+			var t =$('#cc').combobox('getText');
+			alert(t);
+		}
+		//禁用控件
+		function disable(){
+			$('#cc').combobox('disable');
+		}
+		//启用控件
+		function enable(){
+			$('#cc').combobox('enable');
+		}
+ 
+		
+		$.beautyOfCode.init({
+			brushes: ['Xml','JScript'],
+			ready: function() {
+				$.beautyOfCode.beautifyAll();
+				//$("#someCode").beautifyCode('javascript', {gutter:false});
+			}
+		});
+
+		
+    </script>
+
+</head>
+
+<body>
+<fieldset>
+	<legend>实例效果</legend>
+<div style="margin-bottom:10px;">
+		<a href="#" onclick="alert('没想好怎么做呢。')">loadData</a>
+		<a href="#" onclick="setValue('dd')">setValue</a>
+		<a href="#" onclick="getValue()">getValue</a>
+        <a href="#" onclick="getText()">getText</a>
+		<a href="#" onclick="disable()">disable</a>
+		<a href="#" onclick="enable()">enable</a>
+	</div>
+	
+	
+	<select id="cc" class="easyui-combobox" name="dept" style="width:200px;" required="true">
+		<option value="aa">aitem1</option>
+		<option value="bb">bitem2</option>
+		<option value="cc">bitem3</option>
+		<option value="dd">ditem4</option>
+		<option value="ee">eitem5</option>
+	</select>
+
+<div id="resoult" style="border:1px dashed #CCC; margin:20px 10px; padding:10px;"></div>
+</fieldset>
+
+<fieldset>
+	<legend>JS 代码</legend>
+     <pre class="code">
+    <code class="html">
+    &lt;link rel="stylesheet" type="text/css" href="../js/themes/default/easyui.css" />
+    &lt;link rel="stylesheet" type="text/css" href="../js/themes/icon.css" />
+    &lt;script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+    &lt;script type="text/javascript" src="../js/jquery.easyui.js"></script>
+
+    &lt;script type="text/javascript" >
+    	$(function(){
+			$('#cc').combobox({
+				//选择新项时触发
+				onSelect:function(list){
+					var selectItemValue = $(list).val();
+					var selectItemText = $(list)[0].text;
+					$('#resoult').html('选中项的值:'+selectItemValue+'<br>选中项的文本:'+selectItemText);
+					if(selectItemValue=='cc'){
+						$.messager.alert('系统提示', '恭喜，你选对了！', 'info');
+					}else{
+						$.messager.alert('系统提示', ':(,没选对哦，继续啊！！', 'info');
+					}
+				}
+			})
+		})
+		
+		//设置选中的项
+		function setValue(val){
+			$('#cc').combobox('setValue',val);
+		}
+		//获取选中的值
+		function getValue(){
+			var v =$('#cc').combobox('getValue');
+			alert(v);
+		}
+		//获取选中的文本
+		function getText(){
+			var t =$('#cc').combobox('getText');
+			alert(t);
+		}
+		//禁用控件
+		function disable(){
+			$('#cc').combobox('disable');
+		}
+		//启用控件
+		function enable(){
+			$('#cc').combobox('enable');
+		}
+ 
+    &lt;/script>
+     </code>
+    </pre>
+</fieldset>
+
+ <br />
+ <fieldset>
+	<legend>HTML 代码</legend>   
+  <pre class="code">
+    <code class="html">
+    &lt;select id="cc" class="easyui-combobox" name="dept" style="width:200px;" required="true">
+		&lt;option value="aa">aitem1</option>
+		&lt;option value="bb">bitem2</option>
+		&lt;option value="cc">bitem3</option>
+		&lt;option value="dd">ditem4</option>
+		&lt;option value="ee">eitem5</option>
+	&lt;/select>
+     </code>
+    </pre>
+
+</fieldset>
+</body>
+</html>

@@ -1,0 +1,171 @@
+﻿Hive 命令行
+•hive [-hiveconf x=y]* [<-i filename>]* [<-f filename>|<-e query-string>] [-S]
+•-i   从文件初始化HQL
+•-e   从命令行执行指定的HQL
+• -f   执行HQL脚本
+•-v   输出执行的HQL语句到控制台
+•-p <port> connect to Hive Server on port number -hiveconf x=y Use this to set hive/hadoop configuration variables.
+Hive 命令行示例
+•从命令行执行指定的sql语句
+•$HIVE_HOME/bin/hive -e 'select a.col from tab1 a'
+•以指定的hive环境变量执行指定的sql语句
+•$HIVE_HOME/bin/hive -e 'select a.col from tab1 a' -hiveconf hive.exec.scratchdir=/home/my/hive_scratch -hiveconf mapred.reduce.tasks=32
+•以沉默模式执行指定的sql语句，并将执行结果导出到指定文件 HIVE_HOME/bin/hive  -e 'select a.col from tab1 a' > a.txt
+•以非交互式模式执行sql文件
+•HIVE_HOME/bin/hive -f /home/my/hive-script.sql
+•在进入交互模式之前，执行初始化sql文件
+•HIVE_HOME/bin/hive -i /home/my/hive-init.sql
+Hive 交互式Shell命令
+• 当命令 $HIVE_HOME/bin/hive以不带 -e/-f 选项的方式运行时， hive将进入到交互模式
+•以（;）冒号结束命令行
+
+start hive server 
+hive --service hiveserver2 --hiveconf hive.server2.thrift.port=10001
+
+
+hive命令的3种调用方式 
+
+方式1：hive –f  /root/shell/hive-script.sql（适合多语句）
+hive-script.sql类似于script一样，直接写查询命令就行
+
+例如：
+
+[root@cloud4 shell]# vi hive_script3.sql
+
+select * from t1;
+
+select count(*) from t1;
+
+不进入交互模式，执行一个hive script 
+
+这里可以和静音模式-S联合使用,通过第三方程序调用，第三方程序通过hive的标准输出获取结果集。
+
+ $HIVE_HOME/bin/hive -S -f /home/my/hive-script.sql （不会显示mapreduct的操作过程）
+
+方式2：hive -e  'sql语句'（适合短语句）
+
+直接执行sql语句 
+
+例如：
+[root@cloud4 shell]# hive -e 'select * from t1'
+静音模式：
+
+[root@cloud4 shell]# hive -S -e 'select * from t1'  (用法与第一种方式的静音模式一样，不会显示mapreduce的操作过程)
+此处还有一亮点，用于导出数据到linux本地目录下
+例如：
+
+[root@cloud4 shell]# hive -e 'select * from t1'  > test.txt
+有点类似pig导出分析结果一样，都挺方便的
+
+方式3：hive （直接使用hive交互式模式）
+
+都挺方便的
+介绍一种有意思的用法：
+1.sql的语法
+#hive     启动
+
+hive>quit;     退出hive
+
+hive> show databases;   查看数据库
+
+hive> create database test;  创建数据库
+
+hive> use default;    使用哪个数据库
+
+hive>create table t1 (key string); 创建表
+对于创建表我们可以选择读取文件字段按照什么字符进行分割
+例如：
+hive>create table t1(id ) '/wlan' 
+partitioned by (log_date string)  表示通过log_date进行分区
+row format delimited fields terminated by '\t'   表示代表用‘\t’进行分割来读取字段
+stored as textfile/sequencefile/rcfile/;  表示文件的存储的格式
+
+存储格式的参考地址：http://blog.csdn.net/yfkiss/article/details/7787742
+textfile 默认格式，数据不做压缩，磁盘开销大，数据解析开销大。
+可结合Gzip、Bzip2使用（系统自动检查，执行查询时自动解压），但使用这种方式，hive不会对数据进行切分，从而无法对数据进行并行操作。
+实例：
+
+[plain] view plaincopy
+
+> create table test1(str STRING)  
+
+> STORED AS TEXTFILE;   
+
+OK  
+
+Time taken: 0.786 seconds  
+
+#写脚本生成一个随机字符串文件，导入文件：  
+
+> LOAD DATA LOCAL INPATH '/home/work/data/test.txt' INTO TABLE test1;  
+
+Copying data from file:/home/work/data/test.txt  
+
+Copying file: file:/home/work/data/test.txt  
+
+Loading data to table default.test1  
+
+OK  
+
+Time taken: 0.243 seconds  
+
+SequenceFile是Hadoop API提供的一种二进制文件支持，其具有使用方便、可分割、可压缩的特点。
+SequenceFile支持三种压缩选择：NONE, RECORD, BLOCK。 Record压缩率低，一般建议使用BLOCK压缩。
+示例：
+
+[plain] view plaincopy
+
+> create table test2(str STRING)  
+
+> STORED AS SEQUENCEFILE;  
+
+OK  
+
+Time taken: 5.526 seconds  
+
+hive> SET hive.exec.compress.output=true;  
+
+hive> SET io.seqfile.compression.type=BLOCK;  
+
+hive> INSERT OVERWRITE TABLE test2 SELECT * FROM test1;   
+
+rcfile是一种行列存储相结合的存储方式。首先，其将数据按行分块，保证同一个record在一个块上，避免读一个记录需要读取多个block。其次，块数据列式存储，有利于数据压缩和快速的列存取。RCFILE文件示例：
+
+
+实例：
+
+[plain] view plaincopy
+
+> create table test3(str STRING)  
+
+> STORED AS RCFILE;  
+
+OK  
+
+Time taken: 0.184 seconds  
+
+>  INSERT OVERWRITE TABLE test3 SELECT * FROM test1;  
+
+ 
+
+总结：
+相比textfile和SequenceFile，rcfile由于列式存储方式，数据加载时性能消耗较大，但是具有较好的压缩比和查询响应。数据仓库的特点是一次写入、多次读取，因此，整体来看，rcfile相比其余两种格式具有较明显的优势。
+ 
+
+hive>show tables;  查看该数据库中的所有表
+
+hive>show tables  ‘*t*’;    //支持模糊查询
+
+hive>show partitions t1;  //查看表有哪些分区 
+
+hive>drop table t1 ; 删除表
+
+hive不支持修改表中数据，但是可以修改表结构，而不影响数据
+有local的速度明显比没有local慢：
+
+hive>load data inpath '/root/inner_table.dat' into table t1;   移动hdfs中数据到t1表中
+
+hive>load  data local inpath '/root/inner_table.dat' into table t1;  上传本地数据到hdfs中
+
+hive> !ls;  查询当前linux文件夹下的文件
+hive> dfs -ls /; 查询当前hdfs文件系统下  '/'目录下的文件

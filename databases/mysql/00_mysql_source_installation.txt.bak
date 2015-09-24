@@ -1,0 +1,149 @@
+1. install cmake
+[root@mysql src]# tar xf cmake-2.8.11.2.tar.gz
+[root@mysql src]# cd cmake-2.8.11.2
+[root@mysql cmake-2.8.11.2]# ls
+	
+[root@mysql cmake-2.8.11.2]# ./bootstrap
+[root@mysql cmake-2.8.11.2]# make && make install
+
+oldboy cmake: 
+cmake \
+-DCMAKE_INSTALL_PREFIX=/application/mysql-5.5.32 \
+-DMYSQL_DATADIR=/application/mysql-5.5.32/data \
+-DSYSCONFDIR=/etc \
+-DEXTRA_CHARSETS=gbk,gb2312,utf8,ascii \
+-DWITH_MYISAM_STORAGE_ENGINE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITH_FEDERATED_STORAGE_ENGINE=1 \
+-DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
+-DWITHOUT_EXAMPLE_STORAGE_ENGINE=1 \
+-DWITH_PARTITION_STORAGE_ENGINE=1 \
+-DWITH_READLINE=1 \
+-DWITH_FAST_MUTEXES=1 \
+-DWITH_ZLIB=bundled \
+-DWITH_EMBEDDED_SERVER=1 \
+-DMYSQL_UNIX_ADDR=/application/mysql-5.5.32/tmp/mysql/mysql.sock \
+-DMYSQL_TCP_PORT=3306 \
+-DENABLED_LOCAL_INFILE=ON \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DWITH_DEBUG=0
+
+2. 安装编译MySQL-5.6.12
+说明：cmake指定编译选项的方式不同于make，其实现方式对比如下
+./configure 对应的是 cmake .
+./configure --help 对应的是 cmake . -LH 或者是 ccmake .
+
+tar zxvf mysql-5.6.12.tar.gz  
+cd mysql-5.6.12  （以下是一行 这里为了方便大家理解和注释写成换行注释，实际编译中请在换行前 加 " \ "链接）cmake \
+-DCMAKE_INSTALL_PREFIX=/usr/local/mysql \   #安装路径
+-DMYSQL_DATADIR=/usr/local/mysql/data       \    #数据文件存放位置
+-DSYSCONFDIR=/etc              \                                  #my.cnf路径
+-DWITH_MYISAM_STORAGE_ENGINE=1    \       #支持MyIASM引擎
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \     #支持InnoDB引擎
+-DWITH_MEMORY_STORAGE_ENGINE=1 \        #支持Memory引擎
+-DWITH_READLINE=1                    \                         #快捷键功能(我没用过)
+-DMYSQL_UNIX_ADDR=/tmp/mysqld.sock      \   #连接数据库socket路径
+-DMYSQL_TCP_PORT=3306                  \               #端口
+-DENABLED_LOCAL_INFILE=1            \                #允许从本地导入数据
+-DWITH_PARTITION_STORAGE_ENGINE=1  \   #安装支持数据库分区
+-DEXTRA_CHARSETS=all                  \                   #安装所有的字符集
+-DDEFAULT_CHARSET=utf8              \                   #默认字符
+-DDEFAULT_COLLATION=utf8_general_ci
+------------------------------------------------------------------
+cmake \
+-DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+-DMYSQL_DATADIR=/data/mysql/data \
+-DSYSCONFDIR=/etc \
+-DWITH_MYISAM_STORAGE_ENGINE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITH_MEMORY_STORAGE_ENGINE=1 \
+-DWITH_READLINE=1 \
+-DMYSQL_UNIX_ADDR=/tmp/mysql/mysql.sock \
+-DMYSQL_TCP_PORT=3306 \
+-DENABLED_LOCAL_INFILE=1 \
+-DWITH_PARTITION_STORAGE_ENGINE=1 \
+-DEXTRA_CHARSETS=all \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci
+
+接着编译源码
+
+make && make install
+
+修改文件权限，生成数据库
+groupadd mysql  
+useradd mysql -g mysql -M -s /sbin/nologin  
+#增加一个名为CentOS Mysql的用户。
+-g：指定新用户所属的用户组(group)
+-M：不建立根目录
+-s：定义其使用的shell，/sbin/nologin代表用户不能登录系统。
+cd /usr/local/mysql
+chown -R mysql:mysql .
+scripts/mysql_install_db --user=mysql
+chown -R  root .  (将权限设置给root用户，并设置给mysql组， 取消其他用户的读写执行权限，仅留给mysql "rx"读执行权限，其他用户无任何权限)
+chown -R mysql data
+
+
+将mysql的配置文件拷贝到/etc
+
+cp support-files/my-medium.cnf /etc/my.cnf  （原始老版本是此操作，5.6.12版本的是如下文件地址）
+cp support-files/my-default.cnf  /etc/my.cnf  (并给/etc/my.cnf +x权限 同时删除 其他用户的写权限，仅仅留给root 和工作组 rx权限,其他一律删除连rx权限都删除)
+
+vim /etc/my.cnf
+-----------------------------------------------------
+[client]
+port=3306
+socket=/tmp/mysql.sock
+default-character-set = utf8
+
+[mysqld]
+port=3306
+basedir=/usr/local/mysql
+datadir=/usr/local/mysql/data
+socket=/tmp/mysql.sock
+user=mysql
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+############# default settings  ################
+# time zone
+default-time-zone = system
+character-set-server = utf8
+default-storage-engine = InnoDB
+
+[mysqld_safe]
+log-error=/var/log/mysqld.log
+#pid-file=/var/run/mysqld/mysqld.pid
+
+---------------------------------------------------------
+bin/mysqld_safe --user=mysql &  
+#启动mysql，看是否成功  
+netstat -tnl|grep 3306  
+上面是一种启动mysql的方法，还有一种简单的方便，如下：
+
+ 
+#将mysql的启动服务添加到系统服务中  
+cp support-files/mysql.server /etc/init.d/mysql  
+#现在可以使用下面的命令启动mysql  
+service mysql start  
+#停止mysql服务  
+service mysql stop  
+#重启mysql服务  
+service mysql restart  
+
+开机自动启动设置
+
+ 
+chkconfig --add mysql
+##有的系统需要下面的
+chkconfig --level 345 mysql on
+----------------------------------------
+ln -s /usr/local/mysql/bin/mysql /usr/bin/
+--------------------------------------后修改密码
+ 
+mysql -uroot  -h127.0.0.1 -p
+mysql&gt; SET PASSWORD = PASSWORD('123456');
+
+cd /usr/local/mysql 
+#./bin/mysqladmin -u root password 

@@ -1,0 +1,81 @@
+#!/bin/bash
+mysql_port=3307
+mysql_username="admin"
+mysql_password="password"
+function_start_mysql()
+{
+printf "Starting MySQL...\n"
+/bin/sh /usr/local/mysql/bin/mysqld_safe --defaults-file=/data/dbdata_${mysql_port}/my.cnf 2>&1 > /dev/null &
+}
+function_stop_mysql()
+{
+printf "Stoping MySQL...\n"
+/usr/local/mysql/bin/mysqladmin -u ${mysql_username} -p${mysql_password} -S /data/dbdata_${mysql_port}/mysql.sock shutdown
+}
+function_restart_mysql()
+{
+printf "Restarting MySQL...\n"
+function_stop_mysql
+function_start_mysql
+}
+function_kill_mysql()
+{
+kill -9 $(ps -ef | grep 'bin/mysqld_safe' | grep ${mysql_port} | awk '{printf $2}')
+kill -9 $(ps -ef | grep 'libexec/mysqld' | grep ${mysql_port} | awk '{printf $2}')
+}
+case $1 in
+start)
+function_start_mysql;;
+stop)
+function_stop_mysql;;
+kill)
+function_kill_mysql;;
+restart)
+function_stop_mysql
+function_start_mysql;;
+*)
+echo "Usage: /data/dbdata_${mysql_port}/mysqld {start|stop|restart|kill}";;
+esac
+
+vim /data/dbdata_3308/mysqld
+3308的启动文件如下：
+
+点击(此处)折叠或打开
+#!/bin/bash
+mysql_port=3308
+mysql_username="admin"
+mysql_password="password"
+function_start_mysql()
+{
+printf "Starting MySQL...\n"
+/bin/sh /usr/local/mysql/bin/mysqld_safe --defaults-file=/data/dbdata_${mysql_port}/my.cnf 2>&1 > /dev/null &
+}
+function_stop_mysql()
+{
+printf "Stoping MySQL...\n"
+/usr/local/mysql/bin/mysqladmin -u ${mysql_username} -p${mysql_password} -S /data/dbdata_${mysql_port}/mysql.sock shutdown
+}
+function_restart_mysql()
+{
+printf "Restarting MySQL...\n"
+function_stop_mysql
+function_start_mysql
+}
+function_kill_mysql()
+{
+kill -9 $(ps -ef | grep 'bin/mysqld_safe' | grep ${mysql_port} | awk '{printf $2}')
+kill -9 $(ps -ef | grep 'libexec/mysqld' | grep ${mysql_port} | awk '{printf $2}')
+}
+case $1 in
+start)
+function_start_mysql;;
+stop)
+function_stop_mysql;;
+kill)
+function_kill_mysql;;
+restart)
+function_stop_mysql
+function_start_mysql;;
+*)
+echo "Usage: /data/dbdata_${mysql_port}/mysqld {start|stop|restart|kill}";;
+esac

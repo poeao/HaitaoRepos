@@ -1,0 +1,73 @@
+﻿mysql 多实例 
+1. 安装依赖
+yum install curses-devel - y
+yum install libail-devel -y
+关掉mysql : pkill mysqld
+相当于  make install 之后的步骤重新开始。 
+1. mkdir -p /data/{3306,3307}/data
+    tree /data
+2. 配置文件参见 my.cnf
+/data
+├── 3306
+│   ├── data
+│   │   └── my.cnf
+│   └── my.cnf
+└── 3307
+    ├── data
+    └── my.cnf
+.多实例启动文件的启动mysql 实质：
+mysqld_safe --defaults-file=/data/3306/my.cnf 2>&1 > /dev/null & 
+mysqld_safe --defaults-file=/data/3307/my.cnf 2>&1 > /dev/null & 
+停止实质： 
+mysqladmin -u root -proot -S /data/3306/mysql.sock shutdown
+mysqladmin -u root -proot -S /data/3307/mysql.sock shutdown
+
+[root@centos-65 3306]# tree /data
+/data
+├── 3306
+│   ├── data
+│   │   └── my.cnf
+│   ├── my.cnf
+│   └── mysql
+└── 3307
+    ├── data
+    ├── my.cnf
+    └── mysql
+
+chown -R mysql.mysql /data/
+find /data/ -type f -name "mysql"|xargs chmod u+x
+
+初始化DB
+mysql_install_db --basedir=/application/mysql --datadir=/data/3306/data --user=mysql
+mysql_install_db --basedir=/application/mysql --datadir=/data/3307/data --user=mysql
+
+Installing MySQL system tables...
+OK
+Filling help tables...
+OK
+
+.login.
+[root@centos-65 ~]# mysql -S /data/3306/mysql.sock
+
+开机启动， echo "/data/330x/mysql start " >>/etc/rc.local 
+
+.set password for mysql db root user:
+mysqladmin -u root -S /data/3306/mysql.sock password 'root'
+mysqladmin -u root -S /data/3307/mysql.sock password 'root'
+
+设置密码后，按如下方式登录： 
+ mysql -S /data/3306/mysql.sock -p
+
+
+find /data -type f -name "mysql" -exec chmod 700 {} \;
+
+Modify password:
+update mysql.user set password=PASSWORD('123456') where user='root' and host='localhost';
+
+replace:
+set -i 's#/usr/local/mysql#/application/mysql#g' /application/mysql/bin/mysqld_safe
+
+#find lost root password:
+mysqld_safe --defaults-file=/data/3306/my.cnf --skip-grant-table &
+mysql -uroot -p -S /data/3306/mysql.sock  
+

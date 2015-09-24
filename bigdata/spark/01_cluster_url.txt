@@ -1,0 +1,18 @@
+http://spark-master:50070   登录Web控制可以查看HDFS集群
+
+http://spark-master:8088    通过Web控制台查看ResourceManager运行状态
+
+http://spark-worker1:8042  通过Web控制台查看SparkWorker1上的NodeManager运行状态
+http://spark-worker2:8042  通过Web控制台查看SparkWorker1上的NodeManager运行状态
+
+http://spark-master:19888 在Web控制台上看到JobHistory中的任务执行历史信息
+
+
+http://spark-worker1:50075
+
+
+http://spark-master:8080 Spark集群的Web页面 
+http://spark-master:4040 从Web的角度看一下SparkUI
+
+MASTER:spark://SparkMaster:7077 ./spark-shell
+

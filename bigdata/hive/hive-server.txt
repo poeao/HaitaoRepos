@@ -1,0 +1,4 @@
+
+hive --service hiveserver -p 50000 &
+
+hive --service hiveserver2 --hiveconf hive.server2.thrift.port=10001

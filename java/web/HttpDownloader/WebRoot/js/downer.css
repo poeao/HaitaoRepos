@@ -1,0 +1,47 @@
+﻿body{ font:12px/12px 宋体,新宋体; color:#333333; margin:0; padding:0;}
+li{ list-style:none; }
+a{ text-decoration:none; color:#004477; }
+a:hover{ color:#004477; text-decoration:underline; }
+
+/*文件列表框*/
+#FilePostLister
+{
+    border: 1px solid #6FBCE2;
+    background-color: #FFFFFF;
+    font:12px/12px 宋体,新宋体;/*防目外部样式破坏*/
+    width: 387px;
+    height:400px;
+    overflow-x:hidden;
+    overflow-y:scroll;
+}
+/*细线*/
+.Line{background-color: #E3E6EB;overflow: hidden;display: none;height: 1px;}
+/*新构架*/
+div.UploaderItem{font-family: 新宋体;font-size: 12px; background-color: #FFFFFF;width: 410px; height:65px; margin:5px 10px 0 20px; display:none;}
+div.top-space{margin:3px 0 0 0;}
+div.lineSpace{margin:10px 0 0 0;}
+div.UploaderItemLeft{width:315px; float:left;}
+div.UploaderItemRight{width:40px; float:left;margin:3px 0 0 0;}
+/*文件信息*/
+.FileInfo{margin:3px 0 0 0;padding:0;}
+/*文件名称*/
+div.UploaderItem .FileName{ float:left; font-weight: bold; overflow:hidden; width:239px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+/*文件大小*/
+div.UploaderItem .FileSize{padding:0;color:#728089;width:52px; float:left;text-align:right;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;}
+/*进度条边框*/
+div.UploaderItem div.ProcessBorder{margin:25px 0 0 0;padding: 0px;border: 1px solid #AAAAAA;width:284px; clear:both; }
+div.UploaderItem div.Process{ height:12px; background-color: #A5DF16;width:0;/*width:200px;*/}
+/*上传信息*/
+div.UploaderItem div.PostInf{color: #7A8F99;margin:8px 0 0 0;}
+/*进度百分比*/
+div.UploaderItem div.ProcessNum{font:12px/12px 宋体;margin:10px 0 0 0;}
+/*按钮*/
+div.UploaderItem a.Btn,div.UploaderItem a.Btn:hover{text-decoration: none; color:#244281;}
+.BtnInfo{height:12px;}
+/*上传面板*/
+#UploaderPanel{font:12px/12px 宋体; background:#ECF9FF; border:solid 1px #4CA5D8;width:402px;}
+#UploaderPanel .header{ height:31px; line-height:31px; background:#67B9DC; border-bottom:solid 1px #FFF; color:White;padding:0 0 0 10px; font-weight:bold;}
+#UploaderPanel .toolbar{padding:20px 0 0 0;}
+#UploaderPanel .toolbar input{margin:0 0 0 7px;}
+#UploaderPanel .content{margin:17px 7px 15px 7px; background:#ECF9FF;}
+#UploaderPanel .footer{height:25px; line-height:25px; background:#D4EDF9; color:#7A8F99; border-top:solid 1px #B7DDF0;padding:5px;}

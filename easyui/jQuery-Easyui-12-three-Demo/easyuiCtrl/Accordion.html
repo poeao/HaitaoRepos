@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Accordion</title>
+ 	<link rel="stylesheet" type="text/css" href="../js/themes/default/easyui.css" />
+    <link rel="stylesheet" type="text/css" href="../js/themes/icon.css" />
+    <script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.easyui.min-1.1.2.js"></script>
+    <script type="text/javascript" src="../js/jquery.beautyOfCode.js"></script>
+
+    <script type="text/javascript" >
+    	$(function(){
+			$('#aa').accordion();
+		})
+		
+		$.beautyOfCode.init({
+			brushes: ['Xml','JScript'],
+			ready: function() {
+				$.beautyOfCode.beautifyAll();
+				//$("#someCode").beautifyCode('javascript', {gutter:false});
+			}
+		});
+
+		
+    </script>
+    
+</head>
+
+<body>
+<fieldset>
+	<legend>实例效果</legend>
+<div id="cc" style="overflow:auto;height:330px;padding:0px; margin:10px;border:1px solid #99BBE8;">
+	<div id="aa" class="easyui-accordion" fit=true border=false style="width:200px; height:200px;" >
+			<div title="Title1"  selected="true" icon="icon-ok" style="overflow:auto;padding:10px;">
+				<h3 style="color:#0099FF;">Accordion for jQuery</h3>
+				<p>Accordion is a part of easyui framework for jQuery. </p>
+			</div>
+			<div title="Title2" icon="icon-reload" style="padding:10px;">
+				content2
+			</div>
+			<div title="Title3">
+				content3
+			</div>
+		</div>
+	</div>
+</fieldset>
+
+<fieldset>
+	<legend>JS 代码</legend>
+    <pre class="code">
+    <code class="html">
+
+    	&lt;link rel="stylesheet" type="text/css" href="../js/themes/default/easyui.css" />
+        &lt;link rel="stylesheet" type="text/css" href="../js/themes/icon.css" />
+        &lt;script type="text/javascript" src="../js/jquery-1.4.2.min.js"></script>
+        &lt;script type="text/javascript" src="../js/jquery.easyui.js"></script>
+        &lt;script type="text/javascript" >
+            $(function(){
+                $('#aa').accordion(); //初始化
+            })
+        &lt;/script>
+        </code>
+    </pre>
+ </fieldset>
+ <br />
+ <fieldset>
+	<legend>HTML 代码</legend>   
+    <pre class="code">
+    <code class="html">
+
+    	&lt;div id="aa" class="easyui-accordion" fit=true border=false style="width:200px; height:200px;" >
+			&lt;div title="Title1"  selected="true" icon="icon-ok" style="overflow:auto;padding:10px;">
+				&lt;h3 style="color:#0099FF;">Accordion for jQuery&lt;/h3>
+				&lt;p>Accordion is a part of easyui framework for jQuery. &lt;/p>
+			&lt;/div>
+			&lt;div title="Title2" icon="icon-reload" style="padding:10px;">
+				content2
+			&lt;/div>
+			&lt;div title="Title3">
+				content3
+			&lt;/div>
+		&lt;/div>
+        </code>
+    </pre>
+    
+</fieldset>
+
+</body>
+</html>

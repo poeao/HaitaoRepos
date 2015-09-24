@@ -10,3 +10,7 @@ mysql> GRANT USAGE ON *.* TO 'dummy'@'localhost';
 
 
 use mysql;mysql>update user set host = '%' where user = 'root';
+
+#view the backup file 
+grep -E -v "#|\/|^$|--" xxxxx.sql
+

@@ -1,0 +1,13 @@
+#Fat Jar Configuration File
+#Sun Jul 16 14:48:35 CST 2006
+onejar.license.required=false
+manifest.classpath=
+onejar.checkbox=false
+jarname=progressUpload.jar
+manifest.mergeall=true
+manifest.mainclass=
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=

@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <p>此页面用来测试down_create.jsp页面是否正常</p>
+    <form action="../db/down_create.jsp" method="get">
+        UID：<input name="uid" type="text" value="0" /><br />
+        MAC：<input name="mac" type="text" value="10-10-10-10-10" /><br />
+        <!--D:\\Soft\\QQ2014.exe-->
+        pathLoc：<input name="pathLoc" type="text" value="D%3a%5c%5cSoft%5c%5cQQ2014.exe" /><br />
+        <!--http://www.qq.com/QQ2014.exe-->
+        pathSvr：<input name="pathSvr" type="text" value="http%3a%2f%2fwww.qq.com%2fQQ2014.exe" /><br />
+        lengthLoc：<input name="lengthLoc" type="text" value="10" /><br />
+        lengthSvr：<input name="lengthSvr" type="text" value="10" /><br />
+        cbk：<input name="callback" type="text" value="callback" /><br />
+        <input type="submit" value="提交" />
+    </form>
+</body>
+</html>
