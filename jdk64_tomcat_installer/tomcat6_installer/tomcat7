@@ -1,0 +1,57 @@
+#!/bin/bash
+# chkconfig: 345 99 10
+# description: Auto-starts tomcat
+# /etc/init.d/tomcatd
+# Tomcat auto-start
+# Source function library.
+#. /etc/init.d/functions
+# source networking configuration.
+#. /etc/sysconfig/network
+RETVAL=0
+export JAVA_HOME=/usr/local/java/jdk1.7.0_67
+export CATALINA_HOME=/opt/apache/tomcat7/server-8088
+export CATALINA_BASE=/opt/apache/tomcat7/server-8088
+
+start(){
+        if [ -f $CATALINA_HOME/bin/startup.sh ]; then
+            echo $"Starting Tomcat7"
+            $CATALINA_HOME/bin/startup.sh
+            RETVAL=$?
+            echo "Start OK"
+            return $RETVAL
+        fi
+}
+
+stop(){
+        if [ -f $CATALINA_HOME/bin/shutdown.sh ]; then
+           echo $"Stopping Tomcat7"
+           $CATALINA_HOME/bin/shutdown.sh
+           RETVAL=$?
+           sleep 2
+           ps fwwu|grep 8088|grep -v grep|grep -v PID|awk '{print $2}'|xargs kill -9 >/dev/null 2>&1
+           echo "Stop Ok"
+           # [ $RETVAL -eq 0 ] && rm -f /var/lock/...
+           return $RETVAL
+        fi
+}
+
+case "$1" in
+        start)
+                start
+        ;;
+        stop)
+                stop
+        ;;
+        restart)
+         echo "Restarting Tomcat"
+         $0 stop
+         sleep 2
+         $0 start
+        ;;
+        *)
+        echo "Usage : $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit $RETVAL

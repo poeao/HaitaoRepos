@@ -1,4 +1,5 @@
 mysqldump -h localhost -uanhry -panhry --opt anhry > anhryXXXXX.sql 
+mysqldump -h localhost -uroot -panhry_1q2w3e4r --opt angroup > angroup.sql
 mysql -h localhost -P 3308 -uanhry -panhry anhry < anhry20131025.sql
 
 mysql> GRANT ALL PRIVILEGES ON *.* TO 'monty'@'localhost'
