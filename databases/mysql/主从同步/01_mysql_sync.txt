@@ -1,0 +1,90 @@
+主库一个I/O线程， 从库两个 一个I/O线程，一个SQL线程
+主从库在某个点上数据要一致
+主库上要建立进行数据同步的帐号，主库要打开bin-log 开关 否则没法同步
+
+1 . mysql 自动批量制作主从同步需要的语句 (在从库上执行）
+
+cat | mysql -uroot -proot -s /data/3308/mysql.sock << EOF
+CHANGE MASTER TO 
+MASTER_HOST='192.168.137.65',
+MASTER_PORT=3306,
+MASTER_USER='rep',
+MASTER_PASSWORD='rep',
+MASTER_LOG_FILE='mysql-bin.000008',
+MASTER_LOG_POS=320;
+EOF
+
+
+start slave;  开启同步
+
+
+------------------------------------ Mysql master  slave -----------------------------------
+1. 在master 上打开 binlog,  设置server-id 
+[mysqld]
+server-id = 1
+log-bin = /log/path
+***********************************************************************
+[root@centos-65 3306]# egrep "log-bin|server-id" my.cnf
+server-id = 1
+log-bin = /data/3306/mysql-bin
+***********************************************************************
+  slave 的server-id 要和master 不一样  
+
+2. 在master 上建立用于同步的帐号：
+***********************************************************************
+mysql> grant replication slave on *.* to 'rep'@'%' identified by 'rep';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> flush privileges;
+***********************************************************************
+
+3. 在master 上 备份数据 
+master 加读锁 
+  mysql> flush table with read lock;
+Query OK, 0 rows affected (0.00 sec)
+#记录备份点：
+mysql> show master status;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000008 |      320 |              |                  |
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+#新开一个窗口
+[root@centos-65 ~]# mysqldump -uroot -proot -S /data/3306/mysql.sock -A -B --events |gzip > /opt/rep.sql.gz
+[root@centos-65 ~]# mysqldump -uroot -proot -S /data/3306/mysql.sock -A -B --events --master-data=2 > /opt/rep.sql
+[root@centos-65 ~]# mysqldump -uroot -proot -S /data/3306/mysql.sock -A -B --events --master-data=1 > /opt/rep2.sql
+mysql> unlock tables;
+Query OK, 0 rows affected (0.00 sec)
+
+4. 同步数据到slave 
+[root@centos-65 ~]# mysql -uroot -proot -S /data/3307/mysql.sock </opt/rep.sql
+
+5. 在slave 上执行 ： 
+mysql> CHANGE MASTER TO
+    -> MASTER_HOST='192.168.137.65',
+    -> MASTER_PORT=3306,
+    -> MASTER_USER='rep',
+    -> MASTER_PASSWORD='rep',
+    -> MASTER_LOG_FILE='mysql-bin.000008',
+    -> MASTER_LOG_POS=320;
+Query OK, 0 rows affected (0.01 sec)
+保存在 data/master.info 当中  
+
+6. 在slave 上 
+mysql> start slave;
+Query OK, 0 rows affected (0.00 sec)
+mysql> show slave status\G;
+*************************** 1. row ***************************
+               Slave_IO_State: Waiting for master to send event
+                  Master_Host: 192.168.137.65
+                  Master_User: rep
+                  Master_Port: 3306
+                Connect_Retry: 60
+              Master_Log_File: mysql-bin.000008
+          Read_Master_Log_Pos: 320
+               Relay_Log_File: relay-bin.000002
+                Relay_Log_Pos: 253
+        Relay_Master_Log_File: mysql-bin.000008
+             Slave_IO_Running: Yes
+            Slave_SQL_Running: Yes

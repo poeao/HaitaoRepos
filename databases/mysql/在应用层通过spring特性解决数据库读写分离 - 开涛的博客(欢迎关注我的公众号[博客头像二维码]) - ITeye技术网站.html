@@ -1,0 +1,949 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0048)http://jinnianshilongnian.iteye.com/blog/1720618 -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站</title>
+    <meta name="description" content="   如何配置mysql数据库的主从？  单机配置mysql主从：http://my.oschina.net/god/blog/496     常见的解决数据库读写分离有两种方案  1、应用层  http://neoremind.net/2011/06/spring实现数据库读写分离  目前的一些解决方案需要在程序中手动指定数据源，比较麻烦，后边我会通过AOP思想来解决这个问题。     2、中间件 ...">
+    <meta name="keywords" content=" 在应用层通过spring特性解决数据库读写分离">
+    <link rel="shortcut icon" href="http://jinnianshilongnian.iteye.com/images/favicon.ico" type="image/x-icon">
+    <link rel="search" type="application/opensearchdescription+xml" href="http://jinnianshilongnian.iteye.com/open_search.xml" title="ITeye">
+    <link href="http://jinnianshilongnian.iteye.com/rss" rel="alternate" title="开涛的博客(欢迎关注我的公众号[博客头像二维码])" type="application/rss+xml">
+    <link href="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/blog.css" media="screen" rel="stylesheet" type="text/css">
+<link href="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/orange.css" media="screen" rel="stylesheet" type="text/css">
+    <script type="text/javascript" async="" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/ga.js"></script><script type="text/javascript" async="" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/ga.js"></script><script src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/application.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-535605-1']);
+  _gaq.push(['_setDomainName', 'iteye.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+      <link href="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/SyntaxHighlighter.css" media="screen" rel="stylesheet" type="text/css">
+  <script src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/shCoreCommon.js" type="text/javascript"></script>
+<script src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/hotkey.js" type="text/javascript"></script>
+  <script src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/code_favorites.js" type="text/javascript"></script>
+<script src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/weiboshare.js" type="text/javascript"></script>
+  <style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style></head>
+  <body>
+    <div id="header">
+      <div id="blog_site_nav">
+  <a href="http://www.iteye.com/" class="homepage">首页</a>
+  <a href="http://www.iteye.com/news">资讯</a>
+  <a href="http://www.iteye.com/magazines">精华</a>
+  <a href="http://www.iteye.com/forums">论坛</a>
+  <a href="http://www.iteye.com/ask">问答</a>
+  <a href="http://www.iteye.com/blogs">博客</a>
+  <a href="http://www.iteye.com/blogs/subjects">专栏</a>
+  <a href="http://www.iteye.com/groups">群组</a>
+  <a href="http://jinnianshilongnian.iteye.com/blog/1720618#" onclick="return false;" id="msna"><u>更多</u> <small>▼</small></a>
+  <div class="quick_menu" style="display:none;">
+    <a target="_blank" href="http://job.iteye.com/iteye">招聘</a>
+    <a href="http://www.iteye.com/search">搜索</a>
+  </div>
+</div>
+
+      <div id="user_nav">
+      <a href="http://jinnianshilongnian.iteye.com/login" class="welcome" title="登录">您还未登录 !</a>
+    <a href="http://jinnianshilongnian.iteye.com/login">登录</a>
+    <a href="http://jinnianshilongnian.iteye.com/signup" class="nobg">注册</a>
+  </div>
+
+    </div>
+
+    <div id="page">
+      <div id="branding" class="clearfix">
+        <div id="blog_name">
+          <h1><a href="http://jinnianshilongnian.iteye.com/">开涛的博客(欢迎关注我的公众号[博客头像二维码])</a></h1>
+        </div>
+        <div id="fd"></div>
+        <div id="blog_navbar">
+          <ul>
+            <li class="blog_navbar_for"><a href="http://jinnianshilongnian.iteye.com/"><strong>博客</strong></a></li>
+            <li><a href="http://jinnianshilongnian.iteye.com/weibo">微博</a></li>
+            <li><a href="http://jinnianshilongnian.iteye.com/album">相册</a></li>
+            <li><a href="http://jinnianshilongnian.iteye.com/link">收藏</a></li>
+            <li><a href="http://jinnianshilongnian.iteye.com/blog/guest_book">留言</a></li>
+            <li><a href="http://jinnianshilongnian.iteye.com/blog/profile">关于我</a></li>
+          </ul>
+    
+          <div class="search">
+            <form action="http://jinnianshilongnian.iteye.com/blog/search" method="get">
+              <input class="search_text" id="query" name="query" style="margin-left: 10px;width: 110px;" type="text" value="">
+              <input class="submit_search" type="submit" value="">
+            </form>
+          </div> 
+          <div id="fd"></div>         
+        </div>
+      </div>
+      
+      <div id="content" class="clearfix">
+        <div id="main">
+          
+
+
+
+          
+
+
+<div class="h-entry" style="display:none">
+  <a href="http://jinnianshilongnian.iteye.com/" class="p-author" target="_blank">jinnianshilongnian</a>
+</div>
+
+
+<div class="blog_main">
+  <div class="blog_title">
+    <h3>
+      <a href="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站.html">在应用层通过spring特性解决数据库读写分离</a>
+      <em class="actions">      </em>
+    </h3>
+    <ul class="blog_categories"><strong>博客分类：</strong> <li><a href="http://jinnianshilongnian.iteye.com/category/218109">spring杂谈</a></li> </ul>
+        <div class="news_tag"></div>
+  </div>
+
+  <div id="blog_content" class="blog_content">
+    <p>&nbsp;</p>
+<h3>如何配置mysql数据库的主从？</h3>
+<p class="MsoNormal"><span>单机配置</span><span>mysql</span><span>主从：</span><span><a href="http://my.oschina.net/god/blog/496">http://my.oschina.net/god/blog/496</a></span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<h3>常见的解决数据库读写分离有两种方案</h3>
+<p class="MsoNormal"><strong><span>1</span></strong><strong><span>、应用层</span></strong></p>
+<p class="MsoNormal"><a href="http://neoremind.net/2011/06/spring%E5%AE%9E%E7%8E%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><strong><span><span style="font-weight: normal;">http://neoremind.net/2011/06/</span></span></strong><span>spring</span>实现数据库读写分离</a></p>
+<p class="MsoNormal"><span>目前的一些解决方案需要在程序中手动指定数据源，比较麻烦，后边我会通过</span><span>AOP</span><span>思想来解决这个问题。</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p class="MsoNormal"><strong><span>2</span></strong><strong><span>、中间件</span></strong></p>
+<p class="MsoNormal"><span>mysql-proxy</span><span>：</span><span><a href="http://hi.baidu.com/geshuai2008/item/0ded5389c685645f850fab07">http://hi.baidu.com/geshuai2008/item/0ded5389c685645f850fab07</a></span></p>
+<p class="MsoNormal"><span>Amoeba
+for&nbsp;MySQL</span><span>：</span><span><a href="http://www.iteye.com/topic/188598"><span>http://www.iteye.com/topic/188598</span></a></span><span>和</span><span><a href="http://www.iteye.com/topic/1113437"><span>http://www.iteye.com/topic/1113437</span></a></span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p class="MsoNormal"><span>此处我们介绍一种在应用层的解决方案，通过</span><span>spring</span><span>动态数据源和</span><span>AOP</span><span>来解决数据库的读写分离。</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p class="MsoNormal"><span>该方案目前已经在一个互联网项目中使用了，而且可以很好的工作。</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<h3>该方案目前支持</h3>
+<p class="MsoNormal"><span>一读多写；当写时默认读操作到写库、当写时强制读操作到读库。</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<h3>考虑未来支持</h3>
+<p class="MsoNormal"><span>读库负载均衡、读库故障转移等。</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<h3>使用场景</h3>
+<p class="MsoNormal"><span>不想引入中间件，想在应用层解决读写分离，可以考虑这个方案；</span></p>
+<p class="MsoNormal"><span>建议数据访问层使用</span><span>jdbc</span><span>、</span><span>ibatis</span><span>，不建议</span><span>hibernate。</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<h3>优势</h3>
+<p class="MsoNormal"><span>应用层解决，不引入额外中间件；</span></p>
+<p class="MsoNormal"><span>在应用层支持『当写时默认读操作到写库』，这样如果我们采用这种方案，在写操作后读数据直接从写库拿，不会产生数据复制的延迟问题；</span></p>
+<p class="MsoNormal"><span>应用层解决读写分离，理论支持任意数据库。</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+<h3>缺点</h3>
+<p class="MsoNormal">1、不支持@Transactional注解事务，此方案要求所有读方法必须是read-only=true，因此如果是@Transactional，这样就要求在每一个读方法头上加@Transactional 且readOnly属性=true，相当麻烦。 :oops:&nbsp;</p>
+<p class="MsoNormal">2、必须按照配置约定进行配置，不够灵活。</p>
+<p class="MsoNormal">&nbsp;</p>
+<h3>两种方案</h3>
+<h3><span><img alt="" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/ebfdc7b0-f06a-3bcc-8622-9d424432132b.jpg"><br><br></span></h3>
+<p class="MsoNormal"><span>方案</span><span>1</span><span>：当只有读操作的时候，直接操作读库（从库）；</span></p>
+<p class="MsoNormal"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span>当在写事务（即写主库）中读时，也是读主库（即参与到主库操作），这样的优势是可以防止写完后可能读不到刚才写的数据；</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p class="MsoNormal"><span>此方案其实是使用事务传播行为为：</span><span>SUPPORTS</span><span>解决的。</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p><br><img alt="" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/b98f6123-8c63-3ec7-b2c1-54e3e439df92.jpg"></p>
+<p class="MsoNormal"><span>方案</span><span>2</span><span>：当只有读操作的时候，直接操作读库（从库）；</span></p>
+<p class="MsoNormal"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span>当在写事务（即写主库）中读时，强制走从库，即先暂停写事务，开启读（读从库），然后恢复写事务。</span></p>
+<p class="MsoNormal"><span>此方案其实是使用事务传播行为为：</span><span>NOT_SUPPORTS</span><span>解决的。</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<h3><span>核心组件</span></h3>
+<p class="MsoNormal"><span>cn.javass.common.datasource.ReadWriteDataSource</span><span>：读写分离的动态数据源，类似于</span><span>AbstractRoutingDataSource</span><span>，具体参考</span><span>javadoc</span><span>；</span></p>
+<p class="MsoNormal"><span>cn.javass.common.datasource.ReadWriteDataSourceDecision</span><span>：读写库选择的决策者，具体参考</span><span>javadoc</span><span>；</span></p>
+<p class="MsoNormal"><span>cn.javass.common.datasource.ReadWriteDataSourceProcessor</span><span>：此类实现了两个职责（为了减少类的数量将两个功能合并到一起了）：读</span><span>/</span><span>写动态数据库选择处理器、通过</span><span>AOP</span><span>切面实现读</span><span>/</span><span>写选择，具体参考</span><span>javadoc</span><span>。</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<h3>具体配置</h3>
+<p class="MsoNormal"><strong><span>1</span></strong><strong><span>、数据源配置</span></strong></p>
+<p class="MsoNormal"><span style="font-size: 10.0pt;">1.1</span><span>、写库配置</span></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%20%20%09%3Cbean%20id%3D%22writeDataSource%22%20class%3D%22org.logicalcobwebs.proxool.ProxoolDataSource%22%3E%0A%09%09%3Cproperty%20name%3D%22alias%22%20value%3D%22writeDataSource%22%2F%3E%0A%09%09%3Cproperty%20name%3D%22driver%22%20value%3D%22%24%7Bwrite.connection.driver_class%7D%22%20%2F%3E%0A%09%09%3Cproperty%20name%3D%22driverUrl%22%20value%3D%22%24%7Bwrite.connection.url%7D%22%20%2F%3E%0A%09%09%3Cproperty%20name%3D%22user%22%20value%3D%22%24%7Bwrite.connection.username%7D%22%20%2F%3E%0A%09%09%3Cproperty%20name%3D%22password%22%20value%3D%22%24%7Bwrite.connection.password%7D%22%20%2F%3E%0A%09%09%3Cproperty%20name%3D%22maximumConnectionCount%22%20value%3D%22%24%7Bwrite.proxool.maximum.connection.count%7D%22%2F%3E%0A%09%09%3Cproperty%20name%3D%22minimumConnectionCount%22%20value%3D%22%24%7Bwrite.proxool.minimum.connection.count%7D%22%20%2F%3E%0A%09%09%3Cproperty%20name%3D%22statistics%22%20value%3D%22%24%7Bwrite.proxool.statistics%7D%22%20%2F%3E%0A%09%09%3Cproperty%20name%3D%22simultaneousBuildThrottle%22%20value%3D%22%24%7Bwrite.proxool.simultaneous.build.throttle%7D%22%2F%3E%0A%09%3C%2Fbean%3E%0A" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean&nbsp;id=</span><span class="string">"writeDataSource"</span><span>&nbsp;</span><span class="keyword">class</span><span>=</span><span class="string">"org.logicalcobwebs.proxool.ProxoolDataSource"</span><span>&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"alias"</span><span>&nbsp;value=</span><span class="string">"writeDataSource"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"driver"</span><span>&nbsp;value=</span><span class="string">"${write.connection.driver_class}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"driverUrl"</span><span>&nbsp;value=</span><span class="string">"${write.connection.url}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"user"</span><span>&nbsp;value=</span><span class="string">"${write.connection.username}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"password"</span><span>&nbsp;value=</span><span class="string">"${write.connection.password}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"maximumConnectionCount"</span><span>&nbsp;value=</span><span class="string">"${write.proxool.maximum.connection.count}"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"minimumConnectionCount"</span><span>&nbsp;value=</span><span class="string">"${write.proxool.minimum.connection.count}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"statistics"</span><span>&nbsp;value=</span><span class="string">"${write.proxool.statistics}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"simultaneousBuildThrottle"</span><span>&nbsp;value=</span><span class="string">"${write.proxool.simultaneous.build.throttle}"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&lt;/bean&gt;&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://jinnianshilongnian.iteye.com/blog/1720618#" pre_index="0" title="在应用层通过spring特性解决数据库读写分离" style="display: none;">  	&lt;bean id="writeDataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource"&gt;
+		&lt;property name="alias" value="writeDataSource"/&gt;
+		&lt;property name="driver" value="${write.connection.driver_class}" /&gt;
+		&lt;property name="driverUrl" value="${write.connection.url}" /&gt;
+		&lt;property name="user" value="${write.connection.username}" /&gt;
+		&lt;property name="password" value="${write.connection.password}" /&gt;
+		&lt;property name="maximumConnectionCount" value="${write.proxool.maximum.connection.count}"/&gt;
+		&lt;property name="minimumConnectionCount" value="${write.proxool.minimum.connection.count}" /&gt;
+		&lt;property name="statistics" value="${write.proxool.statistics}" /&gt;
+		&lt;property name="simultaneousBuildThrottle" value="${write.proxool.simultaneous.build.throttle}"/&gt;
+	&lt;/bean&gt;
+</pre>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span style="font-size: 10.0pt;">1.2</span><span>、读库配置</span></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%20%20%20%20%3Cbean%20id%3D%22readDataSource1%22%20class%3D%22org.logicalcobwebs.proxool.ProxoolDataSource%22%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22alias%22%20value%3D%22readDataSource%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22driver%22%20value%3D%22%24%7Bread.connection.driver_class%7D%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22driverUrl%22%20value%3D%22%24%7Bread.connection.url%7D%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22user%22%20value%3D%22%24%7Bread.connection.username%7D%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22password%22%20value%3D%22%24%7Bread.connection.password%7D%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22maximumConnectionCount%22%20value%3D%22%24%7Bread.proxool.maximum.connection.count%7D%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22minimumConnectionCount%22%20value%3D%22%24%7Bread.proxool.minimum.connection.count%7D%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22statistics%22%20value%3D%22%24%7Bread.proxool.statistics%7D%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22simultaneousBuildThrottle%22%20value%3D%22%24%7Bread.proxool.simultaneous.build.throttle%7D%22%2F%3E%0A%20%20%20%20%3C%2Fbean%3E%26nbsp%3B" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>&lt;bean&nbsp;id=</span><span class="string">"readDataSource1"</span><span>&nbsp;</span><span class="keyword">class</span><span>=</span><span class="string">"org.logicalcobwebs.proxool.ProxoolDataSource"</span><span>&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"alias"</span><span>&nbsp;value=</span><span class="string">"readDataSource"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"driver"</span><span>&nbsp;value=</span><span class="string">"${read.connection.driver_class}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"driverUrl"</span><span>&nbsp;value=</span><span class="string">"${read.connection.url}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"user"</span><span>&nbsp;value=</span><span class="string">"${read.connection.username}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"password"</span><span>&nbsp;value=</span><span class="string">"${read.connection.password}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"maximumConnectionCount"</span><span>&nbsp;value=</span><span class="string">"${read.proxool.maximum.connection.count}"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"minimumConnectionCount"</span><span>&nbsp;value=</span><span class="string">"${read.proxool.minimum.connection.count}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"statistics"</span><span>&nbsp;value=</span><span class="string">"${read.proxool.statistics}"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"simultaneousBuildThrottle"</span><span>&nbsp;value=</span><span class="string">"${read.proxool.simultaneous.build.throttle}"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&lt;/bean&gt;&nbsp;&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://jinnianshilongnian.iteye.com/blog/1720618#" pre_index="1" title="在应用层通过spring特性解决数据库读写分离" style="display: none;">    &lt;bean id="readDataSource1" class="org.logicalcobwebs.proxool.ProxoolDataSource"&gt;
+        &lt;property name="alias" value="readDataSource"/&gt;
+        &lt;property name="driver" value="${read.connection.driver_class}" /&gt;
+        &lt;property name="driverUrl" value="${read.connection.url}" /&gt;
+        &lt;property name="user" value="${read.connection.username}" /&gt;
+        &lt;property name="password" value="${read.connection.password}" /&gt;
+        &lt;property name="maximumConnectionCount" value="${read.proxool.maximum.connection.count}"/&gt;
+        &lt;property name="minimumConnectionCount" value="${read.proxool.minimum.connection.count}" /&gt;
+        &lt;property name="statistics" value="${read.proxool.statistics}" /&gt;
+        &lt;property name="simultaneousBuildThrottle" value="${read.proxool.simultaneous.build.throttle}"/&gt;
+    &lt;/bean&gt;&nbsp;</pre>
+<p class="MsoNormal"><span style="font-size: 10pt; font-family: &#39;Courier New&#39;;">1.3</span><span>、读写动态库配置</span><span style="font-size: 10pt; font-family: &#39;Courier New&#39;;">&nbsp;&nbsp;&nbsp; </span></p>
+<p class="MsoNormal"><span>通过</span><span style="font-size: 10pt; font-family: &#39;Courier New&#39;;">writeDataSource</span><span>指定写库，通过</span><span style="font-size: 10pt; font-family: &#39;Courier New&#39;;">readDataSourceMap</span><span>指定从库列表，从库列表默认通过顺序轮询来使用读库，具体参考</span><span style="font-size: 10pt; font-family: &#39;Courier New&#39;;">javadoc</span><span>；</span></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%20%20%20%20%3Cbean%20id%3D%22readWriteDataSource%22%20class%3D%22cn.javass.common.datasource.ReadWriteDataSource%22%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22writeDataSource%22%20ref%3D%22writeDataSource%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22readDataSourceMap%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%3Cmap%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Centry%20key%3D%22readDataSource1%22%20value-ref%3D%22readDataSource1%22%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Centry%20key%3D%22readDataSource2%22%20value-ref%3D%22readDataSource1%22%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Centry%20key%3D%22readDataSource3%22%20value-ref%3D%22readDataSource1%22%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Centry%20key%3D%22readDataSource4%22%20value-ref%3D%22readDataSource1%22%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%3C%2Fmap%3E%0A%20%20%20%20%20%20%20%20%3C%2Fproperty%3E%0A%20%20%20%20%3C%2Fbean%3E%26nbsp%3B" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>&lt;bean&nbsp;id=</span><span class="string">"readWriteDataSource"</span><span>&nbsp;</span><span class="keyword">class</span><span>=</span><span class="string">"cn.javass.common.datasource.ReadWriteDataSource"</span><span>&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"writeDataSource"</span><span>&nbsp;ref=</span><span class="string">"writeDataSource"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"readDataSourceMap"</span><span>&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;map&gt;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;entry&nbsp;key=<span class="string">"readDataSource1"</span><span>&nbsp;value-ref=</span><span class="string">"readDataSource1"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;entry&nbsp;key=<span class="string">"readDataSource2"</span><span>&nbsp;value-ref=</span><span class="string">"readDataSource1"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;entry&nbsp;key=<span class="string">"readDataSource3"</span><span>&nbsp;value-ref=</span><span class="string">"readDataSource1"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;entry&nbsp;key=<span class="string">"readDataSource4"</span><span>&nbsp;value-ref=</span><span class="string">"readDataSource1"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/map&gt;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;&nbsp;&nbsp;</span></li><li><span>&lt;/bean&gt;&nbsp;&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://jinnianshilongnian.iteye.com/blog/1720618#" pre_index="2" title="在应用层通过spring特性解决数据库读写分离" style="display: none;">    &lt;bean id="readWriteDataSource" class="cn.javass.common.datasource.ReadWriteDataSource"&gt;
+        &lt;property name="writeDataSource" ref="writeDataSource"/&gt;
+        &lt;property name="readDataSourceMap"&gt;
+           &lt;map&gt;
+              &lt;entry key="readDataSource1" value-ref="readDataSource1"/&gt;
+              &lt;entry key="readDataSource2" value-ref="readDataSource1"/&gt;
+              &lt;entry key="readDataSource3" value-ref="readDataSource1"/&gt;
+              &lt;entry key="readDataSource4" value-ref="readDataSource1"/&gt;
+           &lt;/map&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;&nbsp;</pre>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><strong><span style="font-size: 10.0pt;">2</span></strong><strong><span>、</span></strong><strong><span style="font-size: 10.0pt;">XML</span></strong><strong><span>事务属性配置</span></strong></p>
+<p class="MsoNormal"><span>所以读方法必须是</span><span style="font-size: 10pt; font-family: &#39;Courier New&#39;;">read-only</span><span>（必须，以此来判断是否是读方法）。</span></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%20%20%20%20%3Ctx%3Aadvice%20id%3D%22txAdvice%22%20transaction-manager%3D%22txManager%22%3E%0A%20%20%20%20%20%20%20%20%3Ctx%3Aattributes%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22save*%22%20propagation%3D%22REQUIRED%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22add*%22%20propagation%3D%22REQUIRED%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22create*%22%20propagation%3D%22REQUIRED%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22insert*%22%20propagation%3D%22REQUIRED%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22update*%22%20propagation%3D%22REQUIRED%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22merge*%22%20propagation%3D%22REQUIRED%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22del*%22%20propagation%3D%22REQUIRED%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22remove*%22%20propagation%3D%22REQUIRED%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22put*%22%20read-only%3D%22true%22%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22query*%22%20read-only%3D%22true%22%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22use*%22%20read-only%3D%22true%22%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22get*%22%20read-only%3D%22true%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22count*%22%20read-only%3D%22true%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22find*%22%20read-only%3D%22true%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22list*%22%20read-only%3D%22true%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ctx%3Amethod%20name%3D%22*%22%20propagation%3D%22REQUIRED%22%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2Ftx%3Aattributes%3E%0A%20%20%20%20%3C%2Ftx%3Aadvice%3E%26nbsp%3B" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>&lt;tx:advice&nbsp;id=</span><span class="string">"txAdvice"</span><span>&nbsp;transaction-manager=</span><span class="string">"txManager"</span><span>&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:attributes&gt;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"save*"</span><span>&nbsp;propagation=</span><span class="string">"REQUIRED"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"add*"</span><span>&nbsp;propagation=</span><span class="string">"REQUIRED"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"create*"</span><span>&nbsp;propagation=</span><span class="string">"REQUIRED"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"insert*"</span><span>&nbsp;propagation=</span><span class="string">"REQUIRED"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"update*"</span><span>&nbsp;propagation=</span><span class="string">"REQUIRED"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"merge*"</span><span>&nbsp;propagation=</span><span class="string">"REQUIRED"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"del*"</span><span>&nbsp;propagation=</span><span class="string">"REQUIRED"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"remove*"</span><span>&nbsp;propagation=</span><span class="string">"REQUIRED"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"put*"</span><span>&nbsp;read-only=</span><span class="string">"true"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"query*"</span><span>&nbsp;read-only=</span><span class="string">"true"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"use*"</span><span>&nbsp;read-only=</span><span class="string">"true"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"get*"</span><span>&nbsp;read-only=</span><span class="string">"true"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"count*"</span><span>&nbsp;read-only=</span><span class="string">"true"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"find*"</span><span>&nbsp;read-only=</span><span class="string">"true"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"list*"</span><span>&nbsp;read-only=</span><span class="string">"true"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;tx:method&nbsp;name=<span class="string">"*"</span><span>&nbsp;propagation=</span><span class="string">"REQUIRED"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/tx:attributes&gt;&nbsp;&nbsp;</span></li><li><span>&lt;/tx:advice&gt;&nbsp;&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://jinnianshilongnian.iteye.com/blog/1720618#" pre_index="3" title="在应用层通过spring特性解决数据库读写分离" style="display: none;">    &lt;tx:advice id="txAdvice" transaction-manager="txManager"&gt;
+        &lt;tx:attributes&gt;
+            &lt;tx:method name="save*" propagation="REQUIRED" /&gt;
+            &lt;tx:method name="add*" propagation="REQUIRED" /&gt;
+            &lt;tx:method name="create*" propagation="REQUIRED" /&gt;
+            &lt;tx:method name="insert*" propagation="REQUIRED" /&gt;
+            &lt;tx:method name="update*" propagation="REQUIRED" /&gt;
+            &lt;tx:method name="merge*" propagation="REQUIRED" /&gt;
+            &lt;tx:method name="del*" propagation="REQUIRED" /&gt;
+            &lt;tx:method name="remove*" propagation="REQUIRED" /&gt;
+            
+            &lt;tx:method name="put*" read-only="true"/&gt;
+            &lt;tx:method name="query*" read-only="true"/&gt;
+            &lt;tx:method name="use*" read-only="true"/&gt;
+            &lt;tx:method name="get*" read-only="true" /&gt;
+            &lt;tx:method name="count*" read-only="true" /&gt;
+            &lt;tx:method name="find*" read-only="true" /&gt;
+            &lt;tx:method name="list*" read-only="true" /&gt;
+            
+            &lt;tx:method name="*" propagation="REQUIRED"/&gt;
+        &lt;/tx:attributes&gt;
+    &lt;/tx:advice&gt;&nbsp;</pre>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><strong><span>3</span></strong><strong><span>、事务管理器</span></strong></p>
+<p class="MsoNormal"><span>事务管理器管理的是</span><span>readWriteDataSource</span></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%3Cbean%20id%3D%22txManager%22%20class%3D%22org.springframework.jdbc.datasource.DataSourceTransactionManager%22%3E%0A%20%20%20%20%20%20%20%20%3Cproperty%20name%3D%22dataSource%22%20ref%3D%22readWriteDataSource%22%2F%3E%0A%20%20%20%20%3C%2Fbean%3E%26nbsp%3B" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>&lt;bean&nbsp;id=</span><span class="string">"txManager"</span><span>&nbsp;</span><span class="keyword">class</span><span>=</span><span class="string">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span><span>&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"dataSource"</span><span>&nbsp;ref=</span><span class="string">"readWriteDataSource"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;&nbsp;&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://jinnianshilongnian.iteye.com/blog/1720618#" pre_index="4" title="在应用层通过spring特性解决数据库读写分离" style="display: none;">&lt;bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"&gt;
+        &lt;property name="dataSource" ref="readWriteDataSource"/&gt;
+    &lt;/bean&gt;&nbsp;</pre>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><strong><span>4</span></strong><strong><span>、读</span><span>/</span></strong><strong><span>写动态数据库选择处理器</span></strong></p>
+<p class="MsoNormal"><span>根据之前的</span><span>txAdvice</span><span>配置的事务属性决定是读</span><span>/</span><span>写，具体参考</span><span>javadoc</span><span>；</span></p>
+<p class="MsoNormal"><span>forceChoiceReadWhenWrite</span><span>：用于确定在如果目前是写（即开启了事务），下一步如果是读，是直接参与到写库进行读，还是强制从读库读，具体参考</span><span>javadoc</span><span>；</span></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%20%20%20%20%3Cbean%20id%3D%22readWriteDataSourceTransactionProcessor%22%20class%3D%22cn.javass.common.datasource.ReadWriteDataSourceProcessor%22%3E%0A%20%20%20%20%20%20%20%3Cproperty%20name%3D%22forceChoiceReadWhenWrite%22%20value%3D%22false%22%2F%3E%0A%20%20%20%20%3C%2Fbean%3E%26nbsp%3B" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>&lt;bean&nbsp;id=</span><span class="string">"readWriteDataSourceTransactionProcessor"</span><span>&nbsp;</span><span class="keyword">class</span><span>=</span><span class="string">"cn.javass.common.datasource.ReadWriteDataSourceProcessor"</span><span>&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&lt;property&nbsp;name=<span class="string">"forceChoiceReadWhenWrite"</span><span>&nbsp;value=</span><span class="string">"false"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&lt;/bean&gt;&nbsp;&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://jinnianshilongnian.iteye.com/blog/1720618#" pre_index="5" title="在应用层通过spring特性解决数据库读写分离" style="display: none;">    &lt;bean id="readWriteDataSourceTransactionProcessor" class="cn.javass.common.datasource.ReadWriteDataSourceProcessor"&gt;
+       &lt;property name="forceChoiceReadWhenWrite" value="false"/&gt;
+    &lt;/bean&gt;&nbsp;</pre>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><strong><span>5</span></strong><strong><span>、事务切面和读</span><span>/</span></strong><strong><span>写库选择切面</span></strong></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%20%20%20%20%3Caop%3Aconfig%20expose-proxy%3D%22true%22%3E%0A%20%20%20%20%20%20%20%20%3C!--%20%E5%8F%AA%E5%AF%B9%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91%E5%B1%82%E5%AE%9E%E6%96%BD%E4%BA%8B%E5%8A%A1%20--%3E%0A%20%20%20%20%20%20%20%20%3Caop%3Apointcut%20id%3D%22txPointcut%22%20expression%3D%22execution(*%20cn.javass..service..*.*(..))%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3Caop%3Aadvisor%20advice-ref%3D%22txAdvice%22%20pointcut-ref%3D%22txPointcut%22%2F%3E%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20%3C!--%20%E9%80%9A%E8%BF%87AOP%E5%88%87%E9%9D%A2%E5%AE%9E%E7%8E%B0%E8%AF%BB%2F%E5%86%99%E5%BA%93%E9%80%89%E6%8B%A9%20--%3E%0A%20%20%20%20%20%20%20%20%3Caop%3Aaspect%20order%3D%22-2147483648%22%20ref%3D%22readWriteDataSourceTransactionProcessor%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%3Caop%3Aaround%20pointcut-ref%3D%22txPointcut%22%20method%3D%22determineReadOrWriteDB%22%2F%3E%0A%20%20%20%20%20%20%20%20%3C%2Faop%3Aaspect%3E%0A%20%20%20%20%3C%2Faop%3Aconfig%3E%26nbsp%3B" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-j"><li><span><span>&lt;aop:config&nbsp;expose-proxy=</span><span class="string">"true"</span><span>&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;!--&nbsp;只对业务逻辑层实施事务&nbsp;--&gt;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;aop:pointcut&nbsp;id=<span class="string">"txPointcut"</span><span>&nbsp;expression=</span><span class="string">"execution(*&nbsp;cn.javass..service..*.*(..))"</span><span>&nbsp;/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;aop:advisor&nbsp;advice-ref=<span class="string">"txAdvice"</span><span>&nbsp;pointcut-ref=</span><span class="string">"txPointcut"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;!--&nbsp;通过AOP切面实现读/写库选择&nbsp;--&gt;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;aop:aspect&nbsp;order=<span class="string">"-2147483648"</span><span>&nbsp;ref=</span><span class="string">"readWriteDataSourceTransactionProcessor"</span><span>&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;aop:around&nbsp;pointcut-ref=<span class="string">"txPointcut"</span><span>&nbsp;method=</span><span class="string">"determineReadOrWriteDB"</span><span>/&gt;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/aop:aspect&gt;&nbsp;&nbsp;</span></li><li><span>&lt;/aop:config&gt;&nbsp;&nbsp;&nbsp;</span></li></ol></div><pre name="code" class="java" codeable_id="" codeable_type="BlogComment" source_url="http://jinnianshilongnian.iteye.com/blog/1720618#" pre_index="6" title="在应用层通过spring特性解决数据库读写分离" style="display: none;">    &lt;aop:config expose-proxy="true"&gt;
+        &lt;!-- 只对业务逻辑层实施事务 --&gt;
+        &lt;aop:pointcut id="txPointcut" expression="execution(* cn.javass..service..*.*(..))" /&gt;
+        &lt;aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/&gt;
+        
+        &lt;!-- 通过AOP切面实现读/写库选择 --&gt;
+        &lt;aop:aspect order="-2147483648" ref="readWriteDataSourceTransactionProcessor"&gt;
+           &lt;aop:around pointcut-ref="txPointcut" method="determineReadOrWriteDB"/&gt;
+        &lt;/aop:aspect&gt;
+    &lt;/aop:config&gt;&nbsp;</pre>
+<p class="MsoNormal"><span>1</span><span>、事务切面一般横切业务逻辑层；</span></p>
+<p class="MsoNormal"><span>2</span><span>、此处我们使用</span><span>readWriteDataSourceTransactionProcessor</span><span>的通过</span><span>AOP</span><span>切面实现读</span><span>/</span><span>写库选择功能，</span><span>order=Integer.MIN_VALUE(</span><span>即最高的优先级</span><span>)</span><span>，从而保证在操作事务之前已经决定了使用读</span><span>/</span><span>写库。</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p class="MsoNormal"><strong><span>6</span></strong><strong><span>、测试用例</span></strong></p>
+<p class="MsoNormal">只要配置好事务属性（通过read-only=true指定读方法）即可，其他选择读/写库的操作都交给readWriteDataSourceTransactionProcessor完成。</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>可以参考附件的：</span></p>
+<p class="MsoNormal"><span>cn.javass.readwrite.ReadWriteDBTestWithForceChoiceReadOnWriteFalse</span></p>
+<p class="MsoNormal"><span>cn.javass.readwrite.ReadWriteDBTestWithNoForceChoiceReadOnWriteTrue</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p class="MsoNormal"><span><span style="color: #ff0000;">可以下载附件的代码进行测试</span>，具体选择主</span><span>/</span><span>从可以参考日志输出。</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p class="MsoNormal"><span style="color: #ff0000;">暂不想支持@Transactional注解式事务。</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p class="MsoNormal"><strong></strong><span>PS</span><span>：欢迎拍砖指正。</span>&nbsp;&nbsp;&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+  </div>
+
+  
+  <div class="attachments">
+    
+      
+        <ul style="display:none;">
+          <li><a href="http://dl2.iteye.com/upload/attachment/0076/3580/ebfdc7b0-f06a-3bcc-8622-9d424432132b.jpg" target="_blank"><img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/ebfdc7b0-f06a-3bcc-8622-9d424432132b-thumb.jpg" class="magplus" title="点击查看原始大小图片"></a></li>
+          
+          <li>大小: 19.7 KB</li>
+        </ul>
+      
+    
+      
+        <ul style="display:none;">
+          <li><a href="http://dl2.iteye.com/upload/attachment/0076/3582/b98f6123-8c63-3ec7-b2c1-54e3e439df92.jpg" target="_blank"><img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/b98f6123-8c63-3ec7-b2c1-54e3e439df92-thumb.jpg" class="magplus" title="点击查看原始大小图片"></a></li>
+          
+          <li>大小: 15.3 KB</li>
+        </ul>
+      
+    
+      
+        <ul>
+          <li><a href="http://dl.iteye.com/topics/download/cd0a906a-11ba-320d-9503-6252c3fe58c5">master-slaver.rar</a> (6.7 MB)</li>
+          
+          <li>下载次数: 1420</li>
+        </ul>
+      
+    
+    
+      <ul>
+        <li><a href="http://jinnianshilongnian.iteye.com/blog/1720618#" onclick="$$(&#39;div.attachments ul&#39;).invoke(&#39;show&#39;);$(this).up(1).hide();return false;">查看图片附件</a></li>
+      </ul>
+    
+  </div>
+
+
+  
+  
+  <iframe src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/187.html" scrolling="no" width="468" height="60" frameborder="0"></iframe>
+  
+  <div id="bottoms" class="clearfix">
+    <div id="digg_bottom" class="clearfix"><div class="digged"><strong>18</strong> <br>顶</div><div class="digged"><strong>3</strong> <br>踩</div></div>
+    <div id="share_weibo">分享到：
+      <a data-type="sina" href="javascript:;" title="分享到新浪微博"><img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/sina.jpg"></a>
+      <a data-type="qq" href="javascript:;" title="分享到腾讯微博"><img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/tec.jpg"></a>
+    </div>
+  </div>
+
+  <div class="blog_nav">
+    <div class="pre_next">
+      <a href="http://jinnianshilongnian.iteye.com/blog/1721870" class="next" title="Servlet3.1规范翻译——前言">Servlet3.1规范翻译——前言</a>
+      |
+      <a href="http://jinnianshilongnian.iteye.com/blog/1719952" class="pre" title="扩展SpringMVC以支持绑定JSON格式的请求参数">扩展SpringMVC以支持绑定JSON格式的请求参 ...</a>
+    </div>
+  </div>
+  <div class="blog_bottom">
+    <ul>
+      <li>2012-11-08 20:31</li>
+      <li>浏览 23120</li>
+      <li><a href="http://jinnianshilongnian.iteye.com/blog/1720618#comments">评论(24)</a></li>
+      
+      
+      <li>分类:<a href="http://www.iteye.com/blogs/category/architecture">企业架构</a></li>      
+      <li class="last"><a href="http://www.iteye.com/wiki/blog/1720618" target="_blank" class="more">相关推荐</a></li>
+    </ul>
+  </div>
+
+  <div class="blog_comment">
+    <h5>评论</h5>
+    <a id="comments" name="comments"></a>
+    <div id="bc2377149">
+  <div class="comment_title">
+    24 楼
+    <a href="http://feirou520.iteye.com/" target="_blank" title="feirou520">feirou520</a>
+    2015-08-25&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">我在使用BeanPostProcessor拦截NameMatchTransactionAttributeSource的时候,怎么也拦截不到这个类，我想知道有什么可能会造成这样的情况</div>
+</div>
+
+<div id="bc2372933">
+  <div class="comment_title">
+    23 楼
+    <a href="http://linjin19880218.iteye.com/" target="_blank" title="linjin19880218">linjin19880218</a>
+    2015-06-03&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">问下开涛，你这个用读写分离用hibernate，既然事务拦截不到了。知道为什么么？</div>
+</div>
+
+<div id="bc2372907">
+  <div class="comment_title">
+    22 楼
+    <a href="http://210006373.iteye.com/" target="_blank" title="210006373">210006373</a>
+    2015-06-02&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_smile.gif">&nbsp; :<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_cry.gif"> (&nbsp;<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_surprised.gif">&nbsp;<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_lol.gif">&nbsp;<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_cry.gif">&nbsp;<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_wink.gif">&nbsp;<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_arrow.gif"> </div>
+</div>
+
+<div id="bc2366045">
+  <div class="comment_title">
+    21 楼
+    <a href="http://rainbow-cai158.iteye.com/" target="_blank" title="rainbow.cai158">rainbow.cai158</a>
+    2015-01-09&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">修正。。主写从读- -</div>
+</div>
+
+<div id="bc2366044">
+  <div class="comment_title">
+    20 楼
+    <a href="http://rainbow-cai158.iteye.com/" target="_blank" title="rainbow.cai158">rainbow.cai158</a>
+    2015-01-09&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">现在有更简单的实现方法了，使用mysql replication,只要设置jdbc connection readOnly为true ,即可实现主读从写</div>
+</div>
+
+<div id="bc2364741">
+  <div class="comment_title">
+    19 楼
+    <a href="http://hjjwind.iteye.com/" target="_blank" title="hjjwind">hjjwind</a>
+    2014-12-15&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">taok88 写道</div><div class="quote_div">楼主的文章写的很好，值得学习。<br><br>关于sprng配置动态数据源，我这边遇到一个问题.<br>我没有用aop来配置哪些方法连写的库，哪些方法连读的库。<br>我直接是在指定的查询方法里调用ReadWriteDataSourceDecision.markRead()方法，方法执行完之后再调用reset方法。<br><br>但是这样会有一个问题，用户并发量大时候，就会有数据源错乱，在写数据库操作的方法里会引用到只读的数据库。<br>楼主问题下这是什么情况啊？</div><br><br><br>——估计是WEB服务器都是使用的线程池，有线程变量没清空。<br></div>
+</div>
+
+<div id="bc2363351">
+  <div class="comment_title">
+    18 楼
+    <a href="http://taok88.iteye.com/" target="_blank" title="taok88">taok88</a>
+    2014-11-20&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">楼主的文章写的很好，值得学习。<br><br>关于sprng配置动态数据源，我这边遇到一个问题.<br>我没有用aop来配置哪些方法连写的库，哪些方法连读的库。<br>我直接是在指定的查询方法里调用ReadWriteDataSourceDecision.markRead()方法，方法执行完之后再调用reset方法。<br><br>但是这样会有一个问题，用户并发量大时候，就会有数据源错乱，在写数据库操作的方法里会引用到只读的数据库。<br>楼主问题下这是什么情况啊？</div>
+</div>
+
+<div id="bc2362198">
+  <div class="comment_title">
+    17 楼
+    <a href="http://1215811695.iteye.com/" target="_blank" title="1215811695">1215811695</a>
+    2014-11-05&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">楼主给力，spring博客总的好多，有时间好好看看。<br>我现在有个问题，就是楼主说不支持@Transactional。我想问一下，假如在方法上面使用了@Transactional并且没有加readonly属性，会有什么情况？是在事务的传播时会有问题吗？<br><br>我看楼主通过aop切面来定义事务管理的，假如一个service即满足了aop又满足了@transaction.是不是会开两次事务（spring不太熟，望见凉）<br></div>
+</div>
+
+<div id="bc2348769">
+  <div class="comment_title">
+    16 楼
+    <a href="http://cool3rocks.iteye.com/" target="_blank" title="Cool3Rocks">Cool3Rocks</a>
+    2014-05-22&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">应该是 shiro 加载的优先级太高了，引用的 bean 还没有创建完，头疼</div>
+</div>
+
+<div id="bc2348749">
+  <div class="comment_title">
+    15 楼
+    <a href="http://cool3rocks.iteye.com/" target="_blank" title="Cool3Rocks">Cool3Rocks</a>
+    2014-05-22&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">Cool3Rocks 写道</div><div class="quote_div">开涛你好，我在使用BeanPostProcessor拦截NameMatchTransactionAttributeSource的时候, 报了如下异常，导致拦截失败。请问有解决办法么<br><br>19:46:49.865 [localhost-startStop-1] INFO&nbsp; org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean '(inner bean)#470' of type [class org.springframework.transaction.interceptor.NameMatchTransactionAttributeSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)<br></div><br><br>目前确定是与shiro的配置造成的，<br><br>&lt;bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="securityManager" ref="securityManager"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!-- override these for application-specific URLs if you like:--&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="loginUrl" value="${shiro.login.url}"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="unauthorizedUrl" value="${shiro.unauthorizedUrl}"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean&nbsp; --&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!-- defined will be automatically acquired and available via its beanName in chain&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!-- definitions, but you can perform instance overrides or name aliases here if you like: --&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="filters"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;util:map&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;entry key="authc" value-ref="formAuthenticationFilter"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;entry key="logout" value-ref="logoutFilter"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;entry key="sysUser" value-ref="sysUserFilter"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;entry key="onlineSession" value-ref="onlineSessionFilter"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;entry key="syncOnlineSession" value-ref="syncOnlineSessionFilter"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;entry key="jCaptchaValidate" value-ref="jCaptchaValidateFilter"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;entry key="develop" value-ref="developFilter"/&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/util:map&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/property&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;property name="filterChainDefinitions"&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;value&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /static/** = anon<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /anon/** = anon<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /login.json = anon<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /jcaptcha* = anon<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /logout = logout<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /login = jCaptchaValidate,authc<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /** = develop,sysUser,onlineSession,user,syncOnlineSession,perms,roles<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/value&gt;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/property&gt;<br>&nbsp;&nbsp;&nbsp; &lt;/bean&gt;<br><br>去掉才可以</div>
+</div>
+
+<div id="bc2348658">
+  <div class="comment_title">
+    14 楼
+    <a href="http://cool3rocks.iteye.com/" target="_blank" title="Cool3Rocks">Cool3Rocks</a>
+    2014-05-21&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">开涛你好，我在使用BeanPostProcessor拦截NameMatchTransactionAttributeSource的时候, 报了如下异常，导致拦截失败。请问有解决办法么<br><br>19:46:49.865 [localhost-startStop-1] INFO&nbsp; org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean '(inner bean)#470' of type [class org.springframework.transaction.interceptor.NameMatchTransactionAttributeSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)<br></div>
+</div>
+
+<div id="bc2290922">
+  <div class="comment_title">
+    13 楼
+    <a href="http://jinnianshilongnian.iteye.com/" target="_blank" title="jinnianshilongnian">jinnianshilongnian</a>
+    2012-11-24&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">icewind4096 写道</div><div class="quote_div">可以讲讲请问如果有如下的使用情况，该如何解决，<br>管理数据库 manager.db 里面记录每个分公司账册数据库名称<br>Jiangsu.db<br>Hunan.db<br>Zhejiang.db<br>manager.db中的分账册数据库名是动态的，并不是一个固定记录,我只定义了指向manager.db的<br>datasource,用于登录是获得各自的数据库名<br>主要是如何动态的产生到各自数据库的数据源，<br>我考虑了两个方法<br>1.通过过滤器+session来实现<br>2.使用aop，在servise的before中+session来实现，<br>这些数据库结构一样 系统登录到管理数据库 根据客户端提交的标识 决定客户端登录的默认数据库是那个 但是我不知道这个时候数据源的数据库该如何切换 数据源不是都被在配置文件中定义死了吗。我用spring框架该如何实现。或者有什么变通的办法 后端数据库是sqlserver. 难道只有在操作时都带上库名. <br>例如<br>select * from [jiangsu].stock. 查询江苏库存<br>select * from [zhejiang].stock. 查询浙江库存么<br>如果可能可以给我个demo，刚刚上手spring, 谢谢</div><br>过滤器+ThreadLocal+DynamicDataSource完成：<br>1、通过过滤器根据用户登录信息选择库 存到ThreadLocal<br>2、DynamicDataSource通过ThreadLocal选择库<br>3、退出过滤器时删除ThreadLocal<br><br>DynamicDataSource可以搜索下，很多例子</div>
+</div>
+
+<div id="bc2290919">
+  <div class="comment_title">
+    12 楼
+    <a href="http://icewind4096.iteye.com/" target="_blank" title="icewind4096">icewind4096</a>
+    2012-11-24&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">可以讲讲请问如果有如下的使用情况，该如何解决，<br>管理数据库 manager.db 里面记录每个分公司账册数据库名称<br>Jiangsu.db<br>Hunan.db<br>Zhejiang.db<br>manager.db中的分账册数据库名是动态的，并不是一个固定记录,我只定义了指向manager.db的<br>datasource,用于登录是获得各自的数据库名<br>主要是如何动态的产生到各自数据库的数据源，<br>我考虑了两个方法<br>1.通过过滤器+session来实现<br>2.使用aop，在servise的before中+session来实现，<br>这些数据库结构一样 系统登录到管理数据库 根据客户端提交的标识 决定客户端登录的默认数据库是那个 但是我不知道这个时候数据源的数据库该如何切换 数据源不是都被在配置文件中定义死了吗。我用spring框架该如何实现。或者有什么变通的办法 后端数据库是sqlserver. 难道只有在操作时都带上库名. <br>例如<br>select * from [jiangsu].stock. 查询江苏库存<br>select * from [zhejiang].stock. 查询浙江库存么<br>如果可能可以给我个demo，刚刚上手spring, 谢谢</div>
+</div>
+
+<div id="bc2288925">
+  <div class="comment_title">
+    11 楼
+    <a href="http://jinnianshilongnian.iteye.com/" target="_blank" title="jinnianshilongnian">jinnianshilongnian</a>
+    2012-11-09&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">kimmking 写道</div><div class="quote_div">自定义一个annotation @ReadOnly，把读方法或写方法上标记上@ReadOnly<br>然后再AOP处理时换成某个读DS，可以避免方法命名约束。。。<br><br><br>根本之道还是根据sql解析得到是什么操作。例如淘宝的tddl<br><br><br><br><br></div><br><br>嗯，这个也想到了，但是我觉得如果读方法太多很多的方法头上都有@ReadOnly，不爽<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_redface.gif"> 。<br><br><div class="quote_title">引用</div><div class="quote_div">根本之道还是根据sql解析得到是什么操作。例如淘宝的tddl</div> 这个同意，不过如果简单的读写分离用此方案也挺好<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_biggrin.gif"> ，百合现在用呢。</div>
+</div>
+
+<div id="bc2288916">
+  <div class="comment_title">
+    10 楼
+    <a href="http://setting.iteye.com/" target="_blank" title="kimmking">kimmking</a>
+    2012-11-09&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">自定义一个annotation @ReadOnly，把读方法或写方法上标记上@ReadOnly<br>然后再AOP处理时换成某个读DS，可以避免方法命名约束。。。<br><br><br>根本之道还是根据sql解析得到是什么操作。例如淘宝的tddl<br><br><br><br><br></div>
+</div>
+
+<div id="bc2288882">
+  <div class="comment_title">
+    9 楼
+    <a href="http://jinnianshilongnian.iteye.com/" target="_blank" title="jinnianshilongnian">jinnianshilongnian</a>
+    2012-11-09&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">7454103 写道</div><div class="quote_div"><div class="quote_title">jinnianshilongnian 写道</div><div class="quote_div"><div class="quote_title">7454103 写道</div><div class="quote_div">nice<br><br>ps：在实际项目里面会更关注 自动选择数据源的规则<br>这个也是 Amoeba&nbsp; 等一些中间建 待完善地方！</div><br>此方案在一般项目 不想引入中间件可以使用，而且相对来说也不是特别麻烦，几分钟就配置完成了，缺点是不支持@Transactional（不过个人也不喜欢这种风格）<br><br>Amoeba 有路由规则</div><br><br>Amoeba 是有路由规则，就是因为这些规则功能有点弱哈！<br><br>我们现在的项目也有 读写分离这个功能，没有选择那些中间件，和LZ思路差不多吧！<br>不过，我们是基于注解实现的，定义好几个datasource 由注解选择库，暂时为发现什么缺点！</div><br>求分享。<br>不过用注解的话 你们对于查怎么做的？ 每个查询方法都加？<br><br>路由的话我也是考虑用注解实现&nbsp;<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_biggrin.gif">&nbsp; 但是好像比较麻烦 对于需要的方法都加注解 量大的话很挠头 不知道你怎么解决的，分享出来吧，周末等待你的文章&nbsp;<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_biggrin.gif">&nbsp; 哈哈哈</div>
+</div>
+
+<div id="bc2288881">
+  <div class="comment_title">
+    8 楼
+    <a href="http://7454103.iteye.com/" target="_blank" title="7454103">7454103</a>
+    2012-11-09&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">jinnianshilongnian 写道</div><div class="quote_div"><div class="quote_title">7454103 写道</div><div class="quote_div">nice
+<br>
+<br>ps：在实际项目里面会更关注 自动选择数据源的规则
+<br>这个也是 Amoeba&nbsp; 等一些中间建 待完善地方！</div>
+<br>此方案在一般项目 不想引入中间件可以使用，而且相对来说也不是特别麻烦，几分钟就配置完成了，缺点是不支持@Transactional（不过个人也不喜欢这种风格）
+<br>
+<br>Amoeba 有路由规则</div>
+<br>
+<br>Amoeba 是有路由规则，就是因为这些规则功能有点弱哈！
+<br>
+<br>我们现在的项目也有 读写分离这个功能，没有选择那些中间件，和LZ思路差不多吧！
+<br>不过，我们是基于注解实现的，定义好几个datasource 由注解选择库，暂时为发现什么缺点！</div>
+</div>
+
+<div id="bc2288859">
+  <div class="comment_title">
+    7 楼
+    <a href="http://jinnianshilongnian.iteye.com/" target="_blank" title="jinnianshilongnian">jinnianshilongnian</a>
+    2012-11-09&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">7454103 写道</div><div class="quote_div">nice<br><br>ps：在实际项目里面会更关注 自动选择数据源的规则<br>这个也是 Amoeba&nbsp; 等一些中间建 待完善地方！</div><br>此方案在一般项目 不想引入中间件可以使用，而且相对来说也不是特别麻烦，几分钟就配置完成了，缺点是不支持@Transactional（不过个人也不喜欢这种风格）<br><br>Amoeba 有路由规则</div>
+</div>
+
+<div id="bc2288854">
+  <div class="comment_title">
+    6 楼
+    <a href="http://7454103.iteye.com/" target="_blank" title="7454103">7454103</a>
+    2012-11-09&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content">nice
+<br>
+<br>ps：在实际项目里面会更关注 自动选择数据源的规则
+<br>这个也是 Amoeba&nbsp; 等一些中间建 待完善地方！</div>
+</div>
+
+<div id="bc2288824">
+  <div class="comment_title">
+    5 楼
+    <a href="http://jinnianshilongnian.iteye.com/" target="_blank" title="jinnianshilongnian">jinnianshilongnian</a>
+    2012-11-09&nbsp;&nbsp;
+    
+    
+  </div>
+  <div class="comment_content"><div class="quote_title">snowolf 写道</div><div class="quote_div">不错，是不是可以再进一步，@Transactional深入下！<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_biggrin.gif"> </div><br>我想了下为什么我不支持@Transactional：<br>此方案要求所有读方法必须是read-only=true，因此如果是@Transactional，这样就要求在每一个读方法头上加@Transactional 且readOnly属性=true，相当麻烦。<img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_redface.gif"> </div>
+</div>
+
+
+    
+    <div class="pagination"><span class="disabled prev_page">« 上一页</span> <span class="current">1</span> <a href="http://jinnianshilongnian.iteye.com/blog/1720618?page=2#comments" rel="next">2</a> <a href="http://jinnianshilongnian.iteye.com/blog/1720618?page=2#comments" class="next_page" rel="next">下一页 »</a></div>
+  </div>
+
+  <div class="blog_comment">
+    <h5>发表评论</h5>
+            <p style="text-align:center; margin-top:30px;margin-bottom:0px;"><a href="http://jinnianshilongnian.iteye.com/login" style="background-color:white;"> <img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/login_icon.png" style="vertical-align:middle; margin-right: 10px;"></a><a href="http://jinnianshilongnian.iteye.com/login">  您还没有登录,请您登录后再发表评论 </a></p>
+      </div>
+</div>
+
+
+<script type="text/javascript">
+  dp.SyntaxHighlighter.HighlightAll('code', true, true);
+
+  $$('#main .blog_content pre[name=code]').each(function(pre, index){ // blog content
+    var post_id = 1720618;
+    var location = window.location;
+    source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+    pre.writeAttribute('codeable_id', post_id);
+    pre.writeAttribute('codeable_type', "Blog");
+    pre.writeAttribute('source_url', source_url);
+    pre.writeAttribute('pre_index', index);
+    pre.writeAttribute('title', '在应用层通过spring特性解决数据库读写分离');
+  });
+
+  fix_image_size($$('div.blog_content img'), 700);
+
+  function processComment() {
+    $$('#main .blog_comment > div').each(function(comment){// comment
+      var post_id = comment.id.substr(2);
+      $$("#"+comment.id+" pre[name=code]").each(function(pre, index){
+        var location = window.location;
+        source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+        source_url += "#" + comment.id;
+        pre.writeAttribute('codeable_id', post_id);
+        pre.writeAttribute('codeable_type', "BlogComment");
+        pre.writeAttribute('source_url', source_url);
+        pre.writeAttribute('pre_index', index);
+        pre.writeAttribute('title', '在应用层通过spring特性解决数据库读写分离');
+      });
+    });
+  }
+
+  function quote_comment(id) {
+    new Ajax.Request('/editor/quote', {
+      parameters: {'id':id, 'type':'BlogComment'},
+      onSuccess:function(response){editor.bbcode_editor.textarea.insertAfterSelection(response.responseText);
+        Element.scrollTo(editor.bbcode_editor.textarea.element);}
+    });
+  }
+
+  code_favorites_init();
+  processComment();
+  new WeiboShare({share_buttons: $('share_weibo'), img_scope: $('blog_content')});
+</script>
+
+
+
+
+        </div>
+
+        <div id="local">
+          <div class="local_top"></div>
+          <div id="blog_owner">
+  <div id="blog_owner_logo"><a href="http://jinnianshilongnian.iteye.com/"><img alt="jinnianshilongnian的博客" class="logo" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/c7dd3e08-f305-3aa7-a0ee-888e606701d4.jpg" title="jinnianshilongnian的博客: 开涛的博客(欢迎关注我的公众号[博客头像二维码])" width=""></a></div>
+  <div id="blog_owner_name">jinnianshilongnian</div>
+</div>
+
+          <div id="blog_actions">
+            <ul>
+              <li>浏览: 5686561 次</li>
+              <li>性别: <img alt="Icon_minigender_1" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/icon_minigender_1.gif" title="男"></li>
+              
+              <li><img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/offline.gif"></li>
+              
+            </ul>
+          </div>
+          <div id="user_visits" class="clearfix">
+            <h5>最近访客 <span style="font-weight:normal;font-size:12px;padding-left:30px;"><a href="http://jinnianshilongnian.iteye.com/blog/user_visits">更多访客&gt;&gt;</a></span></h5>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://xl515331.iteye.com/" target="_blank"><img alt="xl515331的博客" class="logo" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/18bc96b4-9842-4778-ba3f-86f6c5689cd4-thumb.gif" title="xl515331的博客: ThInker.Cn" width="48px"></a></div>
+                <div class="left"><a href="http://xl515331.iteye.com/" target="_blank" title="xl515331">xl515331</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://mrchaixs.iteye.com/" target="_blank"><img alt="Mrchaixs的博客" class="logo" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/user-logo-thumb.gif" title="Mrchaixs的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://mrchaixs.iteye.com/" target="_blank" title="Mrchaixs">Mrchaixs</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://bingki1021.iteye.com/" target="_blank"><img alt="bingki1021的博客" class="logo" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/user-logo-thumb.gif" title="bingki1021的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://bingki1021.iteye.com/" target="_blank" title="bingki1021">bingki1021</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://harborchung.iteye.com/" target="_blank"><img alt="HarborChung的博客" class="logo" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/f0ab4a16-b49e-3a53-ba52-dab225b371cc-thumb.jpg" title="HarborChung的博客: 铁观音Tea" width="48px"></a></div>
+                <div class="left"><a href="http://harborchung.iteye.com/" target="_blank" title="HarborChung">HarborChung</a></div>
+              </div>
+            
+          </div>
+
+          
+            <div>
+              <h5>博客专栏</h5>
+              
+
+  
+  <dl class="series" style="padding-bottom:5px;">
+    <dt>
+      <a href="http://www.iteye.com/blogs/subjects/spring3" target="_blank"><img alt="5c8dac6a-21dc-3466-8abb-057664ab39c7" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/5c8dac6a-21dc-3466-8abb-057664ab39c7.png"></a>
+    </dt>
+    <dd>
+    <a href="http://www.iteye.com/blogs/subjects/spring3" target="_blank" title="跟我学spring3">跟我学spring3</a><br>
+      <span class="visited">浏览量：951356</span>
+    </dd>
+  </dl>
+  
+  <dl class="series" style="padding-bottom:5px;">
+    <dt>
+      <a href="http://www.iteye.com/blogs/subjects/spring-tittle-tattle" target="_blank"><img alt="D659df3e-4ad7-3b12-8b9a-1e94abd75ac3" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/d659df3e-4ad7-3b12-8b9a-1e94abd75ac3.png"></a>
+    </dt>
+    <dd>
+    <a href="http://www.iteye.com/blogs/subjects/spring-tittle-tattle" target="_blank" title="Spring杂谈">Spring杂谈</a><br>
+      <span class="visited">浏览量：1001160</span>
+    </dd>
+  </dl>
+  
+  <dl class="series" style="padding-bottom:5px;">
+    <dt>
+      <a href="http://www.iteye.com/blogs/subjects/kaitao-springmvc" target="_blank"><img alt="43989fe4-8b6b-3109-aaec-379d27dd4090" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/43989fe4-8b6b-3109-aaec-379d27dd4090.png"></a>
+    </dt>
+    <dd>
+    <a href="http://www.iteye.com/blogs/subjects/kaitao-springmvc" target="_blank" title="跟开涛学SpringMVC">跟开涛学SpringMVC...</a><br>
+      <span class="visited">浏览量：1806564</span>
+    </dd>
+  </dl>
+  
+  <dl class="series" style="padding-bottom:5px;">
+    <dt>
+      <a href="http://www.iteye.com/blogs/subjects/Servlet-3-1" target="_blank"><img alt="1df97887-a9e1-3328-b6da-091f51f886a1" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/1df97887-a9e1-3328-b6da-091f51f886a1.png"></a>
+    </dt>
+    <dd>
+    <a href="http://www.iteye.com/blogs/subjects/Servlet-3-1" target="_blank" title="Servlet3.1规范翻译">Servlet3.1规范翻...</a><br>
+      <span class="visited">浏览量：111801</span>
+    </dd>
+  </dl>
+  
+  <dl class="series" style="padding-bottom:5px;">
+    <dt>
+      <a href="http://www.iteye.com/blogs/subjects/springmvc-tattle" target="_blank"><img alt="4f347843-a078-36c1-977f-797c7fc123fc" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/4f347843-a078-36c1-977f-797c7fc123fc.png"></a>
+    </dt>
+    <dd>
+    <a href="http://www.iteye.com/blogs/subjects/springmvc-tattle" target="_blank" title="springmvc杂谈">springmvc杂谈</a><br>
+      <span class="visited">浏览量：429791</span>
+    </dd>
+  </dl>
+  
+  <dl class="series" style="padding-bottom:5px;">
+    <dt>
+      <a href="http://www.iteye.com/blogs/subjects/hibernate" target="_blank"><img alt="22722232-95c1-34f2-b8e1-d059493d3d98" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/22722232-95c1-34f2-b8e1-d059493d3d98.png"></a>
+    </dt>
+    <dd>
+    <a href="http://www.iteye.com/blogs/subjects/hibernate" target="_blank" title="hibernate杂谈">hibernate杂谈</a><br>
+      <span class="visited">浏览量：126523</span>
+    </dd>
+  </dl>
+  
+  <dl class="series" style="padding-bottom:5px;">
+    <dt>
+      <a href="http://www.iteye.com/blogs/subjects/shiro" target="_blank"><img alt="45b32b6f-7468-3077-be40-00a5853c9a48" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/45b32b6f-7468-3077-be40-00a5853c9a48.png"></a>
+    </dt>
+    <dd>
+    <a href="http://www.iteye.com/blogs/subjects/shiro" target="_blank" title="跟我学Shiro">跟我学Shiro</a><br>
+      <span class="visited">浏览量：834421</span>
+    </dd>
+  </dl>
+  
+  <dl class="series" style="padding-bottom:5px;">
+    <dt>
+      <a href="http://www.iteye.com/blogs/subjects/nginx-lua" target="_blank"><img alt="Group-logo" src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/group-logo.gif"></a>
+    </dt>
+    <dd>
+    <a href="http://www.iteye.com/blogs/subjects/nginx-lua" target="_blank" title="跟我学Nginx+Lua开发">跟我学Nginx+Lua开...</a><br>
+      <span class="visited">浏览量：80439</span>
+    </dd>
+  </dl>
+  
+
+
+            </div>
+          
+
+                      <div id="blog_menu">
+              <h5>文章分类</h5>
+              <ul>
+                <li><a href="http://jinnianshilongnian.iteye.com/">全部博客 (311)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/333854">跟我学Nginx+Lua开发 (11)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/206533">跟我学spring (54)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/231099">跟开涛学SpringMVC (34)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/301336">spring4 (16)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/218109">spring杂谈 (50)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/277825">springmvc杂谈 (22)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/305053">跟我学Shiro (26)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/277699">shiro杂谈 (3)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/219273">hibernate杂谈 (10)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/283252">java开发常见问题分析 (36)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/283243">加速Java应用开发 (5)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/255452">Servlet 3.1规范[翻译] (21)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/286229">servlet3.x (2)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/283927">websocket协议[翻译] (14)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/277530">websocket规范[翻译] (1)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/244085">java web (5)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/220701">db (1)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/268665">js &amp; jquery &amp; bootstrap (4)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/252959">非技术 (4)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/215151">reminder[转载] (23)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/317975">跟叶子学把妹 (9)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/337500">nginx (2)</a></li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/category/344044">架构 (5)</a></li>
+                
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>社区版块</h5>
+              <ul>
+                <li><a href="http://jinnianshilongnian.iteye.com/blog/news">我的资讯</a> (10)</li>
+                <li>
+                  <a href="http://jinnianshilongnian.iteye.com/blog/post">我的论坛</a> (1112)
+                </li>
+                <li><a href="http://jinnianshilongnian.iteye.com/blog/answered_problems">我的问答</a> (2428)</li>
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>存档分类</h5>
+              <ul>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/blog/monthblog/2015-10">2015-10</a> (1)</li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/blog/monthblog/2015-09">2015-09</a> (1)</li>
+                
+                  <li><a href="http://jinnianshilongnian.iteye.com/blog/monthblog/2015-08">2015-08</a> (3)</li>
+                
+                <li><a href="http://jinnianshilongnian.iteye.com/blog/monthblog_more">更多存档...</a></li>
+              </ul>
+            </div>
+            
+            
+              <div id="comments_top">
+                <h5>评论排行榜</h5>
+                <ul>
+                  
+                    <li><a href="http://jinnianshilongnian.iteye.com/blog/2232357" title="我是如何构建一个持续发展的项目">我是如何构建一个持续发展的项目</a></li>
+                  
+                    <li><a href="http://jinnianshilongnian.iteye.com/blog/2188538" title="第七章 Web开发实战2——商品详情页">第七章 Web开发实战2——商品详情页</a></li>
+                  
+                    <li><a href="http://jinnianshilongnian.iteye.com/blog/2245925" title="商品详情页系统的Servlet3异步化实践">商品详情页系统的Servlet3异步化实践</a></li>
+                  
+                    <li><a href="http://jinnianshilongnian.iteye.com/blog/2188113" title="第六章 Web开发实战1——HTTP服务">第六章 Web开发实战1——HTTP服务</a></li>
+                  
+                    <li><a href="http://jinnianshilongnian.iteye.com/blog/2235572" title="构建需求响应式亿级商品详情页">构建需求响应式亿级商品详情页</a></li>
+                  
+                </ul>
+              </div>
+            
+
+            <div id="guest_books">
+              <h5>最新评论</h5>
+              <ul>
+                
+                <li>
+                  <a href="http://coolhty.iteye.com/" target="_blank" title="coolhty">coolhty</a>： 
+                  博主你好，如果一个字符串字段可以为空，如果不为空的话验证长度或 ...<br>
+                  <a href="http://jinnianshilongnian.iteye.com/blog/1733708#bc2380319">SpringMVC数据验证——第七章 注解式控制器的数据验证、类型转换及格式化——跟着开涛学SpringMVC</a>
+                </li>
+                
+                <li>
+                  <a href="http://1035054540-qq-com.iteye.com/" target="_blank" title="王树雄">王树雄</a>： 
+                  liuguxing 写道对权限框架没什么研究，一直有个疑惑：一 ...<br>
+                  <a href="http://jinnianshilongnian.iteye.com/blog/2019547#bc2380313">第二章  身份验证——《跟我学Shiro》</a>
+                </li>
+                
+                <li>
+                  <a href="http://wangaowell.iteye.com/" target="_blank" title="wangaowell">wangaowell</a>： 
+                   ...<br>
+                  <a href="http://jinnianshilongnian.iteye.com/blog/2029717#bc2380290">第十二章  与Spring集成——《跟我学Shiro》</a>
+                </li>
+                
+                <li>
+                  <a href="http://skyfar666.iteye.com/" target="_blank" title="zqb666kkk">zqb666kkk</a>： 
+                  非常 感谢&nbsp; 解决了我的问题 可以下班了！<br>
+                  <a href="http://jinnianshilongnian.iteye.com/blog/1894465#bc2380187">spring的二次代理原因及如何排查</a>
+                </li>
+                
+                <li>
+                  <a href="http://feiyang2017.iteye.com/" target="_blank" title="15000346240">15000346240</a>： 
+                  我有个类似的问题，对于这块不理解，所以也不知道怎么改了，求指点 ...<br>
+                  <a href="http://jinnianshilongnian.iteye.com/blog/1856756#bc2380183">Spring 注入集合类型</a>
+                </li>
+                
+              </ul>
+            </div>
+
+            <div class="local_bottom"></div>
+          
+        </div>
+      </div>
+
+      <div id="footer" class="clearfix">
+        <div id="copyright">
+          <hr>
+          声明：ITeye文章版权属于作者，受法律保护。没有作者书面许可不得转载。若作者同意转载，必须以超链接形式标明文章原始出处和作者。<br>
+          © 2003-2015 ITeye.com.   All rights reserved.  [ 京ICP证110151号  京公网安备110105010620 ]
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+  document.write("<img src='http://stat.iteye.com/?url="+ encodeURIComponent(document.location.href) + "&referrer=" + encodeURIComponent(document.referrer) + "&user_id=' width='0' height='0' />");
+</script><img src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/saved_resource" width="0" height="0">
+
+<script src="./在应用层通过spring特性解决数据库读写分离 - 开涛的博客(欢迎关注我的公众号[博客头像二维码]) - ITeye技术网站_files/tracking.js" type="text/javascript"></script>
+
+    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-29786484-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+      
+    
+  
+
+</body></html>

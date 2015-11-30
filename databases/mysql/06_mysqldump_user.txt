@@ -15,3 +15,36 @@ use mysql;mysql>update user set host = '%' where user = 'root';
 #view the backup file 
 grep -E -v "#|\/|^$|--" xxxxx.sql
 
+
+mysqldump -B 参数，  会加上创建库和使用库的语句。 
+
+#压缩结果
+mysqldump -h localhost -uroot -panhry_1q2w3e4r --opt angroup|gzip > angroup.sql
+
+#备份多个库  
+mysqldump -h localhost -uroot -panhry_1q2w3e4r --opt angroup1 angroup2 |gzip > angroup.sql
+
+#show multi database : 
+mysql -uroot -proot -e "show databases;"|grep -Evi "database|infor|perfor"
+mysql -uroot -proot -e "show databases;"|grep -Evi "database|infor|perfor"|sed 's#^#mysqldump -h localhost -uroot -proot  -B #g'
+mysql -uroot -proot -e "show databases;"|grep -Evi "database|infor|perfor"|sed -r  's#^([a-z].*$)#mysqldump -h localhost -uroot -proot  -B \1|gzip > /opt/\1.sql.gz #g'
+
+ mysql -uroot -proot -e "show databases;"|grep -Evi "database|infor|perfor"|sed -r  's#^([a-z].*$)#mysqldump -h localhost -uroot -proot  --events -B \1|gzip > /opt/\1.sql.gz #g'|bash
+
+#single table 
+mysqldump -h localhost -uroot -panhry_1q2w3e4r |gzip > angroup.sql
+
+
+#only back table structure
+mysqldump -d 
+#only data 
+mysqldump -t 
+#split bin-log  切分binlog
+mysqldump -F
+-A  all databases 
+--master-data=1 找到binlog 位置 
+mysqldump导出数据时，当这个参数的值为1的时候，mysqldump出来的文件就会包括CHANGE MASTER TO这个语句，CHANGE MASTER TO后面紧接着就是file和position的记录，在slave上导入数据时就会执行这个语句，salve就会根据指定这个文件位置从master端复制binlog。默认情况下这个值是1
+当这个值是2的时候，chang master to也是会写到dump文件里面去的，但是这个语句是被注释的状态
+
+-x lock all tables
+--compat 去掉注释

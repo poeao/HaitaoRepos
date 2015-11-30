@@ -1,0 +1,14 @@
+同步时忽略同步的库，在主库上修改 my.cnf
+
+binlog-ignore-db = mysql
+binlog-ignore-db = performance_schema
+binlog-ignore-db = informationi_schema
+
+
+从库打开bin-log
+log-bin = /data/3307/mysql-bin
+log-slave-updates
+
+
+定期删除
+expire_logs_days = 7

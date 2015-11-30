@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<!-- 改变struts2默认为2M的上传文件大小限制 -->  
+    <constant name="struts.multipart.maxSize" value="1024000000"/>
+    <constant name="struts.multipart.saveDir" value="/temp"/>
+	<package name="struts2" extends="struts-default">
+		<!-- 用于处理上传文件的ACTION -->
+		<action name="uploadUtil" class="com.struts.action.UploadUtilAction" method="uploadFile"/>
+		<!-- 用于展示所有已上传图片的action -->
+		<action name="getAllPicFile" class="com.struts.action.UploadUtilAction" method="getAllPicFile">
+			<result name="success">/picFileList.jsp</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,14 @@
+ADFHOST1544="http://csdnim.qtmojo.com";
+ADFCID1544=191;
+ADFBID1544=1544;
+ADFLOC='CNBJ0000';
+ADFUSER1544="http://csdnim.qtmojo.com/c?d=csdnim&i=z191,10407733,1544,7651&rf=&a=dFC4Mlems2yq72A5yG85SS2dfKHS&u=";
+ALLYESID4="AHXKU1s6f0H42eh7";
+ADFPGC="3,22,191,0,1975,1544,7651,10407733";
+
+document.write("<script type=\"text/javascript\">\n");
+document.write("    /*iteye博客内页下方banner-475*60*/\n");
+document.write("    var cpro_id = \"u1819087\";\n");
+document.write("</Scr"+"ipt>\n");
+document.write("<script src=\"http://cpro.baidustatic.com/cpro/ui/c.js\" type=\"text/javascript\"></Scr"+"ipt>");
+

@@ -1,0 +1,8 @@
+set names utf-8; 
+
+mysql -uroot -p 'oldbooy123' --default-character-set=utf-8 test < test.sql
+
+#check the character set 
+ show variables like 'character_set%';
+
+

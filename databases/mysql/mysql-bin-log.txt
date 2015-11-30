@@ -1,0 +1,10 @@
+-d 参数  截取指定库的binlog 
+1. 指定开始和结束位置 
+mysqlbinlog mysqlbin.000021 --start-position=510 --stop-position=1312 -r pos.sql
+输出 初始位置510 结束位置1312 的所有binlog 到 pos.sql 
+
+2. 指定开始到结束
+mysqlbinlog mysqlbin.000021 --start-position=510 2 -r pos510toEnd.sql
+
+3.指定开始和结束时间 
+mysqlbinlog mysqlbin.000021 --start-datetime='2014-10-16 17:16:53'  --stop-datetime='2014-10-16 18:16:53'  -r time.sql
