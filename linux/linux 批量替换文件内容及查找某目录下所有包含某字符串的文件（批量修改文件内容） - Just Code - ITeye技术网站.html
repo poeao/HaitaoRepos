@@ -1,0 +1,590 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0040)http://justcoding.iteye.com/blog/1948005 -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站</title>
+    <meta name="description" content="       1. sed  grep -rl matchstring somedir/ | xargs sed -i &#39;s/string1/string2/g&#39;     例如：     对象：文件夹  grep -rl &#39;windows&#39; ./path | xargs sed -i &#39;s/windows/linux/g&#39;     2. find  对象：文件  find -name &#39;test&#39;  ...">
+    <meta name="keywords" content=" linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）">
+    <link rel="shortcut icon" href="http://justcoding.iteye.com/images/favicon.ico" type="image/x-icon">
+    <link rel="search" type="application/opensearchdescription+xml" href="http://justcoding.iteye.com/open_search.xml" title="ITeye">
+    <link href="http://justcoding.iteye.com/rss" rel="alternate" title="Just Code" type="application/rss+xml">
+    <link href="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/blog.css" media="screen" rel="stylesheet" type="text/css">
+<link href="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/purple.css" media="screen" rel="stylesheet" type="text/css">
+    <script type="text/javascript" async="" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/ga.js"></script><script src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/ca-pub-4263087975986867.js"></script><script type="text/javascript" async="" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/ga.js"></script><script src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/application.js" type="text/javascript"></script>
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-535605-1']);
+  _gaq.push(['_setDomainName', 'iteye.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+      <link href="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/SyntaxHighlighter.css" media="screen" rel="stylesheet" type="text/css">
+  <script src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/shCoreCommon.js" type="text/javascript"></script>
+<script src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/hotkey.js" type="text/javascript"></script>
+  <script src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/code_favorites.js" type="text/javascript"></script>
+<script src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/weiboshare.js" type="text/javascript"></script>
+  <link href="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/ui.css" media="screen" rel="stylesheet" type="text/css">
+  <script src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/compress.js" type="text/javascript"></script>
+  <style type="text/css">.dp-cpp .datatypes { color: #2E8B57; font-weight: bold; }</style><style type="text/css">.dp-cpp .datatypes { color: #2E8B57; font-weight: bold; }</style><style type="text/css">.dp-cpp .datatypes { color: #2E8B57; font-weight: bold; }</style><style type="text/css">.dp-cpp .datatypes { color: #2E8B57; font-weight: bold; }</style><style type="text/css">.dp-cpp .datatypes { color: #2E8B57; font-weight: bold; }</style><style type="text/css">.dp-cpp .datatypes { color: #2E8B57; font-weight: bold; }</style><style type="text/css">.dp-cpp .datatypes { color: #2E8B57; font-weight: bold; }</style><style type="text/css">.dp-cpp .datatypes { color: #2E8B57; font-weight: bold; }</style><style type="text/css">.dp-cpp .datatypes { color: #2E8B57; font-weight: bold; }</style><style type="text/css">.dp-cpp .datatypes { color: #2E8B57; font-weight: bold; }</style></head>
+  <body>
+    <div id="header">
+      <div id="blog_site_nav">
+  <a href="http://www.iteye.com/" class="homepage">首页</a>
+  <a href="http://www.iteye.com/news">资讯</a>
+  <a href="http://www.iteye.com/magazines">精华</a>
+  <a href="http://www.iteye.com/forums">论坛</a>
+  <a href="http://www.iteye.com/ask">问答</a>
+  <a href="http://www.iteye.com/blogs">博客</a>
+  <a href="http://www.iteye.com/blogs/subjects">专栏</a>
+  <a href="http://www.iteye.com/groups">群组</a>
+  <a href="http://justcoding.iteye.com/blog/1948005#" onclick="return false;" id="msna"><u>更多</u> <small>▼</small></a>
+  <div class="quick_menu" style="display:none;">
+    <a target="_blank" href="http://job.iteye.com/iteye">招聘</a>
+    <a href="http://www.iteye.com/search">搜索</a>
+  </div>
+</div>
+
+      <div id="user_nav">
+  
+        <a href="http://haitao.iteye.com/" title="查看我的博客首页" class="welcome">欢迎poeao</a>
+    <a id="notifications_count" href="http://my.iteye.com/notifications">0</a>
+    
+      <a href="http://my.iteye.com/messages" title="你有新的站内短信"><img alt="Newpm" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/newpm.gif">收件箱(3)</a>
+    
+    <a href="http://my.iteye.com/" title="我的应用首页">我的应用</a>
+    <div class="quick_menu" style="display:none;">
+      <a href="http://my.iteye.com/feed" title="我关注的好友动态消息">我的关注</a>
+      <a href="http://my.iteye.com/mygroup" title="我加入的群组最新话题">我的群组</a>
+      <a href="http://my.iteye.com/myresume" title="我的个人简历">我的简历</a>
+      <a href="http://my.iteye.com/admin/album" title="我的个人简历">我的相册</a>
+      <a href="http://my.iteye.com/admin/link" title="我收藏的网络资源链接">我的收藏</a>
+      <a href="http://my.iteye.com/admin/code" title="我收藏的代码">我的代码</a>
+      <a href="http://my.iteye.com/admin/weibo" title="用微博发表简短的话题">我的微博</a>
+    </div>
+    <a href="http://haitao.iteye.com/admin" title="管理我的博客">我的博客</a>
+    <a href="http://my.iteye.com/profile" title="修改我的个人设置">设置</a>
+    <a href="http://justcoding.iteye.com/logout" class="nobg" onclick="var f = document.createElement(&#39;form&#39;); f.style.display = &#39;none&#39;; this.parentNode.appendChild(f); f.method = &#39;POST&#39;; f.action = this.href;var m = document.createElement(&#39;input&#39;); m.setAttribute(&#39;type&#39;, &#39;hidden&#39;); m.setAttribute(&#39;name&#39;, &#39;_method&#39;); m.setAttribute(&#39;value&#39;, &#39;put&#39;); f.appendChild(m);var s = document.createElement(&#39;input&#39;); s.setAttribute(&#39;type&#39;, &#39;hidden&#39;); s.setAttribute(&#39;name&#39;, &#39;authenticity_token&#39;); s.setAttribute(&#39;value&#39;, &#39;aeD5AWlJd4rQDPmODVX8PmJmfysQw6r3BdeUYC64yss=&#39;); f.appendChild(s);f.submit();return false;">退出</a>
+  </div>
+
+    </div>
+
+    <div id="page">
+      <div id="branding" class="clearfix">
+        <div id="blog_name">
+          <h1><a href="http://justcoding.iteye.com/">Just Code</a></h1>
+        </div>
+        <div id="fd"></div>
+        <div id="blog_navbar">
+          <ul>
+            <li class="blog_navbar_for"><a href="http://justcoding.iteye.com/"><strong>博客</strong></a></li>
+            <li><a href="http://justcoding.iteye.com/weibo">微博</a></li>
+            <li><a href="http://justcoding.iteye.com/album">相册</a></li>
+            <li><a href="http://justcoding.iteye.com/link">收藏</a></li>
+            <li><a href="http://justcoding.iteye.com/blog/guest_book">留言</a></li>
+            <li><a href="http://justcoding.iteye.com/blog/profile">关于我</a></li>
+          </ul>
+    
+          <div class="search">
+            <form action="http://justcoding.iteye.com/blog/search" method="get">
+              <input class="search_text" id="query" name="query" style="margin-left: 10px;width: 110px;" type="text" value="">
+              <input class="submit_search" type="submit" value="">
+            </form>
+          </div> 
+          <div id="fd"></div>         
+        </div>
+      </div>
+      <div>
+      <script type="text/javascript"><!--
+      google_ad_client = "ca-pub-4263087975986867";
+      google_ad_slot = "4638259239";
+      google_ad_width = 728;
+      google_ad_height = 90;
+      //--></script>
+      <script type="text/javascript" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/show_ads.js">
+      </script><ins id="aswift_0_expand" style="display:inline-table;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:90px;margin:0;padding:0;position:relative;visibility:visible;width:728px;background-color:transparent"><iframe width="728" height="90" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;"></iframe></ins></ins>
+    </div>
+      <div id="content" class="clearfix">
+        <div id="main">
+          
+
+
+
+          
+
+
+<div class="h-entry" style="display:none">
+  <a href="http://justcoding.iteye.com/" class="p-author" target="_blank">天梯梦</a>
+</div>
+
+
+<div class="blog_main">
+  <div class="blog_title">
+    <h3>
+      <a href="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站.html">linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）</a>
+      <em class="actions">      </em>
+    </h3>
+    <ul class="blog_categories"><strong>博客分类：</strong> <li><a href="http://justcoding.iteye.com/category/229050">Ubuntu / Mac / Github / Aptana / Nginx / Shell / Linux</a></li> </ul>
+        <div class="news_tag">&nbsp;</div>
+  </div>
+
+  <div id="blog_content" class="blog_content">
+    <div class="iteye-blog-content-contain" style="font-size: 14px;">
+<p>&nbsp;</p>
+<div class="iteye-blog-content-contain" style="font-size: 14px;">
+<h3>1. sed</h3>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">C代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=grep%20-rl%20matchstring%20somedir%2F%20%7C%20xargs%20sed%20-i%20&#39;s%2Fstring1%2Fstring2%2Fg&#39;" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-cpp"><li><span><span>grep&nbsp;-rl&nbsp;matchstring&nbsp;somedir/&nbsp;|&nbsp;xargs&nbsp;sed&nbsp;-i&nbsp;</span><span class="string">'s/string1/string2/g'</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre class="c" name="code" codeable_id="1948005" codeable_type="Blog" source_url="http://justcoding.iteye.com/blog/1948005" pre_index="0" title="linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）" style="display: none;">grep -rl matchstring somedir/ | xargs sed -i 's/string1/string2/g'</pre>
+<p>&nbsp;</p>
+<p>例如：</p>
+<p>&nbsp;</p>
+<p><span style="background-color: #ffff99;">对象：文件夹</span></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">C代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=grep%20-rl%20&#39;windows&#39;%20.%2Fpath%20%7C%20xargs%20sed%20-i%20&#39;s%2Fwindows%2Flinux%2Fg&#39;" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-cpp"><li><span><span>grep&nbsp;-rl&nbsp;</span><span class="string">'windows'</span><span>&nbsp;./path&nbsp;|&nbsp;xargs&nbsp;sed&nbsp;-i&nbsp;</span><span class="string">'s/windows/linux/g'</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre class="c" name="code" codeable_id="1948005" codeable_type="Blog" source_url="http://justcoding.iteye.com/blog/1948005" pre_index="1" title="linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）" style="display: none;">grep -rl 'windows' ./path | xargs sed -i 's/windows/linux/g'</pre>
+<p>&nbsp;</p>
+<h3>2. find</h3>
+<p><span style="background-color: #ffff99;">对象：文件</span></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">C代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=find%20-name%20&#39;test&#39;%20%7C%20xargs%20perl%20-pi%20-e%20&#39;s%7Cwindows%7Clinux%7Cg&#39;" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-cpp"><li><span><span>find&nbsp;-name&nbsp;</span><span class="string">'test'</span><span>&nbsp;|&nbsp;xargs&nbsp;perl&nbsp;-pi&nbsp;-e&nbsp;</span><span class="string">'s|windows|linux|g'</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre class="c" name="code" codeable_id="1948005" codeable_type="Blog" source_url="http://justcoding.iteye.com/blog/1948005" pre_index="2" title="linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）" style="display: none;">find -name 'test' | xargs perl -pi -e 's|windows|linux|g'</pre>
+<p>&nbsp;</p>
+<div>&nbsp;这里使用了perl语言，使用-e加上一段代码，从而批量地将当前目录及所有子目录下的file.log文件中的string1替换成了string2; string支持正则表达式</div>
+<div>&nbsp;</div>
+<div>
+<h3>3. awk</h3>
+</div>
+<div>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">C代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=grep%20-i%20%22windows%22%20-r%20.%2Fpath%20%7C%20awk%20-F%20%3A%20&#39;%7Bprint%20%241%7D&#39;%20%7C%20sort%20%7C%20uniq%20%7C%20xargs%20sed%20-i%20&#39;s%2Fwindows%2Flinux%2Fg&#39;" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-cpp"><li><span><span>grep&nbsp;-i&nbsp;</span><span class="string">"windows"</span><span>&nbsp;-r&nbsp;./path&nbsp;|&nbsp;awk&nbsp;-F&nbsp;:&nbsp;</span><span class="string">'{print&nbsp;$1}'</span><span>&nbsp;|&nbsp;sort&nbsp;|&nbsp;uniq&nbsp;|&nbsp;xargs&nbsp;sed&nbsp;-i&nbsp;</span><span class="string">'s/windows/linux/g'</span><span>&nbsp;&nbsp;</span></span></li></ol></div><pre class="c" name="code" codeable_id="1948005" codeable_type="Blog" source_url="http://justcoding.iteye.com/blog/1948005" pre_index="3" title="linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）" style="display: none;">grep -i "windows" -r ./path | awk -F : '{print $1}' | sort | uniq | xargs sed -i 's/windows/linux/g'</pre>
+&nbsp;这里使用了shell命令，先查找出文件，再用awk分割（以：切分），再行替换！</div>
+<div>注意：&nbsp;&nbsp; grep可以使用正则，也可以使用\转义一些特殊字符，比如“等&nbsp;&nbsp;</div>
+<div>sed -i 's/\"localhost\"/\"10.2.2.2\"/g' /home/my.conf</div>
+<div>更多：</div>
+<div>
+<h2>&nbsp;</h2>
+<h2>sed replace word / string syntax</h2>
+<p>The syntax is as follows:<br><code></code></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">C代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=sed%20-i%20&#39;s%2Fold-word%2Fnew-word%2Fg&#39;%20*.txt" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-cpp"><li><span><span>sed&nbsp;-i&nbsp;</span><span class="string">'s/old-word/new-word/g'</span><span>&nbsp;*.txt&nbsp;&nbsp;</span></span></li></ol></div><pre class="c" name="code" codeable_id="1948005" codeable_type="Blog" source_url="http://justcoding.iteye.com/blog/1948005" pre_index="4" title="linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）" style="display: none;">sed -i 's/old-word/new-word/g' *.txt</pre>
+<p><code>&nbsp;<br></code></p>
+<p>GNU sed command can edit files in place (makes backup if extension supplied) using the -i option. If you are using an old UNIX sed command version try the following syntax:</p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">C代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=sed%20&#39;s%2Fold%2Fnew%2Fg&#39;%20input.txt%20%3E%20output.txt" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-cpp"><li><span><span>sed&nbsp;</span><span class="string">'s/old/new/g'</span><span>&nbsp;input.txt&nbsp;&gt;&nbsp;output.txt&nbsp;&nbsp;</span></span></li></ol></div><pre class="c" name="code" codeable_id="1948005" codeable_type="Blog" source_url="http://justcoding.iteye.com/blog/1948005" pre_index="5" title="linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）" style="display: none;">sed 's/old/new/g' input.txt &gt; output.txt</pre>
+<p><code>&nbsp;<br></code></p>
+<p>You can use old sed syntax along with <a href="http://www.cyberciti.biz/faq/bash-for-loop/">bash for loop</a>:</p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">C代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%23!%2Fbin%2Fbash%0AOLD%3D%22xyz%22%0ANEW%3D%22abc%22%0ADPATH%3D%22%2Fhome%2Fyou%2Ffoo%2F*.txt%22%0ABPATH%3D%22%2Fhome%2Fyou%2Fbakup%2Ffoo%22%0ATFILE%3D%22%2Ftmp%2Fout.tmp.%24%24%22%0A%5B%20!%20-d%20%24BPATH%20%5D%20%26%26%20mkdir%20-p%20%24BPATH%20%7C%7C%20%3A%0Afor%20f%20in%20%24DPATH%0Ado%0A%20%20if%20%5B%20-f%20%24f%20-a%20-r%20%24f%20%5D%3B%20then%0A%20%20%20%20%2Fbin%2Fcp%20-f%20%24f%20%24BPATH%0A%20%20%20sed%20%22s%2F%24OLD%2F%24NEW%2Fg%22%20%22%24f%22%20%3E%20%24TFILE%20%26%26%20mv%20%24TFILE%20%22%24f%22%0A%20%20else%0A%20%20%20echo%20%22Error%3A%20Cannot%20read%20%24f%22%0A%20%20fi%0Adone%0A%2Fbin%2Frm%20%24TFILE" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-cpp"><li><span><span class="preprocessor">#!/bin/bash</span><span>&nbsp;&nbsp;</span></span></li><li><span>OLD=<span class="string">"xyz"</span><span>&nbsp;&nbsp;</span></span></li><li><span>NEW=<span class="string">"abc"</span><span>&nbsp;&nbsp;</span></span></li><li><span>DPATH=<span class="string">"/home/you/foo/*.txt"</span><span>&nbsp;&nbsp;</span></span></li><li><span>BPATH=<span class="string">"/home/you/bakup/foo"</span><span>&nbsp;&nbsp;</span></span></li><li><span>TFILE=<span class="string">"/tmp/out.tmp.$$"</span><span>&nbsp;&nbsp;</span></span></li><li><span>[&nbsp;!&nbsp;-d&nbsp;$BPATH&nbsp;]&nbsp;&amp;&amp;&nbsp;mkdir&nbsp;-p&nbsp;$BPATH&nbsp;||&nbsp;:&nbsp;&nbsp;</span></li><li><span><span class="keyword">for</span><span>&nbsp;f&nbsp;in&nbsp;$DPATH&nbsp;&nbsp;</span></span></li><li><span><span class="keyword">do</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;<span class="keyword">if</span><span>&nbsp;[&nbsp;-f&nbsp;$f&nbsp;-a&nbsp;-r&nbsp;$f&nbsp;];&nbsp;then&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;/bin/cp&nbsp;-f&nbsp;$f&nbsp;$BPATH&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;sed&nbsp;<span class="string">"s/$OLD/$NEW/g"</span><span>&nbsp;</span><span class="string">"$f"</span><span>&nbsp;&gt;&nbsp;$TFILE&nbsp;&amp;&amp;&nbsp;mv&nbsp;$TFILE&nbsp;</span><span class="string">"$f"</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;<span class="keyword">else</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;echo&nbsp;<span class="string">"Error:&nbsp;Cannot&nbsp;read&nbsp;$f"</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;fi&nbsp;&nbsp;</span></li><li><span>done&nbsp;&nbsp;</span></li><li><span>/bin/rm&nbsp;$TFILE&nbsp;&nbsp;</span></li></ol></div><pre class="c" name="code" codeable_id="1948005" codeable_type="Blog" source_url="http://justcoding.iteye.com/blog/1948005" pre_index="6" title="linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）" style="display: none;">#!/bin/bash
+OLD="xyz"
+NEW="abc"
+DPATH="/home/you/foo/*.txt"
+BPATH="/home/you/bakup/foo"
+TFILE="/tmp/out.tmp.$$"
+[ ! -d $BPATH ] &amp;&amp; mkdir -p $BPATH || :
+for f in $DPATH
+do
+  if [ -f $f -a -r $f ]; then
+    /bin/cp -f $f $BPATH
+   sed "s/$OLD/$NEW/g" "$f" &gt; $TFILE &amp;&amp; mv $TFILE "$f"
+  else
+   echo "Error: Cannot read $f"
+  fi
+done
+/bin/rm $TFILE</pre>
+<p>&nbsp;</p>
+<h3>A Note About Bash Escape Character</h3>
+<p>A non-quoted backslash \ is the Bash escape character. It preserves the literal value of the next character that follows, with the exception of newline. If a \newline pair appears, and the backslash itself is not quoted, the \newline is treated as a line continuation (that is, it is removed from the input stream and effectively ignored). This is useful when you would like to deal with UNIX paths. In this example, the sed command is used to replace UNIX path "/nfs/apache/logs/rawlogs/access.log" with "__DOMAIN_LOG_FILE__":</p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">C代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%23!%2Fbin%2Fbash%0A%23%23%20Our%20path%0A_r1%3D%22%2Fnfs%2Fapache%2Flogs%2Frawlogs%2Faccess.log%22%0A%20%0A%23%23%20Escape%20path%20for%20sed%20using%20bash%20find%20and%20replace%20%0A_r1%3D%22%24%7B_r1%2F%2F%5C%2F%2F%5C%5C%2F%7D%22%0A%20%0A%23%20replace%20__DOMAIN_LOG_FILE__%20in%20our%20sample.awstats.conf%0Ased%20-e%20%22s%2F__DOMAIN_LOG_FILE__%2F%24%7B_r1%7D%2F%22%20%2Fnfs%2Fconf%2Fawstats%2Fsample.awstats.conf%20%20%3E%20%2Fnfs%2Fapache%2Flogs%2Fawstats%2Fawstats.conf%0A%20%0A%23%20call%20awstats%0A%2Fusr%2Fbin%2Fawstats%20-c%20%2Fnfs%2Fapache%2Flogs%2Fawstats%2Fawstats.conf" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-cpp"><li><span><span class="preprocessor">#!/bin/bash</span><span>&nbsp;&nbsp;</span></span></li><li><span><span class="preprocessor">##&nbsp;Our&nbsp;path</span><span>&nbsp;&nbsp;</span></span></li><li><span>_r1=<span class="string">"/nfs/apache/logs/rawlogs/access.log"</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;</span></li><li><span><span class="preprocessor">##&nbsp;Escape&nbsp;path&nbsp;for&nbsp;sed&nbsp;using&nbsp;bash&nbsp;find&nbsp;and&nbsp;replace&nbsp;</span><span>&nbsp;&nbsp;</span></span></li><li><span>_r1=<span class="string">"${_r1//\//\\/}"</span><span>&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;</span></li><li><span><span class="preprocessor">#&nbsp;replace&nbsp;__DOMAIN_LOG_FILE__&nbsp;in&nbsp;our&nbsp;sample.awstats.conf</span><span>&nbsp;&nbsp;</span></span></li><li><span>sed&nbsp;-e&nbsp;<span class="string">"s/__DOMAIN_LOG_FILE__/${_r1}/"</span><span>&nbsp;/nfs/conf/awstats/sample.awstats.conf&nbsp;&nbsp;&gt;&nbsp;/nfs/apache/logs/awstats/awstats.conf&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;</span></li><li><span><span class="preprocessor">#&nbsp;call&nbsp;awstats</span><span>&nbsp;&nbsp;</span></span></li><li><span>/usr/bin/awstats&nbsp;-c&nbsp;/nfs/apache/logs/awstats/awstats.conf&nbsp;&nbsp;</span></li></ol></div><pre class="c" name="code" codeable_id="1948005" codeable_type="Blog" source_url="http://justcoding.iteye.com/blog/1948005" pre_index="7" title="linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）" style="display: none;">#!/bin/bash
+## Our path
+_r1="/nfs/apache/logs/rawlogs/access.log"
+ 
+## Escape path for sed using bash find and replace 
+_r1="${_r1//\//\\/}"
+ 
+# replace __DOMAIN_LOG_FILE__ in our sample.awstats.conf
+sed -e "s/__DOMAIN_LOG_FILE__/${_r1}/" /nfs/conf/awstats/sample.awstats.conf  &gt; /nfs/apache/logs/awstats/awstats.conf
+ 
+# call awstats
+/usr/bin/awstats -c /nfs/apache/logs/awstats/awstats.conf</pre>
+<p>&nbsp;</p>
+<p>The $_r1 is escaped using <a href="http://www.cyberciti.biz/tips/bash-shell-parameter-substitution-2.html">bash find and replace parameter substitution</a> syntax to replace each occurrence of <strong>/</strong> with <strong>\/</strong>.</p>
+<p>&nbsp;</p>
+<h2>perl -pie Syntax For Find and Replace</h2>
+<p>The syntax is as follows:<br><code></code></p>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">C代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=perl%20-pie%20&#39;s%2Fold-word%2Fnew-word%2Fg&#39;%20input.file%20%3E%20new.output.file" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-cpp"><li><span><span>perl&nbsp;-pie&nbsp;</span><span class="string">'s/old-word/new-word/g'</span><span>&nbsp;input.file&nbsp;&gt;&nbsp;</span><span class="keyword">new</span><span>.output.file&nbsp;&nbsp;</span></span></li></ol></div><pre class="c" name="code" codeable_id="1948005" codeable_type="Blog" source_url="http://justcoding.iteye.com/blog/1948005" pre_index="8" title="linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）" style="display: none;">perl -pie 's/old-word/new-word/g' input.file &gt; new.output.file</pre>
+<p><code>&nbsp;<br></code></p>
+</div>
+<p>来源：<a target="_blank" href="http://www.cyberciti.biz/faq/unix-linux-replace-string-words-in-many-files/">http://www.cyberciti.biz/faq/unix-linux-replace-string-words-in-many-files/</a></p>
+<p>&nbsp;</p>
+<h2 title="linux下查找某目录下所有文件包含某字符串的命令">linux下查找某目录下所有文件包含某字符串的命令</h2>
+<div class="dp-highlighter" id=""><div class="bar"><div class="tools">C代码 <embed wmode="transparent" src="/javascripts/syntaxhighlighter/clipboard_new.swf" width="14" height="15" flashvars="clipboard=%23%E4%BB%8E%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%9F%A5%E6%89%BE%E5%8C%B9%E9%85%8D%E6%8C%87%E5%AE%9A%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E8%A1%8C%EF%BC%9A%0A%24%20grep%20%22%E8%A2%AB%E6%9F%A5%E6%89%BE%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%22%20%E6%96%87%E4%BB%B6%E5%90%8D%0A%0A%23%E4%BB%8E%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%9F%A5%E6%89%BE%E4%B8%8E%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D%E7%9A%84%E8%A1%8C%EF%BC%9A%0A%24%20grep%20%E2%80%93e%20%E2%80%9C%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E2%80%9D%20%E6%96%87%E4%BB%B6%E5%90%8D%0A%0A%23%E6%9F%A5%E6%89%BE%E6%97%B6%E4%B8%8D%E5%8C%BA%E5%88%86%E5%A4%A7%E5%B0%8F%E5%86%99%EF%BC%9A%0A%24%20grep%20%E2%80%93i%20%22%E8%A2%AB%E6%9F%A5%E6%89%BE%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%22%20%E6%96%87%E4%BB%B6%E5%90%8D%0A%0A%23%E6%9F%A5%E6%89%BE%E5%8C%B9%E9%85%8D%E7%9A%84%E8%A1%8C%E6%95%B0%EF%BC%9A%0A%24%20grep%20-c%20%22%E8%A2%AB%E6%9F%A5%E6%89%BE%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%22%20%E6%96%87%E4%BB%B6%E5%90%8D%0A%0A%23%E4%BB%8E%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%9F%A5%E6%89%BE%E4%B8%8D%E5%8C%B9%E9%85%8D%E6%8C%87%E5%AE%9A%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E8%A1%8C%EF%BC%9A%0A%24%20grep%20%E2%80%93v%20%22%E8%A2%AB%E6%9F%A5%E6%89%BE%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%22%20%E6%96%87%E4%BB%B6%E5%90%8D%0A%0A%23%E4%BB%8E%E6%A0%B9%E7%9B%AE%E5%BD%95%E5%BC%80%E5%A7%8B%E6%9F%A5%E6%89%BE%E6%89%80%E6%9C%89%E6%89%A9%E5%B1%95%E5%90%8D%E4%B8%BA.txt%E7%9A%84%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%EF%BC%8C%E5%B9%B6%E6%89%BE%E5%87%BA%E5%8C%85%E5%90%AB%22linux%22%E7%9A%84%E8%A1%8C%0Afind%20.%20-type%20f%20-name%20%22*.txt%22%20%7C%20xargs%20grep%20%22linux%22%20" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_star.png" alt="收藏代码"><img class="spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner.gif" style="display:none"></a></div></div><ol start="1" class="dp-cpp"><li><span><span class="preprocessor">#从文件内容查找匹配指定字符串的行：</span><span>&nbsp;&nbsp;</span></span></li><li><span>$&nbsp;grep&nbsp;<span class="string">"被查找的字符串"</span><span>&nbsp;文件名&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span><span class="preprocessor">#从文件内容查找与正则表达式匹配的行：</span><span>&nbsp;&nbsp;</span></span></li><li><span>$&nbsp;grep&nbsp;–e&nbsp;“正则表达式”&nbsp;文件名&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;</span></li><li><span><span class="preprocessor">#查找时不区分大小写：</span><span>&nbsp;&nbsp;</span></span></li><li><span>$&nbsp;grep&nbsp;–i&nbsp;<span class="string">"被查找的字符串"</span><span>&nbsp;文件名&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span><span class="preprocessor">#查找匹配的行数：</span><span>&nbsp;&nbsp;</span></span></li><li><span>$&nbsp;grep&nbsp;-c&nbsp;<span class="string">"被查找的字符串"</span><span>&nbsp;文件名&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span><span class="preprocessor">#从文件内容查找不匹配指定字符串的行：</span><span>&nbsp;&nbsp;</span></span></li><li><span>$&nbsp;grep&nbsp;–v&nbsp;<span class="string">"被查找的字符串"</span><span>&nbsp;文件名&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span><span class="preprocessor">#从根目录开始查找所有扩展名为.txt的文本文件，并找出包含"linux"的行</span><span>&nbsp;&nbsp;</span></span></li><li><span>find&nbsp;.&nbsp;-type&nbsp;f&nbsp;-name&nbsp;<span class="string">"*.txt"</span><span>&nbsp;|&nbsp;xargs&nbsp;grep&nbsp;</span><span class="string">"linux"</span><span>&nbsp;&nbsp;&nbsp;</span></span></li></ol></div><pre class="c" name="code" codeable_id="1948005" codeable_type="Blog" source_url="http://justcoding.iteye.com/blog/1948005" pre_index="9" title="linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）" style="display: none;">#从文件内容查找匹配指定字符串的行：
+$ grep "被查找的字符串" 文件名
+
+#从文件内容查找与正则表达式匹配的行：
+$ grep –e “正则表达式” 文件名
+
+#查找时不区分大小写：
+$ grep –i "被查找的字符串" 文件名
+
+#查找匹配的行数：
+$ grep -c "被查找的字符串" 文件名
+
+#从文件内容查找不匹配指定字符串的行：
+$ grep –v "被查找的字符串" 文件名
+
+#从根目录开始查找所有扩展名为.txt的文本文件，并找出包含"linux"的行
+find . -type f -name "*.txt" | xargs grep "linux" </pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+</div>
+  </div>
+
+  
+
+  
+  
+  <iframe src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/187.html" scrolling="no" width="680" height="90" frameborder="0"></iframe>
+  
+  <div id="bottoms" class="clearfix">
+    
+    <div id="share_weibo">分享到：
+      <a data-type="sina" href="javascript:;" title="分享到新浪微博"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/sina.jpg"></a>
+      <a data-type="qq" href="javascript:;" title="分享到腾讯微博"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/tec.jpg"></a>
+    </div>
+  </div>
+
+  <div class="blog_nav">
+    <div class="pre_next">
+      <a href="http://justcoding.iteye.com/blog/1948475" class="next" title="VideoUrlParser视频信息分析">VideoUrlParser视频信息分析</a>
+      |
+      <a href="http://justcoding.iteye.com/blog/1948004" class="pre" title="linux: sort用法">linux: sort用法</a>
+    </div>
+  </div>
+  <div class="blog_bottom">
+    <ul>
+      <li>2013-09-27 06:23</li>
+      <li>浏览 5728</li>
+      <li><a href="http://justcoding.iteye.com/blog/1948005#comments">评论(0)</a></li>
+      
+      
+        <li><a href="http://justcoding.iteye.com/admin/link?user_favorite%5Btitle%5D=linux+%E6%89%B9%E9%87%8F%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E5%8F%8A%E6%9F%A5%E6%89%BE%E6%9F%90%E7%9B%AE%E5%BD%95%E4%B8%8B%E6%89%80%E6%9C%89%E5%8C%85%E5%90%AB%E6%9F%90%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%88%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%EF%BC%89&user_favorite%5Burl%5D=http%3A%2F%2Fjustcoding.iteye.com%2Fblog%2F1948005" target="_blank" class="favorite" onclick="$$(&#39;.favorite_form_spinner&#39;)[0].show();new Ajax.Request(&#39;/admin/link/new_xhr?user_favorite%5Btitle%5D=linux+%E6%89%B9%E9%87%8F%E6%9B%BF%E6%8D%A2%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E5%8F%8A%E6%9F%A5%E6%89%BE%E6%9F%90%E7%9B%AE%E5%BD%95%E4%B8%8B%E6%89%80%E6%9C%89%E5%8C%85%E5%90%AB%E6%9F%90%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%96%87%E4%BB%B6%EF%BC%88%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%EF%BC%89&amp;user_favorite%5Burl%5D=http%3A%2F%2Fjustcoding.iteye.com%2Fblog%2F1948005&#39;, {method: &#39;get&#39;, onSuccess: function(response){$(document.getElementsByTagName(&#39;body&#39;)[0]).insert({bottom:response.responseText});$$(&#39;.favorite_form_spinner&#39;)[0].hide();}});return false;">收藏</a><img alt="Spinner" class="favorite_form_spinner" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/spinner(1).gif" style="vertical-align:bottom;margin-left:7px;display:none;"></li>
+      
+      <li>分类:<a href="http://www.iteye.com/blogs/category/os">操作系统</a></li>      
+      <li class="last"><a href="http://www.iteye.com/wiki/blog/1948005" target="_blank" class="more">相关推荐</a></li>
+    </ul>
+  </div>
+
+  <div class="blog_comment">
+    <h5>评论</h5>
+    <a id="comments" name="comments"></a>
+    
+    
+    
+  </div>
+
+  <div class="blog_comment">
+    <h5>发表评论</h5>
+            <form action="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站.html" id="comment_form" method="post" onsubmit="return false;"><div style="margin:0;padding:0;display:inline"><input name="authenticity_token" type="hidden" value="aeD5AWlJd4rQDPmODVX8PmJmfysQw6r3BdeUYC64yss="></div>          
+
+
+  <input type="hidden" id="editor_bbcode_flag" value="true">
+
+
+
+<div id="editor_main"><div id="editor_wrapper" class="clearfix"><div id="bbcode_emotions"><h5>表情图标</h5><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_biggrin.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_smile.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_sad.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_surprised.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_eek.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_confused.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_cool.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_lol.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_mad.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_razz.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_redface.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_cry.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_evil.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_twisted.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_rolleyes.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_wink.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_exclaim.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_question.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_idea.gif"><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_arrow.gif"></div><div id="bbcode_controllers"><div id="bbcode_toolbar"><input type="button" value="B" id="button_bold"><input type="button" value="I" id="button_italic"><input type="button" value="U" id="button_underline"><input type="button" value="Quote"><input type="button" value="Code"><input type="button" value="List"><input type="button" value="Img"><input type="button" value="URL"><input type="button" value="Flash"><input type="button" value="Table"><br>字体颜色: <select id="select_color"><option value="black" style="color: black;">标准</option><option value="darkred" style="color: darkred;">深红</option><option value="red" style="color: red;">红色</option><option value="orange" style="color: orange;">橙色</option><option value="brown" style="color: brown;">棕色</option><option value="yellow" style="color: yellow;">黄色</option><option value="green" style="color: green;">绿色</option><option value="olive" style="color: olive;">橄榄</option><option value="cyan" style="color: cyan;">青色</option><option value="blue" style="color: blue;">蓝色</option><option value="darkblue" style="color: darkblue;">深蓝</option><option value="indigo" style="color: indigo;">靛蓝</option><option value="violet" style="color: violet;">紫色</option><option value="gray" style="color: gray;">灰色</option><option value="white" style="color: white;">白色</option><option value="black" style="color: black;">黑色</option></select>&nbsp;字体大小: <select id="select_font"><option value="0">标准</option><option value="xx-small">1 (xx-small)</option><option value="x-small">2 (x-small)</option><option value="small">3 (small)</option><option value="medium">4 (medium)</option><option value="large">5 (large)</option><option value="x-large">6 (x-large)</option><option value="xx-large">7 (xx-large)</option></select>&nbsp;对齐: <select id="select_align"><option value="0">标准</option><option value="left">居左</option><option value="center">居中</option><option value="right">居右</option></select></div><div id="bbcode_tooltip">提示：选择您需要装饰的文字, 按上列按钮即可添加上相应的标签</div><textarea class="validate-richeditor bad-words min-length-5" cols="40" id="editor_body" name="comment[body]" rows="20" style="width: 500px; height: 350px;"></textarea></div></div></div>
+
+
+<script type="text/javascript">
+  var editor = new Control.TextArea.Editor("editor_body", "bbcode", false);
+</script>
+
+          <p style="text-align:right;margin-right:30px;">(快捷键 Alt+S / Ctrl+Enter) <input class="submit" id="quick_reply_button" name="commit" type="submit" value="提交"></p>
+       </form>
+        <script type="text/javascript">
+          new HotKey("s",function() {$('quick_reply_button').click();},{altKey: true, ctrlKey: false});
+          new HotKey(new Number(13),function() {$('quick_reply_button').click();},{altKey: false, ctrlKey: true});
+
+          new Validation("comment_form", {immediate: false, onFormValidate: function(result, form){
+            if(result) {
+              new Ajax.Request('/blog/create_comment/1948005', {
+                onFailure:function(response){
+                  $('comments').insert({after:response.responseText})
+                  form.spinner.hide();
+                  Element.scrollTo($('comments'));
+                },
+                onSuccess:function(response){
+                  Element.scrollTo($('comments'));
+                  var new_comment = new Element('div', {}).update(response.responseText).firstChild;
+                  var comment_id = new_comment.readAttribute('id');
+
+                  $('comments').insert({after:response.responseText});
+                  $('editor_body').value = "";
+
+                  var css_rules = '#' + comment_id + ' pre';
+                  highlightNewAddContent(css_rules);
+                  processComment();
+                  code_favorites_init(css_rules);
+                  
+                  form.spinner.hide();
+                }, parameters:Form.serialize(form)
+              });
+            }
+        }});
+        </script>
+        </div>
+</div>
+
+
+<script type="text/javascript">
+  dp.SyntaxHighlighter.HighlightAll('code', true, true);
+
+  $$('#main .blog_content pre[name=code]').each(function(pre, index){ // blog content
+    var post_id = 1948005;
+    var location = window.location;
+    source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+    pre.writeAttribute('codeable_id', post_id);
+    pre.writeAttribute('codeable_type', "Blog");
+    pre.writeAttribute('source_url', source_url);
+    pre.writeAttribute('pre_index', index);
+    pre.writeAttribute('title', 'linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）');
+  });
+
+  fix_image_size($$('div.blog_content img'), 700);
+
+  function processComment() {
+    $$('#main .blog_comment > div').each(function(comment){// comment
+      var post_id = comment.id.substr(2);
+      $$("#"+comment.id+" pre[name=code]").each(function(pre, index){
+        var location = window.location;
+        source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+        source_url += "#" + comment.id;
+        pre.writeAttribute('codeable_id', post_id);
+        pre.writeAttribute('codeable_type', "BlogComment");
+        pre.writeAttribute('source_url', source_url);
+        pre.writeAttribute('pre_index', index);
+        pre.writeAttribute('title', 'linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容）');
+      });
+    });
+  }
+
+  function quote_comment(id) {
+    new Ajax.Request('/editor/quote', {
+      parameters: {'id':id, 'type':'BlogComment'},
+      onSuccess:function(response){editor.bbcode_editor.textarea.insertAfterSelection(response.responseText);
+        Element.scrollTo(editor.bbcode_editor.textarea.element);}
+    });
+  }
+
+  code_favorites_init();
+  processComment();
+  new WeiboShare({share_buttons: $('share_weibo'), img_scope: $('blog_content')});
+</script>
+
+
+
+
+        </div>
+
+        <div id="local">
+          <div class="local_top"></div>
+          <div id="blog_owner">
+  <div id="blog_owner_logo"><a href="http://justcoding.iteye.com/"><img alt="天梯梦的博客" class="logo" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/91ca89af-122a-38c7-b303-8269d12dfe6a.png" title="天梯梦的博客: Just Code" width=""></a></div>
+  <div id="blog_owner_name">天梯梦</div>
+</div>
+
+          <div id="blog_actions">
+            <ul>
+              <li>浏览: 5443382 次</li>
+              <li>性别: <img alt="Icon_minigender_2" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/icon_minigender_2.gif" title="女"></li>
+              <li>来自: 洛杉矶</li>
+              <li><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/offline.gif"></li>
+              
+                <li>
+                  <a href="http://my.iteye.com/messages/new?message%5Breceiver_name%5D=%E5%A4%A9%E6%A2%AF%E6%A2%A6" class="message" title="发送站内短信">发短消息</a>
+                  
+                    <a href="http://my.iteye.com/feed?subscription%5Bsubscribed_user_name%5D=%E5%A4%A9%E6%A2%AF%E6%A2%A6" class="subscription" onclick="var f = document.createElement(&#39;form&#39;); f.style.display = &#39;none&#39;; this.parentNode.appendChild(f); f.method = &#39;POST&#39;; f.action = this.href;var s = document.createElement(&#39;input&#39;); s.setAttribute(&#39;type&#39;, &#39;hidden&#39;); s.setAttribute(&#39;name&#39;, &#39;authenticity_token&#39;); s.setAttribute(&#39;value&#39;, &#39;aeD5AWlJd4rQDPmODVX8PmJmfysQw6r3BdeUYC64yss=&#39;); f.appendChild(s);f.submit();return false;">关注</a>
+                  
+                </li>
+              
+            </ul>
+          </div>
+          <div id="user_visits" class="clearfix">
+            <h5>最近访客 <span style="font-weight:normal;font-size:12px;padding-left:30px;"><a href="http://justcoding.iteye.com/blog/user_visits">更多访客&gt;&gt;</a></span></h5>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://haitao.iteye.com/" target="_blank"><img alt="poeao的博客" class="logo" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/2e15a6d8-c582-3bfb-ba8f-e57a03f3fc8a-thumb.jpg" title="poeao的博客: Eojoy here ^_^ OHOH" width="48px"></a></div>
+                <div class="left"><a href="http://haitao.iteye.com/" target="_blank" title="poeao">poeao</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://darkblue21.iteye.com/" target="_blank"><img alt="darkblue21的博客" class="logo" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/user-logo-thumb.gif" title="darkblue21的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://darkblue21.iteye.com/" target="_blank" title="darkblue21">darkblue21</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://zhangkunii.iteye.com/" target="_blank"><img alt="zhangkunii的博客" class="logo" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/user-logo-thumb.gif" title="zhangkunii的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://zhangkunii.iteye.com/" target="_blank" title="zhangkunii">zhangkunii</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://zylucky.iteye.com/" target="_blank"><img alt="zylucky的博客" class="logo" src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/user-logo-thumb.gif" title="zylucky的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://zylucky.iteye.com/" target="_blank" title="zylucky">zylucky</a></div>
+              </div>
+            
+          </div>
+
+          
+
+                      <div id="blog_menu">
+              <h5>文章分类</h5>
+              <ul>
+                <li><a href="http://justcoding.iteye.com/">全部博客 (1731)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/89134">Php / Pear / Mysql / Node.js (318)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/89135">Javascript /Jquery / Bootstrap / Web (387)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/178119">Phone / IOS / Objective-C / Swift (135)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/229050">Ubuntu / Mac / Github / Aptana / Nginx / Shell / Linux (284)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/262642">Perl / Koha / Ruby / Markdown (8)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/166396">Java / Jsp (12)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/91095">Python 2 / Wxpython (25)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/89155">Codeigniter / CakePHP (32)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/89136">Div / Css / XML / HTML5 (126)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/91307">WP / Joomla! / Magento / Shopify / Drupal / Moodle / Zimbra (239)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/89437">Apache / VPN / Software (30)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/91407">AS3.0/2.0 / Flex / Flash (45)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/92551">Smarty (6)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/93795">SEO (24)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/89137">Google / Facebook / Pinterest / SNS (74)</a></li>
+                
+                  <li><a href="http://justcoding.iteye.com/category/264864">Tools (12)</a></li>
+                
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>社区版块</h5>
+              <ul>
+                <li><a href="http://justcoding.iteye.com/blog/news">我的资讯</a> (0)</li>
+                <li>
+                  <a href="http://justcoding.iteye.com/blog/post">我的论坛</a> (16)
+                </li>
+                <li><a href="http://justcoding.iteye.com/blog/answered_problems">我的问答</a> (0)</li>
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>存档分类</h5>
+              <ul>
+                
+                  <li><a href="http://justcoding.iteye.com/blog/monthblog/2015-12">2015-12</a> (50)</li>
+                
+                  <li><a href="http://justcoding.iteye.com/blog/monthblog/2015-11">2015-11</a> (40)</li>
+                
+                  <li><a href="http://justcoding.iteye.com/blog/monthblog/2015-10">2015-10</a> (30)</li>
+                
+                <li><a href="http://justcoding.iteye.com/blog/monthblog_more">更多存档...</a></li>
+              </ul>
+            </div>
+            
+            
+              <div id="comments_top">
+                <h5>评论排行榜</h5>
+                <ul>
+                  
+                    <li><a href="http://justcoding.iteye.com/blog/2213661" title="微信扫码登录网页实现原理">微信扫码登录网页实现原理</a></li>
+                  
+                    <li><a href="http://justcoding.iteye.com/blog/2210359" title="微信红包的算法实现探讨（基于PHP）">微信红包的算法实现探讨（基于PHP）</a></li>
+                  
+                    <li><a href="http://justcoding.iteye.com/blog/2263578" title="Proxy、SSH 和 VPN 的区别">Proxy、SSH 和 VPN 的区别</a></li>
+                  
+                </ul>
+              </div>
+            
+
+            <div id="guest_books">
+              <h5>最新评论</h5>
+              <ul>
+                
+                <li>
+                  <a href="http://goahead2010.iteye.com/" target="_blank" title="goahead2010">goahead2010</a>： 
+                  佩服能写出这些博客的人<br>
+                  <a href="http://justcoding.iteye.com/blog/1829963#bc2383159">Linux: xclip,pbcopy,xsel用法 terminal 复制粘帖 (mac , ubuntu)</a>
+                </li>
+                
+                <li>
+                  <a href="http://liruxing1715.iteye.com/" target="_blank" title="liruxing1715">liruxing1715</a>： 
+                  [flash=200,200][flash=200,200][ ...<br>
+                  <a href="http://justcoding.iteye.com/blog/587876#bc2383123">阻止jQuery事件冒泡</a>
+                </li>
+                
+                <li>
+                  <a href="http://k-two.iteye.com/" target="_blank" title="k-two">k-two</a>： 
+                   ...<br>
+                  <a href="http://justcoding.iteye.com/blog/2263578#bc2382787">Proxy、SSH 和 VPN 的区别</a>
+                </li>
+                
+                <li>
+                  <a href="http://hl174.iteye.com/" target="_blank" title="hl174">hl174</a>： 
+                  jsp都有的功能 这样感觉还变复杂了<br>
+                  <a href="http://justcoding.iteye.com/blog/778361#bc2382238">XSL 入门</a>
+                </li>
+                
+                <li>
+                  <a href="http://justcoding.iteye.com/" target="_blank" title="天梯梦">天梯梦</a>： 
+                  dishajk 写道这个算法是不是复杂了？发红包的时候直接随机 ...<br>
+                  <a href="http://justcoding.iteye.com/blog/2210359#bc2381703">微信红包的算法实现探讨（基于PHP）</a>
+                </li>
+                
+              </ul>
+            </div>
+
+            <div class="local_bottom"></div>
+          
+        </div>
+      </div>
+
+      <div id="footer" class="clearfix">
+        <div id="copyright">
+          <hr>
+          声明：ITeye文章版权属于作者，受法律保护。没有作者书面许可不得转载。若作者同意转载，必须以超链接形式标明文章原始出处和作者。<br>
+          © 2003-2016 ITeye.com.   All rights reserved.  [ 京ICP证110151号  京公网安备110105010620 ]
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+  document.write("<img src='http://stat.iteye.com/?url="+ encodeURIComponent(document.location.href) + "&referrer=" + encodeURIComponent(document.referrer) + "&user_id=132292' width='0' height='0' />");
+</script><img src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/saved_resource" width="0" height="0">
+
+<script src="./linux 批量替换文件内容及查找某目录下所有包含某字符串的文件（批量修改文件内容） - Just Code - ITeye技术网站_files/tracking.js" type="text/javascript"></script>
+
+    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-54159016-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+      
+    
+  
+
+</body></html>

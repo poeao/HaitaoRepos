@@ -8,7 +8,7 @@ add180----love2015----jilu151067@163.com----tao07194659
 fpq769----love2015----chengzhao484219@163.com----wenpan136866
 bey449----love2015----fenyong347011@163.com----bibi3107674337
 rps791----love2015----mei91925206@163.com----jiuyuchao
-hkz513----love2015----cixiqiaozhan@163.com----zhanwen3003872
+
 bxb029----love2015----pa11045411@163.com----shao55318380
 uiy912----love2015----shilu292466@163.com----jiaodou9676426
 dlo593----love2015----chungaode@163.com----ke1597836
@@ -23,3 +23,5 @@ mzt161----love2015----congtanghuangca@163.com----yeyong098608
 新号 9.1号之后的 手动直接登录需要验证手机，软件登录没问题的
 如果你是手动登录的话，打开 http://youxi.baidu.com/login-dialog.html
 输入账号密码 点登录按钮就行 （不用管他有没有反应！）在新窗口打开或者刷新贴吧就会看到已经登陆了
+
+hkz513----love2015----cixiqiaozhan@163.com----zhanwen3003872
