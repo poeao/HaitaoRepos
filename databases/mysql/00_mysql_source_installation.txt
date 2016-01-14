@@ -91,6 +91,73 @@ cmake \
 -DMYSQL_DATADIR=/data/mysqldb \   
 -DMYSQL_TCP_PORT=3306 \   
 -DENABLE_DOWNLOADS=1  
+
+cmake \
+-DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+-DMYSQL_UNIX_ADDR=/usr/local/mysql/mysql.sock \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DWITH_MYISAM_STORAGE_ENGINE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITH_ARCHIVE_STORAGE_ENGINE=1 \
+-DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
+-DWITH_MEMORY_STORAGE_ENGINE=1 \
+-DWITH_READLINE=1 \
+-DENABLED_LOCAL_INFILE=1 \
+-DMYSQL_DATADIR=/usr/local/mysql/data \
+-DMYSQL_USER=mysql \
+-DMYSQL_TCP_PORT=3306
+
+＃编译源码，这一步时间会较长，耐心等待。
+
+cmake 编译选项含意：
+
+
+-DCMAKE_INSTALL_PREFIX=/usr/local/mysql
+
+
+#指定mysql安装的根目录，只要
+
+/mysql
+
+目录存在就可以了，mysql-5.5在安装时，会自动创建。这个 值可以在服务器开机时，通过--basedir来设置。
+
+
+-DMYSQL_UNIX_ADDR=/usr/local/mysql/mysql.sock
+
+#mysql服务器用于监听的套接字，这个必需是一个绝对路径，默认是/tmp/mysql.sock。在服务器吭劢 时，可通过--socket 来改变。
+
+
+-DDEFAULT_CHARSET=utf8
+
+#设置mysql默认使用utf8字符集，不指定，默认使用latin1 西欧字符集。
+
+
+-DDEFAULT_COLLATION=utf8_general_ci
+
+#默认字符校对
+
+
+DWITH_EXTRA_CHARSETS=all 
+
+#指定mysql扩展字符集支持所有的字符集。默认mysql支持所有字符集
+
+ -DWITH_MYISAM_STORAGE_ENGINE=1
+
+ -DWITH_INNOBASE_STORAGE_ENGINE=1
+
+  -DWITH_MEMORY_STORAGE_ENGINE=1 
+
+ #静态编译 Myisam、Innobase、Memory 存储引擎刡 mysql 服务器。这样 mysql 服务器就支持这三 种存储引擎了。 
+
+
+-DWITH_READLINE=1  #支持readline库 。
+
+ -DENABLED_LOCAL_INFILE=1  #允许从本地导入数据 ，吭用加载本地数据
+
+ -DMYSQL_DATADIR=/server/mysql/data  #mysql数据库存放数据的目录
+
+-DMYSQL_USER=mysql    #指定运行mysql服务的用户 
 注：重新运行配置，需要删除CMakeCache.txt文件
 
 rm CMakeCache.txt  
