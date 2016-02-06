@@ -1,11 +1,11 @@
 Dubbo 课程播放密码  ： QQ邮箱中有备份 
 
-你好，你的播放密码是：
+你好，你的播放密码是：(old version) 
 
 edbb3d463aac5560179e00bafbf4bbe0336f0189687d65de8d5f6a024836697bbba693f5a1f6e3dbea984801a34a1f59cf47d8af8f36cbe0b6e9afb0d25298ca7d4aa40d1cd1d29729b98a3d6d6adbc9f0d05f96103da3723b460603a8043d5ec5032e7b57c7c79657dd6b5256d6f49c
 
 
-------------------old boy -----------------------------------------------
+------------------old boy -----------x230 player key------------------------------------
 就业指导
 617902d9996a941c7d3149c5d7644dc513d654a52090d490586b81e9a7f5fe907f15ab33957a0833a9c5f7121f81ed044999183ca9f1657bb543c7ff51d14d906c6c2b918892b7d058ef5b5059162f2d
 零基础到精通 (11:08:21):
@@ -16,3 +16,6 @@ openstack
 
 
 --------------------------------------------------------------------------------------
+dubbo player 2.0 . x230 player key  : 
+
+aaad6366d34bdb7eb9f2bc105ecfd73de687e6e3c7c144a55de5dccdeee4f3d510831517aa8402051dc8a5218bcdcfe08ef9c0d591d1d2beeb62173f3f078df47e6fb9f5ed8196b98b05a21d0f3058c5993b1a564df0f5b3bd08c4433840fdd9a4a7ee4ead4caba77ef61b5b5aba3efa
