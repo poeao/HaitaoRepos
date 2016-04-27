@@ -1,0 +1,100 @@
+mysqlbinlog mysqlbin.000020 --start-position=365 --stop-position=456 -r pos.sql
+
+mysqlbinlog mysqlbin.000020 --stop-position=456 -r pos.sql
+
+mysqlbinlog mysqlbin.000020 --start-position=365  -r pos.sql
+
+
+mysqlbinlog mysql-bin.000020 --start-datetime='2014-10-16 17:14:15' --stop-datetime='2014-10-16 17:15:15' -r time.sql
+
+mysql-proxy
+amoeba
+=============================================
+1,2组MySQL-proxy，xtrabackup（物理备份工具）
+5,6组Amoeba，xtrabackup（物理备份工具）
+3,4组MHA,mysql+ha+drbd
+7,8组mysql-mmm/mysql+ha+drbd
+==============================================
+
+
+增量恢复总结：
+1、条件
+全备份以及全备之后的binlog
+
+2、关键点：G点 确定全备份之后时刻binlog文件及位置
+mysqldump -F
+ls -lrt mysql-bin.log >dump.log,cat master.info
+show mater status;
+
+3、恢复时候尽量对外停止服务
+条件的数据堆在一起，写好恢复语句，进行恢复。
+==============================================
+
+4、未雨绸缪，多事前下功夫，而不是事后补救。
+
+
+
+1、停止一个从库，然后再主库刷新binlog,把mysql-bin.000014恢复成bin.sql(去掉drop语句)
+2.把全备bak_2014-11-06.sql及10点前的增量bin.sql恢复到从库。
+3、切换到从库提供服务。
+数据丢多少？10：10分刷新BINLOG以后的数据。mysql-bin.000015
+4、把mysql-bin.000015解析为sql，恢复到从库。
+以上方案还是不会主键冲突问题。
+============================
+1、停止一个从库，然后再主库刷新binlog,把mysql-bin.000014恢复成bin.sql(去掉drop语句)
+2.把全备bak_2014-11-06.sql及10点前的增量bin.sql恢复到从库。
+3、数据丢多少？10：10分刷新BINLOG以后的数据。mysql-bin.000015
+4、停止主库，快速把mysql-bin.000015解析为sql，恢复到从库。
+切换到从库提供服务
+
+
+
+优化：
+char定长字符串
+varchar变长
+
+
+与互联网的发展相关：
+硬件很小，更新少，浏览多：MyISAM更适合。
+
+共享表空间对应物理数据文件：
+[root@resin01 3306]# ll /data/3306/data/ibdata1 
+-rw-rw---- 1 mysql mysql 134217728 01-27 14:19 /data/3306/data/ibdata1
+独立表空间对应物理数据文件：
+innodb_file_per_table
+innodb_data_home_dir = /data/xxx
+
+innodb特点：
+1、Row-level locking 
+2、Full-text search indexes
+3、Data caches
+4、Index caches
+5、Transactions
+6、占用资源多
+7、读写阻塞与事务隔离级别相关
+
+
+创建后引擎的更改，5.0以上：
+ALTER TABLE oldboy ENGINE = INNODB;
+ALTER TABLE oldboy ENGINE = MyISAM;
+
+
+课后作业：19:32 2015/8/6
+自学作业：
+=============================================
+1,2组MySQL-proxy，xtrabackup（物理备份工具）
+5,6组Amoeba，xtrabackup（物理备份工具）
+3,4组MHA,mysql+ha+drbd
+7,8组mysql-mmm/mysql+ha+drbd
+==============================================
+总结作业：
+1、mysqlbinlog命令
+2、增量备份及恢复，案例。
+3、引擎，事务
+4、MySQL管理思想
+下次课预习：
+Shell编程 两个目录。
+
+未来3周：
+一键完成期中架构实战项目：
+http://oldboy.blog.51cto.com/2561410/1680707

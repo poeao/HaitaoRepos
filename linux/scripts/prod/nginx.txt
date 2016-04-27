@@ -1,0 +1,100 @@
+#!/bin/sh
+#chkconfig: 2345 54 65
+#description: start/stop nginx script
+
+#load functions
+[ -f /etc/init.d/functions ] && . /etc/init.d/functions
+
+NGINX="/usr/local/nginx/sbin/nginx"
+prog="/var/lock/subsys/nginx"
+RETVAL=0
+start() {
+        if [ ! -f $prog ]; then
+                $NGINX && RETVAL=$?
+        else
+                return $RETVAL
+        fi
+        if [ $RETVAL -eq 0 ];then
+                touch $prog
+                action "Starting nginx "  /bin/true
+        else
+                action "Starting nginx "  /bin/false
+        fi
+
+        return $RETVAL
+}
+
+stop() {
+        [ ! -f $prog ] && return $RETVAL
+        $NGINX -s stop && RETVAL=$?
+        if [ $RETVAL -eq 0 ];then
+                [ -f $prog ] && rm -f $prog
+                action "Stopping nginx"  /bin/true
+        else
+                action "Stopping nginx"  /bin/false
+        fi
+
+        return $RETVAL
+}
+
+restart() {
+        stop
+        start
+}
+
+reload() {
+        if [ -f $prog ]; then
+                 $NGINX -s reload && RETVAL=$?
+        else
+                RETVAL=1
+                return 1
+        fi
+        if [ $RETVAL -eq 0 ];then
+                action "Reloading nginx "  /bin/true
+        else
+                action "Reloading nginx"  /bin/false
+        fi
+
+        return $RETVAL
+}
+
+usage() {
+        echo "Usage: $0 {start|stop|restart|reload}"
+        exit 1
+}
+
+adminNginx() {
+        case $1 in
+        start)
+           start
+        ;;
+        stop)
+           stop
+        ;;
+        restart)
+           restart
+        ;;
+        reload)
+          reload
+        ;;
+        *)
+        usage
+        ;;
+
+        esac
+        RETVAL=$?
+
+        return $RETVAL
+}
+
+main() {
+        if [ $# -ne 1 ]; then
+                usage
+        else
+                adminNginx $1
+        fi
+}
+
+#main $1
+main $*
+exit $RETVAL

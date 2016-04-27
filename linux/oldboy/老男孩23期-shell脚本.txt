@@ -1,0 +1,237 @@
+企业案例:写网络服务rsync的系统启动脚本
+范例3 ：利用if语句开发类似系统启动rsync服务的脚本
+（可参考系统的rpcbind/nfs/crond脚本）!
+例如：/etc/init.d/rsyncd {start|stop|restart}
+测试用例：
+[root@oldboy 04]# touch /etc/rsyncd.conf
+[root@oldboy 04]# rsync --daemon
+[root@oldboy 04]# lsof -i :873
+COMMAND   PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+rsync   14085 root    4u  IPv4 555582      0t0  TCP *:873 (LISTEN)
+rsync   14085 root    5u  IPv6 555583      0t0  TCP *:873 (LISTEN)
+
+范例4：开发生产mysql多实例启动的脚本（以前的课程内容）
+(1)mysql多实例的启动：
+[root@oldboy 3306]# /data/3306/mysql start
+Starting MySQL...
+[root@oldboy 3306]# /bin/sh /application/mysql/bin/mysqld_safe --defaults-file=/data/3306/my.cnf 2>&1 > /dev/null &
+[1] 31898
+[root@oldboy 3306]# netstat -lnt|grep 330                                          tcp        0      0 0.0.0.0:3306                0.0.0.0:*                   LISTEN
+(2)mysql多实例的停止：
+[root@oldboy 3306]# /data/3306/mysql stop
+Stoping MySQL...
+mysqladmin -u root -poldboy -S /data/3306/mysql.sock shutdown
+利用if语句开发mysql多实例启动脚本。
+
+[ -n "`echo $1|sed 's/[0-9]//g'`" ] && echo "第一个参数必须为数字" && exit 1
+
+[ -n "$num" -a "$num" = "${num//[^0-9]/}" ] && echo "it is num"
+
+123
+123===123
+
+使用grep实现精确过滤的五种方法
+（1）被过滤的内容占据一行时
+[root@MySQL scripts]# cat oldboy.log       
+200
+0200
+2000
+[root@MySQL scripts]# grep "\b200\b" oldboy.log 
+200 #<==正则按单词匹配
+[root@MySQL scripts]# grep -w "200" oldboy.log                  
+200 #<==按单词匹配
+[root@MySQL scripts]# grep -x "200" oldboy.log                  
+200 #<==按整行匹配
+[root@MySQL scripts]# grep "^200$" oldboy.log 
+200 #<==正则开头结尾匹配，相当于整行匹配
+[root@MySQL scripts]# grep -E "\<200\>" oldboy.log 
+200 #<==扩展正则
+（2）被过滤的内容占据一行的一部分
+[root@MySQL scripts]# cat oldboy.log 
+200 oldboy
+0200 oldgirl
+2000 littleboy
+[root@MySQL scripts]# grep "\b200\b" oldboy.log
+200 oldboy
+[root@MySQL scripts]# grep -w "200" oldboy.log
+200 oldboy
+[root@MySQL scripts]# grep -x "200" oldboy.log
+#<==按整行匹配，所以没结果
+[root@MySQL scripts]# grep -x "200 oldboy" oldboy.log
+200 oldboy
+[root@MySQL scripts]# grep "^200$" oldboy.log
+#<==按整行匹配，所以没结果
+[root@MySQL scripts]# grep "^200 oldboy$" oldboy.log
+200 oldboy
+[root@MySQL scripts]# grep -E "\<200\>" oldboy.log 
+200 oldboy
+-w:匹配单词，相当于正则的"\<..\>"(..表示你自定义的规则)
+-x:匹配一行，相当于正则的"^..$"(..表示你自定义的规则)
+
+
+
+用法: grep [选项] "匹配模式" 文件(一个或多个)
+
+    匹配模式的选择：常用的有-E,-i,-w,-x.
+-E:如果加这个选项，那么后面的匹配模式就是扩展的正则表达式，也就是grep -E = egrep.
+-i:忽略大小写
+       -w:匹配单词，相当于正则中的"\<...\>"(...表示你自定义的规则)
+       -x:匹配一行，相当于正则中的"^...$"(...表示你自定义的规则)
+   常规通用的选项：一般用的就是-v选项
+       -v:取反，也就是输出我们定义的模式相反的内容。
+   输出控制：这个比较多，来几个最常用的吧，
+       -m:只匹配规定的行数，之后的内容就不在匹配了。
+       -n:在输出的结果里显示行号，这里要清楚的是这里所谓的行号是该行内容在原文件中的行号，而不是在输出结果中            的行号。
+        -o:只显示匹配内容，grep默认是显示满足匹配条件的一行，加上这个参数就只显示匹配结果，比如我们要匹配一              个ip地址，就只需要结果，而不需要该行的内容。
+       -R:递归匹配。如果要在一个目录中的多个文件或目录匹配内容，则需要这个参数。
+       -c:count.统计，统计匹配结果的行数，主要不是匹配结果的次数，是行数。
+   文本控制：其实和输出控制差不多，常用的有三个
+       -B：输出满足条件行的前几行，比如grep -B 3 "aa" file 表示在file中输出有aa的行，同时还要输出aa的前3行。
+       -A：这个与-B类似，输出满足条件行的后几行。
+       -C：这个相当于同时用-B -A，也就是前后都输出。
+
+
+1、条件表达式
+   文件、字符串、整数
+2、if语句
+   取值判断。
+3、函数
+
+4、case
+   多分支的if语句。
+# See how we were called.
+case "$1" in
+  start)
+        ;;
+  stop)
+        ;;
+  status)
+        ;;
+  restart|reload)
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|status|restart}"
+        ;;
+esac
+
+函数名 参数1 参数2
+
+
+前景色
+echo -e "\033[30m 黑色字oldboy trainning \033[0m"
+echo -e "\033[31m 红色字oldboy trainning \033[0m"
+echo -e "\033[32m 绿色字oldboy trainning \033[0m"
+echo -e "\033[33m 黄色字oldboy trainning \033[0m"
+echo -e "\033[34m 蓝色字oldboy trainning \033[0m"
+echo -e "\033[35m 紫色字oldboy trainning \033[0m"
+echo -e "\033[36m 天蓝字oldboy trainning \033[0m"
+echo -e "\033[37m 白色字oldboy trainning \033[0m"
+
+
+RED_COLOR='\E[1;31m'
+GREEN_COLOR='\E[1;32m'
+YELLOW_COLOR='\E[1;33m'
+BLUE_COLOR='\E[1;34m'
+RES='\E[0m'
+
+man手册查看颜色man console_codes
+
+
+背景色
+echo -e "\033[40;37m 黑底白字 welcome to old1boy\033[0m"
+echo -e "\033[41;37m 红底白字 welcome to old2boy\033[0m"
+echo -e "\033[42;37m 绿底白字 welcome to old3boy\033[0m"
+echo -e "\033[43;37m 黄底白字 welcome to old4boy\033[0m"
+echo -e "\033[44;37m 蓝底白字 welcome to old5boy\033[0m"
+echo -e "\033[45;37m 紫底白字 welcome to old6boy\033[0m"
+echo -e "\033[46;37m 天蓝白字 welcome to old7boy\033[0m"
+echo -e "\033[47;30m 白底黑字 welcome to old8boy\033[0m"
+
+
+字背景颜色范围:40----49
+40:黑
+41:深红
+42:绿
+43:黄色
+44:蓝色
+45:紫色
+46:深绿
+47:白色
+字颜色:30-----------39
+30:黑
+31:红
+32:绿
+33:黄
+34:蓝色
+35:紫色
+36:深绿
+37:白色
+==ANSI控制码的说明
+\33[0m 关闭所有属性
+\33[1m 设置高亮度
+\33[4m 下划线
+\33[5m 闪烁
+\33[7m 反显
+\33[8m 消隐
+\33[30m -- \33[37m 设置前景色
+\33[40m -- \33[47m 设置背景色
+\33[nA 光标上移n行
+\33[nB 光标下移n行
+\33[nC 光标右移n行
+\33[nD 光标左移n行
+\33[y;xH设置光标位置
+\33[2J 清屏
+\33[K 清除从光标到行尾的内容
+\33[s 保存光标位置
+\33[u 恢复光标位置
+\33[?25l 隐藏光标
+\33[?25h 显示光标
+
+已知nginx管理命令为：
+启动：/application/nginx/sbin/nginx
+停止：/application/nginx/sbin/nginx -s stop
+重新加载：/application/nginx/sbin/nginx -s reload
+请用case脚本模拟nginx服务启动关闭：
+/etc/init.d/nginx {start|stop|restart|reload} 
+并实现可通过chkconfig管理。
+
+企业案例：开发mysql多实例启动脚本：
+已知mysql多实例启动命令为：
+mysqld_safe --defaults-file=/data/3306/my.cnf &
+停止命令为：
+mysqladmin -u root -poldboy123 -S /data/3306/mysql.sock shutdown
+请完成mysql单实例或多实例启动启动脚本的编写
+要求：用函数、case语句等实现。（15分钟）
+
+作业：
+1、开发rsyncd启动脚本，并且可以chkconfig管理。
+2、开发mysql多实例启动脚本。
+case语句小结：
+1、case语句就相当于多分支的if语句。
+    case语句优势更规范、易读。
+2、case语句适合变量的值少，且为固定的数字或字符串集合。（1,2,3）或（start,stop,restart）。
+3、系统服务启动脚本传参的判断多用case语句。多参考rpcbind/nfs/crond脚本。
+小结：
+1)所有的case语句都可以用if实现，但是case更规范清晰一些，
+2）case一般适合于服务的启动脚本。
+3）case的变量的值如果已知固定的start/stop/restart元素的时候比较适合一些。
+
+课后作业：19:38 2015/8/18
+1、if语句
+3、函数
+4、case语句
+5、while语句基础
+预习：
+while
+for
+shell数组
+trap信号及跳板机
+
+shell必会19道 本周四下午 14:00
+http://oldboy.blog.51cto.com/2561410/1632876
+
+
+
+
+
+

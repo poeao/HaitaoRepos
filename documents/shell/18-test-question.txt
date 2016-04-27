@@ -1,0 +1,619 @@
+目录：
+1、监控MySQL主从同步... 1
+2、批量创建文件及改名... 3
+3、批量创建用户随机密码... 6
+4、判断网络主机存活... 7
+5、解决DOS攻击生产案例... 7
+6、MySQL启动脚本... 8
+7、分库备份... 11
+8、分库分表备份... 11
+9、打印字母数不大于6的单词... 12
+10、比较2个整数大小... 15
+11、打印选择菜单... 17
+12、监控web、db服务... 20
+    12.1 监控web服务... 20
+        12.1.1本地端口判断... 20
+        12.1.2本地进程判断... 20
+        12.1.3远程端口判断... 21
+        12.1.4获取返回内容判断... 22
+        12.1.5根据状态码判断... 22
+    12.2 监控db服务... 23
+        12.2.1插入与查询的值对比判断... 23
+        12.2.2返回值判断... 24
+        12.2.3本地端口对比... 24
+        12.2.4本地进程判断... 25
+        12.2.5远程端口判断... 25
+13、监控memcache服务... 26
+14、监控web站点目录... 27
+15、rsync的系统启动脚本... 29
+16、抽奖... 31
+17、破解密码... 34
+18、批量检查多个网站地址是否正常... 35
+ 
+1、监控MySQL主从同步
+企业面试题1：监控MySQL主从同步是否异常，如果异常，则发送短信或者邮件给管理员。提示：如果没主从同步环境,可以用下面文本放到文件里读取来模拟：
+阶段1：开发一个守护进程脚本每30秒实现检测一次。
+阶段2：如果同步出现如下错误号（1158,1159,1008,1007,1062），则跳过错误。
+阶段3：请使用数组技术实现上述脚本（获取主从判断及错误号部分）
+ 
+模拟文本
+ 
+[root@oldboy~]# mysql -uroot-p'oldboy' -S /data/3307/mysql.sock -e "show slavestatus\G;"
+*************************** 1.row ***************************
+               Slave_IO_State:Waiting formaster to send event
+                  Master_Host:10.0.0.179   #当前的mysql master服务器主机
+                  Master_User: rep
+                  Master_Port: 3306
+                Connect_Retry: 60
+              Master_Log_File:mysql-bin.000013
+         Read_Master_Log_Pos: 502547
+               Relay_Log_File:relay-bin.000013
+                Relay_Log_Pos:251
+        Relay_Master_Log_File:mysql-bin.000013
+             Slave_IO_Running:Yes
+           Slave_SQL_Running: Yes
+              Replicate_Do_DB:
+         Replicate_Ignore_DB: mysql
+          Replicate_Do_Table:
+      Replicate_Ignore_Table:
+     Replicate_Wild_Do_Table:
+Replicate_Wild_Ignore_Table:
+                   Last_Errno: 0
+                   Last_Error:
+                 Skip_Counter: 0
+         Exec_Master_Log_Pos: 502547
+              Relay_Log_Space:502986
+              Until_Condition:None
+               Until_Log_File:
+                Until_Log_Pos: 0
+          Master_SSL_Allowed: No
+          Master_SSL_CA_File:
+          Master_SSL_CA_Path:
+              Master_SSL_Cert:
+           Master_SSL_Cipher:
+               Master_SSL_Key:
+       Seconds_Behind_Master: 0   #和主库比同步延迟的秒数，这个参数很重要
+Master_SSL_Verify_Server_Cert: No
+                Last_IO_Errno: 0
+                Last_IO_Error:
+               Last_SQL_Errno: 0
+               Last_SQL_Error:
+  
+  
+脚本
+                             
+[root@shell scripts]# vicheck_mysql_slave.sh
+#!/bin/sh
+#oldboy linux training
+#2015-05-17
+#说明：本脚本来自老男孩linux21期学员张耀开发！
+# Source function library.
+. /etc/init.d/functions
+  
+# Defined variables
+MysqlUser=root
+MysqlPass=oldboy123
+MysqlPort=3307
+Mysqlsock=/data/$MysqlPort/mysql.sock
+ErrorNo=(1158 1159 1008 10071062)
+errorlog=/tmp/error_skip.log
+MysqlCmd="/application/mysql/bin/mysql-u$MysqlUser -p$MysqlPass -S $Mysqlsock"
+  
+# Judge mysql server is ok?
+[ -S $Mysqlsock ] ||{
+    echo "Maybe MySQL have sometingwrong"
+    exit 1
+}
+  
+# Defined skip error Functions
+function error_skip(){
+    local flag
+    flag=0
+    for num in ${ErrorNo[@]}
+      do
+        if [ "$1" == "$num"];then
+           $MysqlCmd -e'stop slave;set globalsql_slave_skip_counter=1;start slave;'
+           echo "$(date +%F_%R) $1">>$errorlog
+        else
+           echo "$(date +%F_%R) $1">>$errorlog
+           ((flag++))
+        fi
+    done
+    [ "$flag" =="${#ErrorNo[@]}" ] &&{
+        action "MySQL Slave"/bin/false
+        uniq $errorlog|mail -s "MySQLSlave is error" 12345678@qq.com
+    }
+}
+  
+# Defined check slave Functions
+function check_slave(){
+    MyResult=`$MysqlCmd -e'show slavestatus\G'|egrep '_Running|Behind_Master|SQL_Errno' |awk '{print $NF}'`
+    array=($MyResult)
+    if [ "${array[0]}" =="Yes" -a "${array[1]}" == "Yes" -a"${array[2]}" == "0" ]
+      then
+        action "MySQL Slave"/bin/true
+    else
+error_skip ${array[3]}
+    fi
+}
+  
+# Defined main Functions
+function main(){
+    while true
+       do
+         check_slave
+         sleep 60
+    done
+}
+main
+ 
+2、批量创建文件及改名
+企业面试题2：使用for循环在/oldboy目录下通过随机小写10个字母，批量创建10个html文件，名称例如为：
+[root@oldboy oldboy]# sh/server/scripts/oldboy.sh
+[root@oldboy oldboy]# ls -l
+total 0
+-rw-r--r-- 1 root root 0 Apr 1511:34 coaolvajcq_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1511:34 gmkhrancxh_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1511:34 jdxexendbe_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1511:34 qcawgsrtkp_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1511:34 qnvuxvicni_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1511:34 tmdjormaxr_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1511:34 ugaywanjlm_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1511:34 vfrphtqjpc_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1511:34 vioesjmcbu_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1511:34 wzewnojiwe_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1511:34 xzzruhdzda_oldboy.html
+ 
+请用至少两种方法实现，将以上文件名中的oldboy全部改成oldgirl(用for循环实现),并且html改成大写。
+ 
+ 
+2.1批量创建脚本
+[root@shell scripts]# vitouch2.sh 
+#!/bin/bash
+Path=/oldboy
+[ -d $Path ] || mkdir $Path
+  
+for i in `seq 10`
+  do
+     char=`echo $RANDOM|md5sum|cut -c 2-11|tr[0-9] [a-j]`
+     touch $Path/${char}_oldboy.html
+done
+[root@shell scripts]# shtouch2.sh   
+[root@shell scripts]# ll -h/oldboy/
+total 0
+-rw-r--r-- 1 root root 0 Apr 1107:49 aeddbiacdj_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1107:49 bccbacghba_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1107:49 bdhijefefb_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1107:49 bhfghjcgaa_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1107:49 ddaacedijc_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1107:49 ebcbbfabaf_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1107:49 ecafccebbi_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1107:49 egcdafafad_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1107:49 iehfcgfaef_oldboy.html
+-rw-r--r-- 1 root root 0 Apr 1107:49 ifddfaaicd_oldboy.html
+  
+2.2批量改名
+[root@shell scripts]# vimv2.sh    
+#!/bin/bash
+Path=/oldboy
+[ -d $Path ] && cd $Path
+for file in `ls`
+ do
+     mv $file `echo $file|sed -e"s#oldboy#oldgirl#g" -e "s#html#HTML#g" `
+done
+[root@shell scripts]# sh mv2.sh
+[root@shell scripts]# ll -h/oldboy/
+total 0
+-rw-r--r-- 1 root root 0 Apr 1107:49 aeddbiacdj_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1107:49 bccbacghba_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1107:49 bdhijefefb_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1107:49 bhfghjcgaa_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1107:49 ddaacedijc_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1107:49 ebcbbfabaf_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1107:49 ecafccebbi_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1107:49 egcdafafad_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1107:49 iehfcgfaef_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1107:49 ifddfaaicd_oldgirl.HTML
+  
+  
+[root@shell scripts]# vimv3.sh    
+#!/bin/bash
+Path=/oldboy
+[ -d $Path ] && cd $Path
+for file in `ls`
+ do
+     mv $file `echo${file/oldboy.html/oldgirl.HTML}`
+done
+[root@shell scripts]# sh mv3.sh
+[root@shell scripts]# ll -h/oldboy/            
+total 0
+-rw-r--r-- 1 root root 0 Apr 1108:12 abcaeacdbe_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1108:12 affabgbccg_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1108:12 badbifffbg_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1108:12 ccbcifibbe_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1108:12 cchbacgegb_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1108:12 cdfbjfdiib_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1108:12 chjechdgab_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1108:12 ghibcfcbee_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1108:12 icafaafbdb_oldgirl.HTML
+-rw-r--r-- 1 root root 0 Apr 1108:12 igiijhbebj_oldgirl.HTML
+
+3、批量创建用户随机密码
+企业面试题3：批量创建10个系统帐号oldboy01-oldboy10并设置密码（密码为随机8位字符串）。
+ 
+ 
+[root@shell scripts]# viuseradd.sh
+#! /bin/bash
+. /etc/init.d/functions
+  
+Path=/server/scripts
+UserDb=$Path/user.db
+FailDb=$Path/fail_user.db
+  
+[ -d "$Path" ] || mkdir-p $Path
+[ -f "$UserDb" ] ||touch $UserDb
+[ -f "$FailDb" ] ||touch $FailDb
+  
+for n in $(seq -w 10)
+ do
+    passwd=`echo $(date+%t%N)$RANDOM|md5sum|cut -c 2-9`
+    useradd oldboy$n >&/dev/null&& user_status=$?
+    echo "$passwd"|passwd --stdinoldboy$n >&/dev/null && pass_status=$?
+    if [ $user_status -eq 0 -a $pass_status -eq0 ];then
+       action "adduser oldboy$n"/bin/true
+       echo -e "user:\toldboy$npass:$passwd" >>$UserDb
+    else
+       action "adduser oldboy$n"/bin/false
+       echo -e "user:\toldboy$npass:$passwd" >>$FailDb
+    fi
+done
+[root@shell scripts]# shuseradd.sh           
+adduser oldboy01                                          [  OK  ]
+adduser oldboy02                                          [  OK  ]
+adduser oldboy03                                          [  OK  ]
+adduser oldboy04                                          [  OK  ]
+adduser oldboy05                                          [  OK  ]
+adduser oldboy06                                          [  OK  ]
+adduser oldboy07                                           [ OK  ]
+adduser oldboy08                                          [  OK  ]
+adduser oldboy09                                          [  OK  ]
+adduser oldboy10                                          [  OK  ]
+[root@shell scripts]# cat user.db
+user:   oldboy01 pass:f3291720
+user:   oldboy02 pass:457a9f30
+user:   oldboy03 pass:ff186389
+user:   oldboy04 pass:8f884b7c
+user:   oldboy05 pass:26f831b4
+user:   oldboy06 pass:344e2300
+user:   oldboy07 pass:0736b278
+user:   oldboy08 pass:67c1fa76
+user:   oldboy09 pass:b11e7aa9
+user:   oldboy10 pass:9e0c3673
+4、判断网络主机存活
+企业面试题4：写一个脚本，实现判断10.0.0.0/24网络里，当前在线用户的IP有哪些（方法有很多）
+ 
+#!/bin/sh
+for n in `seq 254`
+do
+  ping -c1 10.0.0.$n &>/dev/null
+  if [ $? -eq 0 ]
+  then
+      echo "10.0.0.$n is up ">>/tmp/uplist.log
+  else
+      echo "10.0.0.$n is down ">>/tmp/downlist.log
+  fi
+done
+5、解决DOS攻击生产案例
+企业实战题5：请用至少两种方法实现！写一个脚本解决DOS攻击生产案例。
+提示：根据web日志或者或者网络连接数，监控当某个IP并发连接数或者短时内PV达到100，即调用防火墙命令封掉对应的IP，监控频率每隔3分钟。防火墙命令为：iptables-AINPUT -s 10.0.1.10 -j DROP。
+ 
+[root@shell scripts]# vi dos.sh
+#!/bin/bash
+  
+log=/tmp/tmp.log
+  
+[ -f $log ] || touch $log
+  
+function add_iptables(){
+    whileread line
+        do
+          ip=`echo $line|awk '{print $2}'`
+          count=`echo $line|awk '{print $1}'`
+            if [ $count -gt 100 ] && [`iptables -L -n|grep "$ip"|wc -l` -lt 1 ]
+             then
+                iptables -I INPUT -s $ip -jDROP
+                echo "$line isdropped" >>/tmp/droplist.log
+            fi
+        done<$log
+}
+  
+  
+function main(){
+    whiletrue
+           do
+             #awk '{print $1}' access.log|grep-v "^$"|sort|uniq -c >$log
+             netstat -an|grep EST|awk -F '[:]+' '{print $6}'|sort|uniq -c >$log
+             add_iptables
+             sleep 180
+    done
+}
+  
+main
+6、MySQL启动脚本
+企业实战题6：开发mysql多实例启动脚本：
+已知mysql多实例启动命令为：mysqld_safe--defaults-file=/data/3306/my.cnf&
+停止命令为：mysqladmin -u root -poldboy123 -S /data/3306/mysql.sockshutdown
+请完成mysql多实例启动启动脚本的编写
+要求：用函数，case语句、if语句等实现。
+ 
+[root@shell scripts]# vi mysqld1.sh
+#!/bin/bash
+# chkconfig: 2345 65 37
+# description: manager multiplemysqld server.
+  
+# Warning: This script uses the/etc/init.d/functions system function.
+#          System  kernel version isCentOS6.6,2.6.32-504.el6.x86_64.
+#          I'm not sure whether other systemscan be used normally.
+# Source function library.
+. /etc/init.d/functions
+  
+  
+Port=$2
+datadir=/data/$2
+Path="/application/mysql"
+CmdPath="$Path/bin"
+MysqlCmd="$CmdPath/mysqld_safe"
+prog=mysqld
+Port=$2
+datadir=/data/$2
+pidfile=${PIDFILE-$datadir/mysqld.pid}
+lockfile=${LOCKFILE-/var/lock/subsys/mysqld$Port}
+MysqlConf="$datadir/my.cnf"
+RETVAL=0
+  
+Usage1(){
+        echo -e "\033[33m USAGE: $0 {startport|stop port|status port|restart port} \033[0m"
+        exit 6
+}
+  
+Usage2(){
+        echo -e "\033[33m MySQL DaemonProgram Need Configuration File,like $datadir/my.cnf \033[0m"
+        exit 6
+}
+  
+[ -n "$Port" -a  -z "`echo"${Port//[0-9]/}"`" ] || Usage1
+  
+start(){
+        [ -x $MysqlCmd ] || exit 5
+        [ -f $MysqlConf ] || Usage2
+        echo -n $"Starting $prog: "
+        daemon --pidfile=${pidfile}"$MysqlCmd --defaults-file=$MysqlConf &>/dev/null &"
+        sleep 1
+        RETVAL=$?
+        echo
+        [ $RETVAL = 0 ] && touch${lockfile}
+        return $RETVAL
+}
+  
+stop(){
+        echo -n $"Stopping $prog: "
+        killproc -p $pidfile
+        retval=$?
+        echo
+        [ $retval -eq 0 ] && rm -f${lockfile}
+        return $retval
+}
+  
+restart() {
+        stop
+        sleep 1
+        start
+}
+  
+rh_status() {
+        status -p $pidfile
+}
+  
+rh_status_q() {
+        rh_status >/dev/null 2>&1
+}
+  
+case "$1" in
+    start)
+        rh_status_q && exit 0
+        $1
+        ;;
+    stop)
+        rh_status_q || exit 0
+        $1
+        ;;
+    restart)
+        $1
+        ;;
+    status)
+        rh_status
+        ;;
+    *)
+        Usage1
+        exit 2
+esac
+7、分库备份
+企业实战题7:如何实现对MySQL数据库进行分库备份，请用脚本实现
+ 
+[root@shell scripts]# vifenku_backup.sh 
+#!/bin/bash
+MysqlUser=root
+PassWord=oldboy123
+Port=3306
+Socket="/data/$Port/mysql.sock"
+MysqlCmd="mysql -u$MysqlUser-p$PassWord -S $Socket"
+Database=`$MysqlCmd -e "showdatabases;"|egrep -v "Database|_schema|mysql"`
+MysqlDump="mysqldump-u$MysqlUser -p$PassWord -S $Socket"
+IP=`ifconfig eth0|awk -F "[:]+" 'NR==2 {print $4}'`
+BackupDir=/backup/$IP
+  
+[ -d $BackupDir ] || mkdir -p$BackupDir
+  
+  
+for dbname in $Database
+  do
+     $MysqlDump --events -B $dbname|gzip>/$BackupDir/${dbname}_$(date +%F)_bak.sql.gz
+done
+[root@shell 10.0.0.3]# ls
+chongtu_2015-04-11_bak.sql.gz  oldboy_2015-04-11_bak.sql.gz  test_2015-04-11_bak.sql.gz
+mysql_2015-04-11_bak.sql.gz    qqqqqq_2015-04-11_bak.sql.gz
+8、分库分表备份
+企业实战题8:如何实现对MySQL数据库进行分库加分表备份，请用脚本实现
+ 
+[root@shell scripts]# vifenbiao_backup.sh
+#!/bin/bash
+MysqlUser=root
+PassWord=oldboy123
+Port=3306
+Socket="/data/$Port/mysql.sock"
+MysqlCmd="mysql -u$MysqlUser-p$PassWord -S $Socket"
+Database=`$MysqlCmd -e "showdatabases;"|egrep -v "Database|_schema|mysql"`
+MysqlDump="mysqldump-u$MysqlUser -p$PassWord -S $Socket"
+IP=`ifconfig eth0|awk -F "[:]+" 'NR==2 {print $4}'`
+BackupDir=/backup/$IP
+  
+[ -d $BackupDir ] || mkdir -p$BackupDir
+  
+  
+for dbname in $Database
+  do
+     [ ! -d /$BackupDir/$dbname ] &&mkdir -p /$BackupDir/$dbname
+     TABLE=`$MysqlCmd -e "show tables from$dbname;"|sed '1d'`
+     for table in $TABLE
+        do
+          $MysqlDump $dbname $table|gzip>/$BackupDir/$dbname/${dbname}_${table}_$(date +%F).sql.gz
+     done
+done
+
+9、打印字母数不大于6的单词
+企业面试题9： bash for循环打印下面这句话中字母数不大于6的单词(昆仑万维面试题)。
+Iam oldboy teacher welcome to oldboy training class.
+请用至少两种方法实现！
+ 
+[root@shell scripts]# vi length.sh
+#!/bin/bash
+  
+echo "-------wc -L----"
+for word in I am oldboy teacherwelcome to oldboy training class.
+  do
+     if [ `echo ${word}|wc -L` -le 6 ]
+     then
+        echo $word
+     fi
+done
+  
+echo"-----{#word}-----"
+for word in I am oldboy teacherwelcome to oldboy training class.
+  do
+     if [ ${#word} -le 6 ]
+     then
+        echo $word
+     fi
+done
+  
+  
+echo "-----exprlength-----"
+for word in I am oldboy teacherwelcome to oldboy training class.
+  do
+     if [ `expr length "$word"` -le 6]
+     then
+        echo $word
+     fi
+done
+  
+echo"-----{word:0:6}-----"
+for word in I am oldboy teacherwelcome to oldboy training class.
+do
+    if [ "$word" =="${word:0:6}" ]
+     then
+        echo $word
+    fi
+done
+  
+echo "-----awk-----"
+echo "I am oldboy teacherwelcome to oldboy training class"|awk '{for(i=1;i<=NF;i++)if(length($i)<=6)print $i}'
+  
+echo "-----awk2-----"
+echo -n "I am oldboy teacherwelcome to oldboy training class." | awk 'BEGIN {RS=FS} length($0)<=6{print $0}'
+  
+  
+echo "-----数组-----"
+arr=(I am oldboy teacher welcometo oldboy training class.)
+for word in ${arr[@]}
+do
+  if [ ${#word} -le 6 ]
+  then
+      echo $word
+  fi
+done
+  
+echo-----------------------------
+for((i=0;i<${#arr[*]};i++))
+do
+    if [ ${#arr[$i]} -le 6 ]
+    then
+       echo ${arr[$i]}
+    fi
+done
+[root@shell scripts]# shlength.sh  
+-------wc -L----
+I
+am
+oldboy
+to
+oldboy
+class.
+-----{#word}-----
+I
+am
+oldboy
+to
+oldboy
+class.
+-----expr length-----
+I
+am
+oldboy
+to
+oldboy
+class.
+-----{word:0:6}-----
+I
+am
+oldboy
+to
+oldboy
+class.
+-----awk-----
+I
+am
+oldboy
+to
+oldboy
+class
+-----awk2-----
+I
+am
+oldboy
+to
+oldboy
+class.
+-----数组-----
+I
+am
+oldboy
+to
+oldboy
+class.
+-----------------------------
+I
+am
+oldboy
+to
+oldboy
+class.

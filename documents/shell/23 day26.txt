@@ -1,0 +1,246 @@
+
+面试题019 ：MySQL集群和高可用方案有哪些，再生产场景你都用过哪些方案？
+
+
+面试题020：MySQL数据库如何实现读写分离，你的公司是怎么实现的（请答出200服务器以上规模企业数据库的解决方案）
+
+
+面试题021：开发有一堆数据插入，如何防止插入的中文数据产生乱码？
+
+面试题022：如何批量更改数据库表的引擎，例如：myisam改成innodb。
+
+面试题023：如何批量更改数据库字符集，例如;GBK更改为UTF8。
+
+面试题024 ：你的数据库是如何备份的（请答出200服务器以上规模企业数据库备份的解决方案）
+
+面试题025：key_buffer_size参数作用，如何修改这个参数不重启数据库就可以生效？
+
+面试题026：delete from test和truncate table test区别？
+ 
+面试题027：你维护的企业里MySQL服务架构能说下么？
+
+面试题028：网站打开慢，请给出排查方法，如果是因为数据库慢导致，如何排查并解决，请分析并举例？
+
+面试题029：什么是数据库的事务，事务有哪些特性？
+
+Shell是一个命令解释器，它在操作系统的最外层，负责直接与用户对话，把用户的输入解释给操作系统，并处理各种各样的操作系统的输出结果，输出到屏幕返回给用户。这种对话方式可以是交互的方式（从键盘输入命令，可以立即得到shell的回应），或非交互(脚本)的方式。
+
+  cd /var/log
+  cat /dev/null > messages
+  echo "Logs cleaned up."
+
+
+#!/bin/bash
+  # 清除日志脚本, 版本 2
+  LOG_DIR=/var/log
+  ROOT_UID=0     # $UID为0的时候,用户才具有root用户的权限
+#要使用root用户来运行.
+  if [ "$UID" -ne "$ROOT_UID" ]
+then
+     echo "Must be root to run this script."
+     exit 1
+  fi  
+cd $LOG_DIR || {
+    echo "Cannot change to necessary directory." >&2
+    exit 1
+  }
+  cat /dev/null > messages && echo "Logs cleaned up."
+  exit 0
+  # 退出之前返回0表示成功. 返回1表示失败。
+
+python
+1)复杂的日志分析，逻辑处理。
+2）web开发，豆瓣，知乎。
+3）开发软件 openstack,saltstack。
+
+
+#!/bin/bash
+
+Shell脚本的执行通常可以采用以下几种方式：
+①bash script-name或sh script-name(推荐使用)
+②path/script-name 或./script-name(当前路径下执行脚本)
+③source script-name或 . script-name   #→注意”.”点号。
+④sh<script-name或cat scripts-name|sh(同样适合bash)
+
+5）某互联网公司linux运维职位实际面试笔试填空题：
+1.已知如下命令及返回结果，请问 echo $user 的返回的结果为（  ）。
+[oldboy@test ~]$ cat test.sh
+user=`whoami`
+[oldboy@test ~]$ sh test.sh 
+[oldboy@test ~]$ echo $user
+问：执行echo $user命令的结果是什么？
+
+[root@MySQL ~]# tail -2 /etc/init.d/functions 
+echo "I am oldboy linux"
+}
+[root@MySQL ~]# cat test.sh 
+. /etc/init.d/functions
+oldboy
+
+2.shell中变量名及变量内容的要求
+一般是由字母，数字，下划线组成。以字母开头，例如：
+oldboy，oldboy123，oldboy_training。
+
+
+a=192.168.1.2
+b='192.168.1.2'
+c="192.168.1.2"
+
+echo "a=$a"
+echo "b=$b"
+echo "c=${c}"
+
+a=192.168.1.2-$a
+b='192.168.1.2-$a'
+c="192.168.1.2-$a"
+
+echo "a=$a"
+echo "b=$b"
+echo "c=${c}"
+
+一般连续的字符串，数字，路径等可以不加任何引号
+，不过无引号的情况最好用双引号替代之。
+
+
+6、变量定义小结：
+普通变量：
+a=1 连续的数字字符串
+a="/etc/rc.local $USER" 解析结果后输出
+a='$USER' 原样输出
+命令内容定义：
+a=`ls` 反引号
+a=$(ls) 
+
+
+
+一道实用linux运维问题的9种shell解答方法（http://oldboy.blog.51cto.com/2561410/760192）
+
+$n  获取当前执行的shell脚本的第n个参数值，n=1..9 ，当 n 为0时表示脚本的文件名,如果n大于9，用大括号括起来${10}，参数以空格隔开。
+
+linux下set和eval的使用小案例解答
+本博文主要是讲解学生提出的如下一行命令脚本定义的真正内涵：
+
+
+runlevel=$(set -- $(runlevel); eval "echo \$$#" ) 
+http://oldboy.blog.51cto.com/2561410/1175971
+
+I am oldboy linux,welcome to our training.
+
+
+#!/bin/sh
+while true
+do
+  read  -p "Pls input:" a
+  expr $a + 0 >/dev/null 2>&1
+  [ $? -eq 0 ] &&echo int||echo chars
+done
+
+
+小结：
+(())，let,expr,bc(小数awk),$[]
+
+19:38 2015/8/11
+课后作业：
+1、shell脚本基础，shell介绍，重要性
+2、写脚本规范，脚本的建立和执行。
+3、shell,php,perl,python特点及区别
+4、全局变量、普通变量的定义规范，定义方法
+5、特殊变量，位置变量，进程状态变量
+6、变量的字串知识
+7、变量的数值计算：
+(())，let,expr,bc(小数awk),$[]
+预习：
+1、条件测试
+2、if语句
+3、case语句
+4、while循环
+
+
+
+$? 命令返回值
+$0 脚本名字
+$# 传参个数
+$n 
+
+
+$* “$1$2$3”
+$@  "$1" "$2"
+$$  程序PID
+
+source .  bash  sh
+
+
+###config mail service###
+function postfix(){
+	echo -e "set from=oldboy@163.com smtp=smtp.163.com\nset smtp-auth-user=oldboy smtp-auth-password=oldboy123 smtp-auth=login" >>/etc/mail.rc
+	/etc/init.d/postfix start
+}
+postfix
+
+扩展：MYSQL,WEB 服务是否正常。
+
+老男孩教育23期面授开始奖励了，现场投票：
+5个组长奖   王书彬 孙文俊 李想 任俊杰 罗杰
+3个助人为乐 谢迪 何清 郭雨明
+1个最佳班长 李闯
+每人共选择9票
+如果打钩低于9票，第一行标记打钩的票数
+每人任选一行。
+奖励：
+组长：前2名 200元，第三名150 第四五100
+班长：200
+助人为乐：200 150 100
+
+或2.5倍课程费用抵扣
+
+
+
+
+
+
+得票低于5票者候选者自动弃权
+
+
+范例3：使用if多分支语句、read及脚本传参方式如何实现2个整数比较大小？
+
+范例4：实现通过传参的方式往/etc/user.conf里添加用户，具体要求如下：
+1）命令用法：
+USAGE: sh adduser {-add|-del|-search} username 
+2）传参要求：
+如果参数为-add时，表示添加后面接的用户名，
+如果参数为-del时，表示删除后面接的用户名，
+如果参数为-search时，表示查找后面接的用户名，
+3）如果有同名的用户则不能添加，没有对应用户则无需删除，查找到用户以及没有用户时给出明确提示。
+4）/etc/user.conf不能被所有外部用户直接删除及修改
+
+23期课后作业：19:50 2015/8/14
+1、猜数字：首先让系统随机生成一个数字，给这个数字定一个范围（数字前50及后50），让用户输入，对输入判断，如果不符合数字就给予高与低的提示，根据提示，看你多少次可以猜对？
+2、范例4：实现通过传参的方式往/etc/user.conf里添加用户，具体要求如下：
+1）命令用法：
+USAGE: sh adduser {-add|-del|-search} username 
+2）传参要求：
+如果参数为-add时，表示添加后面接的用户名，
+如果参数为-del时，表示删除后面接的用户名，
+如果参数为-search时，表示查找后面接的用户名，
+3）如果有同名的用户则不能添加，没有对应用户则无需删除，查找到用户以及没有用户时给出明确提示。
+4）/etc/user.conf不能被所有外部用户直接删除及修改
+3、条件表达式以及if语句
+预习：
+1、case语句，while语句，for语句
+2、函数。
+3、数组
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

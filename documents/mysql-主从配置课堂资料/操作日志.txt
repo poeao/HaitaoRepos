@@ -1,0 +1,126 @@
+
+
+
+
+
+
+
+  120  cd /application/mysql/scripts/
+  121  ./mysql_install_db --basedir=/application/mysql/ --datadir=/data/3306/data/ --user=mysql
+  122  vi /etc/hosts
+  123  ./mysql_install_db --basedir=/application/mysql/ --datadir=/data/3307/data/ --user=mysql
+
+[root@MySQL scripts]# mysqladmin -uroot password oldboy123 -S /data/3306/mysql.sock 
+[root@MySQL scripts]# mysqladmin -uroot password oldboy456 -S /data/3307/mysql.sock     
+[root@MySQL scripts]# mysql -uroot -poldboy456 -S /data/3307/mysql.sock     Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 3
+Server version: 5.5.32 Source distribution
+
+Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> quit
+Bye
+[root@MySQL scripts]# mysql -uroot -poldboy456 -S /data/3307/mysql.sock 
+
+
+[root@MySQL scripts]# sed -i '13 s#oldboy#oldboy123#g' /data/3306/mysql   
+[root@MySQL scripts]# sed -n '13p' /data/3306/mysql                      
+mysql_pwd="oldboy123"
+[root@MySQL scripts]# sed -i '13 s#oldboy#oldboy456#g' /data/3307/mysql   
+[root@MySQL scripts]# sed -n '13p' /data/3307/mysql                    
+mysql_pwd="oldboy456"
+[root@MySQL scripts]# /data/3306/mysql stop
+Stoping MySQL...
+[root@MySQL scripts]# /data/3307/mysql stop 
+Stoping MySQL...
+[root@MySQL scripts]# ss -lntup|grep 3307
+[root@MySQL scripts]# /data/3307/mysql start
+Starting MySQL...
+[root@MySQL scripts]# /data/3306/mysql start 
+Starting MySQL...
+[root@MySQL scripts]# ss -lntup|grep 3307   
+tcp    LISTEN     0      128                    *:3307                  *:*      users:(("mysqld",28987,11))
+[root@MySQL scripts]# ss -lntup|grep 3307
+tcp    LISTEN     0      128                    *:3307                  *:*      users:(("mysqld",28987,11))
+[root@MySQL scripts]# ss -lntup|grep 330
+tcp    LISTEN     0      128                    *:3306                  *:*      users:(("mysqld",29729,12))
+tcp    LISTEN     0      128                    *:3307                  *:*      users:(("mysqld",28987,11))
+
+
+mkdir -p /data/3308/data
+\cp /data/3306/my.cnf  /data/3308/
+\cp /data/3306/mysql  /data/3308/
+sed -i 's/3306/3308/g' /data/3308/my.cnf 
+sed -i 's/server-id=1/server-id=8/g' /data/3308/my.cnf 
+sed -i 's/3306/3308/g' /data/3308/mysql
+chown -R mysql:mysql /data/3308
+chmod 700 /data/3308/mysql
+cd /application/mysql/scripts
+./mysql_install_db --datadir=/data/3308/data --basedir=/application/mysql --user=mysql
+chown -R mysql:mysql /data/3308
+/data/3308/mysql start
+sleep 5
+netstat -lnt|grep 3308
+
+
+文件级别同步方案：
+1、普通同步：scp/sftp/ftp/samba/rsync/csync2/union
+2、实时同步：nfs/inotify/sersync/lsyncd
+3、文件系统同步：drbd
+======================
+第三方同步软件:实时的（实时的不一定是同步的，可能异步的）：
+1、db 自带的同步功能
+  mysql replication,oracle dataguard
+  redis主从复制，mongodb
+=====================
+运维思想实现：
+1、程序双写
+
+
+grant replication slave on *.* to 'rep'@'10.0.0.%' identified by 'oldboy123';
+
+mysqldump -uroot -poldboy123 -A -B -F --master-data=2 -x --events|gzip >/opt/all.sql.gz
+
+
+ls -lh /opt/bak_$(date +%F).sql.gz 
+mysql> show master status;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000003 |      331 |              |                  |
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+
+
+mysqldump -uroot -poldboy123 -A -B -F --master-data=2 -x --events|gzip >/opt/all.sql.gz
+
+--master-data=1
+-- CHANGE MASTER TO MASTER_LOG_FILE='mysql-bin.000004', MASTER_LOG_POS=107;
+
+[root@MySQL opt]# gzip -d bak_2015-07-23.sql.gz 
+[root@MySQL opt]# mysql -uroot -poldboy456 -S /data/3307/mysql.sock <bak_2015-07-23.sql 
+
+
+
+
+mysql -uroot -p'oldboy456' -S /data/3307/mysql.sock<< EOF
+stop slave;
+CHANGE MASTER TO  
+MASTER_HOST='10.0.0.5', 
+MASTER_PORT=3306,
+MASTER_USER='rep', 
+MASTER_PASSWORD='oldboy123', 
+MASTER_LOG_FILE='mysql-bin.000003',
+MASTER_LOG_POS=331;
+EOF
+
+
+
+
+

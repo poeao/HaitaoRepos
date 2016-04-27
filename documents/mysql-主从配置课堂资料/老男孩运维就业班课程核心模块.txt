@@ -1,0 +1,62 @@
+
+老男孩教育linux运维就业班课程目录核心：
+
+第一部分 基础不牢，地动山摇
+1、linux命令基础（大量企业案例实战）
+100-150个命令及linux三剑客加正则表达式
+ls pwd cp mv rm alias sed awk grep cat
+mount  find  tar more less tail head uptime iostat sar 
+last free du df useradd usermod userdel chmod chown chattr 
+lsattr lsmod ln dos2unix touch mkdir netstat lsof route ifconfig
+tracert ping ip uname w who lastlog whoami dmesg finger
+groupadd groupdel id egrep unzip tr bc cut ps kill 
+killall pkill top watch nohup bg fg jobs echo printf
+rz sz yum rpm umount showmout  fdisk mkfs parted rsync 
+scp sftp su sudo cd crondtab tac paste split md5sum 
+dirname basename strace lstrace tree dd rename diff vimdiff telnet 
+nmap nc wget curl man file which whereis locate export 
+nl reboot halt shutdown xargs exec stat ntpdate time pstree
+vmstat chkconfig umask set env modprobe expr let setup unalias
+sort uniq wc iconv gzip hostname date password chage visudo
+ifup ifdown mail mutt nslookup dig fsck exit logout clear
+ethtool、mii-tool、dmidecode、dmesg history eject sync 
+
+2、linux核心基础知识（大量企业案例实战）
+linux系统原理、启动过程，目录结构，常见配置路径，文件属性，
+链接知识，目录权限，用户管理，磁盘管理，文件系统，网络基础（IP、路由等）
+
+第二部分 不会linux网络服务，只能说是基础系统工程师或网管
+
+3、linux核心基础网络服务
+搭建中小规模网站集群10-20台规模必备
+Crond定时任务，RSYNC数据同步，INOTIFY,SERSYNC实时数据同步，
+NFS网络存储系统、SSH服务批量管理，批量分发文件（ansible）
+nginx,apache服务，php模块及php fastcgi服务。
+Nginx proxy+keepalived 反向代理及高可用性集群
+LNMP,LAMP优化、安全，及网站集群优化安全
+ntp（自学）,rpm定制打包（视频自学），yum仓库搭建（视频自学）
+日志审计（视频自学）
+
+老男孩教育运维就业班期中集群架构前的内容
+
+4、核心必会技术MySQL数据库与NOSQL数据库
+MySQL核心精讲，Memcached or Redis。
+amoeba（自学作业）,mha（自学作业） mysql-mmm（自学作业）
+
+5、linux运维编程技术
+Shell高级编程实战必会，python自动化编程（选）
+
+6、大型网站集群套件
+nginx,keepalived,lvs
+
+7、监控工具与防火墙
+zabbix,iptables,nagios（选）,cacti（选）
+
+8、网站集群优化与安全
+WEB，数据库，存储及大型网站集群体系的安全优化
+
+9、企业运维知识、核心就业指导
+机房相关、CDN相关、就业指导。
+
+10、根据进度选讲课程
+tomcat,svn,openvpn,kvm

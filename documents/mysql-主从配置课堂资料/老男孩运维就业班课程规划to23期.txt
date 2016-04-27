@@ -1,0 +1,79 @@
+
+
+
+老男孩运维就业班课程规划：
+
+1、linux命令基础（大量企业案例实战）
+100-150个命令及linux三剑客加正则表达式
+ls pwd cp mv rm alias sed awk grep cat
+mount  find  tar more less tail head uptime iostat sar 
+last free du df useradd usermod userdel chmod chown chattr 
+lsattr lsmod ln dos2unix touch mkdir netstat lsof route ifconfig
+tracert ping ip uname w who lastlog whoami dmesg finger
+groupadd groupdel id egrep unzip tr bc cut ps kill 
+killall pkill top watch nohup bg fg jobs echo printf
+rz sz yum rpm umount showmout  fdisk mkfs parted rsync 
+scp sftp su sudo cd crondtab tac paste split md5sum 
+dirname basename strace lstrace tree dd rename diff vimdiff telnet 
+nmap nc wget curl man file which whereis locate export 
+nl reboot halt shutdown xargs exec stat ntpdate time pstree
+vmstat chkconfig umask set env modprobe expr let setup unalias
+sort uniq wc iconv gzip hostname date password chage visudo
+ifup ifdown mail mutt nslookup dig fsck exit logout clear
+ethtool、mii-tool、dmidecode、dmesg history eject sync 
+
+2、linux核心基础知识（大量企业案例实战）
+linux系统原理、启动过程，目录结构，常见配置路径，文件属性，
+链接知识，目录权限，用户管理，磁盘管理，文件系统，网络基础（IP、路由等）
+
+3、linux核心基础网络服务
+搭建中小规模网站集群10-20台规模必备
+Crond定时任务，RSYNC数据同步，INOTIFY,SERSYNC实时数据同步，
+NFS网络存储系统、SSH服务批量管理，批量分发文件（ansible）
+nginx,apache服务，php模块及php fastcgi服务。
+Nginx proxy+keepalived 反向代理及高可用性集群
+LNMP,LAMP优化、安全，及网站集群优化安全
+
+老男孩教育运维就业班期中集群架构前的内容
+
+4、核心必会技术MySQL数据库与NOSQL数据库
+MySQL，Memcached or Redis。
+
+5、shell高级编程实战
+
+6、网站集群套件
+nginx,keepalived,lvs
+
+7、监控、防火墙
+zabbix,iptables
+
+8、优化与安全
+WEB，数据库，网站集群体系的安全优化
+
+9、就业知识
+机房相关、CDN相关、就业指导。
+
+
+
+  120  cd /application/mysql/scripts/
+  121  ./mysql_install_db --basedir=/application/mysql/ --datadir=/data/3306/data/ --user=mysql
+  122  vi /etc/hosts
+  123  ./mysql_install_db --basedir=/application/mysql/ --datadir=/data/3307/data/ --user=mysql
+
+[root@MySQL scripts]# mysqladmin -uroot password oldboy123 -S /data/3306/mysql.sock 
+[root@MySQL scripts]# mysqladmin -uroot password oldboy456 -S /data/3307/mysql.sock     
+[root@MySQL scripts]# mysql -uroot -poldboy456 -S /data/3307/mysql.sock     Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 3
+Server version: 5.5.32 Source distribution
+
+Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> quit
+Bye
+[root@MySQL scripts]# mysql -uroot -poldboy456 -S /data/3307/mysql.sock 
